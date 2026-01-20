@@ -1,0 +1,20 @@
+<RCC>
+    <qresource>
+        <file>ColorPoint.qmlproject</file>
+        <file>ColorPoint/Constants.qml</file>
+        <file>ColorPoint/EventListModel.qml</file>
+        <file>ColorPoint/EventListSimulator.qml</file>
+        <file>ColorPoint/qmldir</file>
+        <file>ColorPointContent/App.qml</file>
+        <file>ColorPointContent/assets/image_1.png</file>
+        <file>ColorPointContent/assets/image_2.png</file>
+        <file>ColorPointContent/assets/image_3.png</file>
+        <file>ColorPointContent/assets/refresh.png</file>
+        <file>ColorPointContent/ChartUI.qml</file>
+        <file>ColorPointContent/Main.qml</file>
+        <file>ColorPointContent/MainScreen.ui.qml</file>
+        <file>ColorPointContent/Screen01.ui.qml</file>
+        <file>ColorPointContent/SmartNIR.qml</file>
+        <file>qtquickcontrols2.conf</file>
+    </qresource>
+</RCC>
