@@ -118,47 +118,7 @@ Rectangle {
                                             anchors.horizontalCenter: parent.horizontalCenter //水平置中
                                         }
                                     }
-                                    //clear_List BTN
-                                    // Rectangle {
-                                    //     id: clearListBtn
-                                    //     // anchors.top: datalist.bottom
-                                    //     // anchors.topMargin: 16
-                                    //     //anchors.horizontalCenter: parent.horizontalCenter
-                                    //     Layout.preferredHeight: parent.height * 0.1
-                                    //     Layout.preferredWidth: parent.width * 0.5
-                                    //     Layout.alignment: Qt.AlignHCenter
-                                    //     color: "#3a3a3a"
-                                    //     radius: 10
 
-                                    //     Text {
-                                    //         id: clearListTxt
-                                    //         color: "#ffffff"
-                                    //         font.family: "Poppins"
-                                    //         font.pixelSize: clearListMouseArea.containsMouse ? 24 : 22
-                                    //         font.weight: Font.Bold
-                                    //         //horizontalAlignment: Text.AlignHCenter
-                                    //         text: "Clear List"
-                                    //         textFormat: Text.PlainText
-                                    //         anchors.centerIn: parent
-                                    //         //verticalAlignment: Text.AlignVCenter
-                                    //         // anchors.verticalCenter: parent.verticalCenter //文字垂直置中
-                                    //         // anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
-                                    //         wrapMode: Text.WordWrap
-                                    //     }
-
-                                    //     layer.enabled: true
-                                    //     layer.effect: MultiEffect {
-                                    //         shadowEnabled: clearListMouseArea.containsMouse ? true : false
-                                    //         shadowColor: "gray"
-                                    //         shadowBlur: 0.8
-                                    //     }
-                                    //     MouseArea {
-                                    //         id: clearListMouseArea
-                                    //         anchors.fill: parent
-                                    //         hoverEnabled: true
-                                    //         cursorShape: Qt.PointingHandCursor
-                                    //     }
-                                    // }
                                 }
                             }
                         }
