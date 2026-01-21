@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-//import Qt.labs.qmlmodels
+import QtQuick.Layouts
 import QtQuick.Effects
 import QtQml.Models
 
@@ -9,7 +9,7 @@ Rectangle {
     color: "#00000000" // 背景深灰色
     property var columnMap: ["time", "label", "v1", "v2", "v3", "v4"]
     property var headerText: ["Time", "Label", "1", "2", "3", "4"]
-    property var columnWidths: [220, 120, 100, 100, 100, 100]
+    property var columnWidths: [10, 240, 380, 480, 580, 680]
     property ListModel dataModel: ListModel {}
     Rectangle {
         id: dataList
@@ -24,63 +24,86 @@ Rectangle {
                 ListElement { time: "20251023-143005"; label: "white"; v1: "4800"; v2: "4869"; v3: "5138"; v4: "5861" }
                 ListElement { time: "20251023-143010"; label: "102";   v1: "0.67"; v2: "0.8";  v3: "13.9"; v4: "-23.7" }
             }
+        ColumnLayout {
+            anchors.fill: parent
+            spacing: 5
+            Rectangle {
+                    //Layout.fillWidth: true
+                Layout.fillWidth: true
+                Layout.preferredHeight: parent.height * 0.1
 
-        // 2. 表格標題列 (Header)
-        HorizontalHeaderView {
-            id: horizontalHeader
-            syncView: tableView
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 40
-            clip: true
-
-            model: headerText
-            delegate: Rectangle {
-                implicitWidth: tableView.columnWidthProvider(model.index)
-                implicitHeight: 40
-                color: "transparent"
-                Text {
-                    text: headerText[model.index]
-                    color: "white"
-                    font.bold: true
-                    font.pixelSize: 22
-                    anchors.fill: parent
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: model.index === 0 ? Text.AlignLeft : Text.AlignHCenter
-                    leftPadding: model.index === 0 ? 15 : 0
+                    //height: 50
+                    color: "transparent"
+                    Text {
+                        text: headerText[0]
+                        x: columnWidths[0]
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "white"
+                        font.bold: true
+                        font.pixelSize: 26
+                    }
+                    Text {
+                        text: headerText[1]
+                        x: columnWidths[1]
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "white"
+                        font.bold: true
+                        font.pixelSize: 26
+                    }
+                    Text {
+                        text: headerText[2]
+                        x: columnWidths[2]
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "white"
+                        font.bold: true
+                        font.pixelSize: 26
+                    }
+                    Text {
+                        text: headerText[3]
+                        x: columnWidths[3]
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "white"
+                        font.bold: true
+                        font.pixelSize: 26
+                    }
+                    Text {
+                        text: headerText[4]
+                        x: columnWidths[4]
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "white"
+                        font.bold: true
+                        font.pixelSize: 26
+                    }
+                    Text {
+                        text: headerText[5]
+                        x: columnWidths[5]
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "white"
+                        font.bold: true
+                        font.pixelSize: 26
+                    }
                 }
-            }
-        }
 
-        // 3. 數據內容區
-        TableView {
-            id: tableView
-            anchors.top: horizontalHeader.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            clip: true
-
-            // 關鍵：將 ListModel 直接作為 model
-            model: dataModel
-            columnWidthProvider: function (column) { return columnWidths[column] }
-
-            delegate: Rectangle {
-                id:test1
-                implicitHeight: 45
-                color: "transparent"
-
-                Text{
-                    text: time
-                    anchors.centerIn: parent
-                    color: "#e0e0e0"
-                    font.pixelSize: 18
-                    anchors.fill: parent
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: column === 0 ? Text.AlignLeft : Text.AlignHCenter
-                    leftPadding: column === 0 ? 15 : 0
-                }
+            ListView {
+                id: listView
+                Layout.fillWidth: true
+                Layout.preferredHeight: parent.height * 0.9
+                model: dataModel
+                //headerPositioning: ListView.OverlayHeader
+                clip: true
+                delegate: ItemDelegate {
+                    id:test1
+                    implicitHeight: 40
+                    Text{
+                        text: time
+                        anchors.centerIn: parent
+                        color: "#e0e0e0"
+                        font.pixelSize: 18
+                        anchors.fill: parent
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment:  Text.AlignLeft
+                        leftPadding: 10
+                    }
 
                 Text{
                     text: label
@@ -130,6 +153,7 @@ Rectangle {
             }
         }
     }
+    }
     //clear_List BTN
     Rectangle {
         id: clearListBtn
@@ -153,7 +177,7 @@ Rectangle {
             text: "Clear List"
             textFormat: Text.PlainText
             anchors.centerIn: parent  //字垂直置中 Text.WordWrap }
-        }
+
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: clearListMouseArea.containsMouse ? true : false
@@ -193,8 +217,9 @@ Rectangle {
             }
         }
     }
-    function updateAllData() {
-        // newJsonData 格式必須是：[{ "time": "...", "label": "..." }, { ... }]
+
+    }
+    function updateAllData() { // newJsonData 格式必須是：[{ "time": "...", "label": "..." }, { ... }]
         // 生成當前時間字串
         let currentTime = new Date().toLocaleTimeString(Qt.locale("zh_TW"), "hhmmss");
         // 隨機生成一個數值
