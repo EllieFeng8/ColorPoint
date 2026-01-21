@@ -177,7 +177,7 @@ Rectangle {
             text: "Clear List"
             textFormat: Text.PlainText
             anchors.centerIn: parent  //字垂直置中 Text.WordWrap }
-
+        }
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: clearListMouseArea.containsMouse ? true : false
@@ -218,7 +218,6 @@ Rectangle {
         }
     }
 
-    }
     function updateAllData() { // newJsonData 格式必須是：[{ "time": "...", "label": "..." }, { ... }]
         // 生成當前時間字串
         let currentTime = new Date().toLocaleTimeString(Qt.locale("zh_TW"), "hhmmss");

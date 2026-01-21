@@ -30,13 +30,13 @@ Rectangle {
 
     Item {
         anchors.fill: parent
-        anchors.topMargin: 20
+        anchors.topMargin: 60
         anchors.bottomMargin: 20
         anchors.leftMargin: 20
         anchors.rightMargin: 20
         ColumnLayout {
             anchors.fill: parent
-            spacing: -80
+            spacing: -60
 
             Rectangle {
                 id: rectangleUp
@@ -139,7 +139,7 @@ Rectangle {
                     anchors.topMargin: 20
                     anchors.leftMargin: 20
                     anchors.rightMargin: 20
-                    anchors.bottomMargin: 70
+                    anchors.bottomMargin: 60
 
                     RowLayout {
                         id: bottomRow
