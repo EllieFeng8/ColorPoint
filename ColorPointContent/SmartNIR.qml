@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
 import QtQml.Models
+import Core 1.0
 
 Rectangle {
     id: root
@@ -10,7 +11,8 @@ Rectangle {
     property var columnMap: ["time", "label", "v1", "v2", "v3", "v4"]
     property var headerText: ["Time", "Label", "1", "2", "3", "4"]
     property var columnWidths: [10, 240, 380, 480, 580, 680]
-    property ListModel dataModel: ListModel {}
+    property alias listView : listView
+    // property ListModel dataModel: ListModel {}
     Rectangle {
         id: dataList
         width: parent.width
@@ -213,14 +215,17 @@ Rectangle {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                updateAllData();
+                //updateAllData();
+                listModelToCsv(dataModel);
+
+
             }
         }
     }
 
     function updateAllData() { // newJsonData 格式必須是：[{ "time": "...", "label": "..." }, { ... }]
         // 生成當前時間字串
-        let currentTime = new Date().toLocaleTimeString(Qt.locale("zh_TW"), "hhmmss");
+        let currentTime = new Date().toLocaleTimeString(Qt.locale("zh_TW"), "hh:mm:ss");
         // 隨機生成一個數值
         let randomValue = (Math.random() * 5000).toFixed(0);
 
@@ -231,5 +236,22 @@ Rectangle {
            v3: (Math.random() * 5000).toFixed(0),
            v4: (Math.random() * 5000).toFixed(0)
         });
+    }
+
+    function listModelToCsv(model) {
+        //var headers = ["time", "label", "v1", "v2", "v3", "v4"]
+        var csv = columnMap.join(",") + "\n"
+        console.log(model)
+        for (var i = 0; i < model.count; i++) {
+            var row = model.get(i)
+            var line = []
+            for (var j = 0; j < columnMap.length; j++) {
+                line.push(row[columnMap[j]])
+            }
+            csv += line.join(",") + "\n"
+        }
+        console.log("csv",csv)
+        Cp.saveCsvFile("",Cp.fileName,csv)
+        //return csv
     }
 }
