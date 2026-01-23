@@ -31,10 +31,11 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(bool autoBtn    READ getAutoBtn    WRITE setAutoBtn    NOTIFY autoBtnChanged)
     Q_PROPERTY(bool scanBtn    READ getScanBtn    WRITE setScanBtn    NOTIFY scanBtnChanged)
     Q_PROPERTY(bool whiteBtn   READ getWhiteBtn   WRITE setWhiteBtn   NOTIFY whiteBtnChanged)
-    Q_PROPERTY(bool saveBtn    READ getSaveBtn    WRITE setSaveBtn    NOTIFY saveBtnChanged)
+    Q_PROPERTY(bool saveLabelBtn    READ getSaveLabelBtn    WRITE setSaveLabelBtn    NOTIFY saveLabelBtnChanged)
+    Q_PROPERTY(bool saveFileNameBtn    READ getSaveFileNameBtn    WRITE setSaveFileNameBtn    NOTIFY saveFileNameBtnChanged)
 
     // ===== Settings =====
-    Q_PROPERTY(int  integTime READ getIntegTime WRITE setIntegTime NOTIFY integTimeChanged)
+    Q_PROPERTY(int  integrationTime READ getIntegrationTime WRITE setIntegrationTime NOTIFY integrationTimeChanged)
     Q_PROPERTY(int  avgTime   READ getAvgTime   WRITE setAvgTime   NOTIFY avgTimeChanged)
 
     // ===== Text =====
@@ -216,19 +217,26 @@ public:
             m_whiteBtn = value;
         emit whiteBtnChanged(m_whiteBtn);
     }
-    Q_INVOKABLE bool getSaveBtn() const { return m_saveBtn   ; }
-    Q_INVOKABLE void setSaveBtn(bool value)
+    Q_INVOKABLE bool getSaveLabelBtn() const { return m_saveLabelBtn   ; }
+    Q_INVOKABLE void setSaveLabelBtn(bool value)
     {
-        if (m_saveBtn != value)
-            m_saveBtn = value;
-        emit saveBtnChanged(m_saveBtn);
+        if (m_saveLabelBtn != value)
+            m_saveLabelBtn = value;
+        emit saveLabelBtnChanged(m_saveLabelBtn);
     }
-    Q_INVOKABLE int getIntegTime() const { return m_integTime ; }
-    Q_INVOKABLE void setIntegTime(int value)
+    Q_INVOKABLE bool getSaveFileNameBtn() const { return m_saveFileNameBtn   ; }
+    Q_INVOKABLE void setSaveFileNameBtn(bool value)
     {
-        if (m_integTime != value)
-            m_integTime = value;
-        emit integTimeChanged(m_integTime);
+        if (m_saveFileNameBtn != value)
+            m_saveFileNameBtn = value;
+        emit saveFileNameBtnChanged(m_saveFileNameBtn);
+    }
+    Q_INVOKABLE int getIntegrationTime() const { return m_integrationTime ; }
+    Q_INVOKABLE void setIntegrationTime(int value)
+    {
+        if (m_integrationTime != value)
+            m_integrationTime = value;
+        emit integrationTimeChanged(m_integrationTime);
     }
     Q_INVOKABLE int getAvgTime() const { return m_avgTime   ; }
     Q_INVOKABLE void setAvgTime(int value)
@@ -265,9 +273,10 @@ public:
     void autoBtnChanged(bool);
     void scanBtnChanged(bool);
     void whiteBtnChanged(bool);
-    void saveBtnChanged(bool);
+    void saveLabelBtnChanged(bool);
+    void saveFileNameBtnChanged(bool);
 
-    void integTimeChanged(int);
+    void integrationTimeChanged(int);
     void avgTimeChanged(int);
 
     void labelChanged( QString text);
@@ -280,18 +289,19 @@ private:
     QVariantList m_nirList;
 	QString m_lastFolderPath;
 	QString m_lastFolderName;
-    bool m_clearBtn   = false;
-    bool m_updateBtn  = false;
+    bool m_clearBtn = false;
+    bool m_updateBtn = false;
     bool m_connectBtn = false;
     bool m_connectedLight = true;
-    bool m_savedLight    = false;
+    bool m_savedLight = false;
     bool m_confirmBtn = false;
-    bool m_autoBtn    = false;
-    bool m_scanBtn    = false;
-    bool m_whiteBtn   = false;
-    bool m_saveBtn    = false;
+    bool m_autoBtn = false;
+    bool m_scanBtn = false;
+    bool m_whiteBtn = false;
+    bool m_saveLabelBtn = false;
+    bool m_saveFileNameBtn = false;
 
-    int m_integTime = 100;
+    int m_integrationTime = 100;
     int m_avgTime   = 101;
 
     QString m_label ="123ab";

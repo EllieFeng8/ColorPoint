@@ -4,42 +4,67 @@ import Core 1.0
 
 MainScreen {
     id: mainScreen
+    property ListModel dataModel: ListModel {}
 
     linkBtnMouseArea.onClicked: {
         Cp.connectBtn = true
-        console.log("linkBtnMouseArea clicked",Cp.connectBtn)
+        //console.log("linkBtnMouseArea clicked",Cp.connectBtn)
     }
 
     confirmBtnMouseArea.onClicked: {
         if(Cp.integTime !== Number(confirmTextField.text)){
             Cp.integTime = Number(confirmTextField.text)
-            console.log("integrationTime:",Cp.integTime,Number(confirmTextField.text))
+            //console.log("integrationTime:",Cp.integTime,Number(confirmTextField.text))
         }
     }
     autoSettingBtnMouseArea.onClicked: {
         if(Cp.integTime !== Number(confirmTextField.text)){
             Cp.integTime = Number(confirmTextField.text)
-            console.log("integrationTime:",Cp.integTime,Number(confirmTextField.text))
+            //console.log("integrationTime:",Cp.integTime,Number(confirmTextField.text))
         }
     }
     scanBtnMouseArea.onClicked: {
         Cp.scanBtn = true
-        console.log("scanBtnMouseArea clicked",Cp.scanBtn)
+        addData();//test
+        // console.log("scanBtnMouseArea clicked",Cp.scanBtn)
     }
     whiteScanBtnMouseArea.onClicked: {
         Cp.whiteBtn = true
-        console.log("whiteScanBtnMouseArea clicked",Cp.whiteBtn)
+        //console.log("whiteScanBtnMouseArea clicked",Cp.whiteBtn)
+    }
+    saveLabelBtnMouseArea.onClicked: {
+        if (lableTextField.text !== labelText) {
+            Cp.label = lableTextField.text
+            //console.log("lableTextField: ", labelText, Cp.label, lableTextField.text)
+        }
     }
     saveFileBtnMouseArea.onClicked: {
-        if (lableTextField.text !== labelText  ){
-            Cp.label = lableTextField.text
-            console.log("lableTextField: ", labelText,Cp.label ,lableTextField.text)
-        }
-
         if (fileNameTextField.text !== fileNameText  ){
             Cp.fileName = fileNameTextField.text
-            console.log("fileNameTextField: ",Cp.fileName,fileNameText,fileNameTextField.text )
+            //console.log("fileNameTextField: ",Cp.fileName,fileNameText,fileNameTextField.text )
         }
+        smartNIR.listModelToCsv(dataModel);
+    }
 
+    SmartNIR{
+        id:smartNIR
+        visible:false
+        listView.model:dataModel
+    }
+
+
+    //test
+    function addData(){
+        let currentTime = new Date().toLocaleTimeString(Qt.locale("zh_TW"), "hh:mm:ss");
+        // 隨機生成一個數值
+        let randomValue = (Math.random() * 5000).toFixed(0);
+        dataModel.append({
+            time: "20260120-" + currentTime, // 更新為當前年份
+            label: Cp.label,
+            v1: randomValue,
+            v2: (Math.random() * 5000).toFixed(0),
+            v3: (Math.random() * 5000).toFixed(0),
+            v4: (Math.random() * 5000).toFixed(0)
+        });
     }
 }

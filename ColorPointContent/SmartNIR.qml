@@ -20,12 +20,6 @@ Rectangle {
         color: "#33424242"
         radius: 8
 
-        ListModel {
-                id: dataModel
-                ListElement { time: "20251023-143015"; label: "white"; v1: "4750"; v2: "4820"; v3: "5100"; v4: "5800" }
-                ListElement { time: "20251023-143005"; label: "white"; v1: "4800"; v2: "4869"; v3: "5138"; v4: "5861" }
-                ListElement { time: "20251023-143010"; label: "102";   v1: "0.67"; v2: "0.8";  v3: "13.9"; v4: "-23.7" }
-            }
         ColumnLayout {
             anchors.fill: parent
             spacing: 5
@@ -194,34 +188,34 @@ Rectangle {
             onClicked: dataModel.clear()
         }
     }
-    Image {
-        id: freshButton
-        source: "assets/refresh.png"
-        scale: freshButtonMouseArea.containsMouse ? 1.5 : 1.2
-        anchors.top: clearListBtn.top
-        anchors.topMargin: 5
-        anchors.left: clearListBtn.right
-        anchors.leftMargin: 180
-
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            shadowEnabled: freshButtonMouseArea.containsMouse ? true : false
-            shadowColor: "gray"
-            shadowBlur: 0.8
-        }
-        MouseArea {
-            id: freshButtonMouseArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: {
-                //updateAllData();
-                listModelToCsv(dataModel);
-
-
-            }
-        }
-    }
+    // Image {
+    //     id: freshButton
+    //     source: "assets/refresh.png"
+    //     scale: freshButtonMouseArea.containsMouse ? 1.5 : 1.2
+    //     anchors.top: clearListBtn.top
+    //     anchors.topMargin: 5
+    //     anchors.left: clearListBtn.right
+    //     anchors.leftMargin: 180
+    //
+    //     layer.enabled: true
+    //     layer.effect: MultiEffect {
+    //         shadowEnabled: freshButtonMouseArea.containsMouse ? true : false
+    //         shadowColor: "gray"
+    //         shadowBlur: 0.8
+    //     }
+    //     MouseArea {
+    //         id: freshButtonMouseArea
+    //         anchors.fill: parent
+    //         hoverEnabled: true
+    //         cursorShape: Qt.PointingHandCursor
+    //         onClicked: {
+    //             //updateAllData();
+    //             listModelToCsv(dataModel);
+    //
+    //
+    //         }
+    //     }
+    // }
 
     function updateAllData() { // newJsonData 格式必須是：[{ "time": "...", "label": "..." }, { ... }]
         // 生成當前時間字串

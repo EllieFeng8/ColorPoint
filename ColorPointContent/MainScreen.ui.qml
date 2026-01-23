@@ -11,6 +11,7 @@ Rectangle {
     // anchors.fill: parent
     clip: true
     color: "#16121c"
+    property alias saveLabelBtnMouseArea: saveLabelBtnMouseArea
     property alias fileNameTextField: fileNameTextField
     property alias lableTextField: lableTextField
     property alias average_TimestextField: average_TimestextField
@@ -23,7 +24,7 @@ Rectangle {
     property alias saveFileBtnMouseArea: saveFileBtnMouseArea
     property bool linkStatus:Cp.connectedLight
     property bool saveStatus:Cp.savedLight
-    property int integrationTime: Cp.integTime
+    property int integrationTime: Cp.integrationTime
     property int averageTimes:Cp.avgTime
     property string labelText: Cp.label
     property string fileNameText: Cp.fileName
@@ -560,8 +561,9 @@ Rectangle {
                                 Column {
                                     id: lableColumn
                                     anchors.centerIn: parent // ⭐ 上下左右置中
-                                    spacing: 85
+                                    spacing: 95
                                     anchors.fill: parent
+                                    topPadding: 40
 
                                     //LABLE
                                     Text {
@@ -577,24 +579,73 @@ Rectangle {
                                         textFormat: Text.PlainText
                                         verticalAlignment: Text.AlignTop
                                         wrapMode: Text.WordWrap
-
-                                        TextField {
-                                            id: lableTextField
+                                        Rectangle {
                                             height: 48
                                             width: parent.width
                                             anchors.top: parent.bottom
                                             anchors.topMargin: 5
-                                            font.pixelSize: 22
-                                            font.weight: Font.Bold
-                                            font.family: "Poppins"
-                                            text: labelText
-                                            color: "#ffffff"
+                                            color: "transparent"
+                                            Row {
+                                                //id: lableColumn
+                                                anchors.centerIn: parent // ⭐ 上下左右置中
+                                                spacing: 12
+                                                anchors.fill: parent
+                                                TextField {
+                                                    id: lableTextField
+                                                    height: parent.height
+                                                    width: parent.width * 6 / 10
+                                                    //anchors.top: parent.bottom
+                                                    //anchors.topMargin: 5
+                                                    font.pixelSize: 22
+                                                    font.weight: Font.Bold
+                                                    font.family: "Poppins"
+                                                    color: "#ffffff"
+                                                    text: labelText
 
-                                            horizontalAlignment: Text.AlignLeft
-                                            verticalAlignment: Text.AlignVCenter
-                                            background: Rectangle {
-                                                color: "#4de59263" // 背景黑色
-                                                radius: 5 // 圓角
+                                                    horizontalAlignment: Text.AlignLeft
+                                                    verticalAlignment: Text.AlignVCenter
+                                                    background: Rectangle {
+                                                        color: "#4de59263" // 背景黑色
+                                                        radius: 5 // 圓角
+                                                    }
+                                                }
+
+                                                Rectangle {
+                                                    id: saveLabelButtom
+
+                                                    height: parent.height
+                                                    width: parent.width * 1 / 3
+                                                    //anchors.top: fileNameTextField.bottom
+                                                    //anchors.topMargin: 120
+                                                    color: "#e59263"
+                                                    radius: 5
+                                                    Text {
+                                                        id: saveLable
+                                                        color: "#ffffff"
+                                                        font.family: "Poppins"
+                                                        font.pixelSize: saveLabelBtnMouseArea.containsMouse ? 28 : 24
+                                                        font.weight: Font.Bold
+                                                        //horizontalAlignment: Text.AlignLeft
+                                                        text: "Save Label"
+                                                        textFormat: Text.PlainText
+                                                        verticalAlignment: Text.AlignTop
+                                                        wrapMode: Text.WordWrap
+                                                        anchors.verticalCenter: parent.verticalCenter //文字垂直置中
+                                                        anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
+                                                    }
+                                                    layer.enabled: true
+                                                    layer.effect: MultiEffect {
+                                                        shadowEnabled: saveLabelBtnMouseArea.containsMouse ? true : false
+                                                        shadowColor: "white"
+                                                        shadowBlur: 0.8
+                                                    }
+                                                    MouseArea {
+                                                        id: saveLabelBtnMouseArea
+                                                        anchors.fill: parent
+                                                        hoverEnabled: true
+                                                        cursorShape: Qt.PointingHandCursor
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -613,61 +664,73 @@ Rectangle {
                                         textFormat: Text.PlainText
                                         verticalAlignment: Text.AlignTop
                                         wrapMode: Text.WordWrap
-                                        TextField {
-                                            id: fileNameTextField
+                                        Rectangle {
                                             height: 48
                                             width: parent.width
                                             anchors.top: parent.bottom
                                             anchors.topMargin: 5
-                                            font.pixelSize: 22
-                                            font.weight: Font.Bold
-                                            font.family: "Poppins"
-                                            text: fileNameText
-                                            color: "#ffffff"
-                                            horizontalAlignment: Text.AlignLeft
-                                            verticalAlignment: Text.AlignVCenter
-                                            background: Rectangle {
-                                                color: "#4de59263" // 背景黑色
-                                                radius: 5 // 圓角
+                                            color: "transparent"
+                                            Row {
+                                                //id: lableColumn
+                                                anchors.centerIn: parent // ⭐ 上下左右置中
+                                                spacing: 12
+                                                anchors.fill: parent
+                                                TextField {
+                                                    id: fileNameTextField
+                                                    height: parent.height
+                                                    width: parent.width * 6 / 10
+                                                    // anchors.top: parent.bottom
+                                                    // anchors.topMargin: 5
+                                                    font.pixelSize: 22
+                                                    font.weight: Font.Bold
+                                                    font.family: "Poppins"
+                                                    text: fileNameText
+                                                    color: "#ffffff"
+                                                    horizontalAlignment: Text.AlignLeft
+                                                    verticalAlignment: Text.AlignVCenter
+                                                    background: Rectangle {
+                                                        color: "#4de59263" // 背景黑色
+                                                        radius: 5 // 圓角
+                                                    }
+                                                }
+                                                //savebotton
+                                                Rectangle {
+                                                    id: saveButtom
+
+                                                    height: parent.height
+                                                    width: parent.width * 1 / 3
+                                                    //anchors.top: fileNameTextField.bottom
+                                                    //anchors.topMargin: 120
+                                                    color: "#e59263"
+                                                    radius: 5
+                                                    Text {
+                                                        id: save_File
+                                                        color: "#ffffff"
+                                                        font.family: "Poppins"
+                                                        font.pixelSize: saveFileBtnMouseArea.containsMouse ? 28 : 24
+                                                        font.weight: Font.Bold
+                                                        //horizontalAlignment: Text.AlignLeft
+                                                        text: "Save File"
+                                                        textFormat: Text.PlainText
+                                                        verticalAlignment: Text.AlignTop
+                                                        wrapMode: Text.WordWrap
+                                                        anchors.verticalCenter: parent.verticalCenter //文字垂直置中
+                                                        anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
+                                                    }
+                                                    layer.enabled: true
+                                                    layer.effect: MultiEffect {
+                                                        shadowEnabled: saveFileBtnMouseArea.containsMouse ? true : false
+                                                        shadowColor: "white"
+                                                        shadowBlur: 0.8
+                                                    }
+                                                    MouseArea {
+                                                        id: saveFileBtnMouseArea
+                                                        anchors.fill: parent
+                                                        hoverEnabled: true
+                                                        cursorShape: Qt.PointingHandCursor
+                                                    }
+                                                }
                                             }
-                                        }
-                                    }
-
-                                    //savebotton
-                                    Rectangle {
-                                        id: saveButtom
-
-                                        height: 48
-                                        width: parent.width
-                                        //anchors.top: fileNameTextField.bottom
-                                        //anchors.topMargin: 120
-                                        color: "#e59263"
-                                        radius: 5
-                                        Text {
-                                            id: save_File
-                                            color: "#ffffff"
-                                            font.family: "Poppins"
-                                            font.pixelSize: saveFileBtnMouseArea.containsMouse ? 28 : 24
-                                            font.weight: Font.Bold
-                                            //horizontalAlignment: Text.AlignLeft
-                                            text: "Save File"
-                                            textFormat: Text.PlainText
-                                            verticalAlignment: Text.AlignTop
-                                            wrapMode: Text.WordWrap
-                                            anchors.verticalCenter: parent.verticalCenter //文字垂直置中
-                                            anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
-                                        }
-                                        layer.enabled: true
-                                        layer.effect: MultiEffect {
-                                            shadowEnabled: saveFileBtnMouseArea.containsMouse ? true : false
-                                            shadowColor: "white"
-                                            shadowBlur: 0.8
-                                        }
-                                        MouseArea {
-                                            id: saveFileBtnMouseArea
-                                            anchors.fill: parent
-                                            hoverEnabled: true
-                                            cursorShape: Qt.PointingHandCursor
                                         }
                                     }
                                 }
