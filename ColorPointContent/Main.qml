@@ -12,15 +12,15 @@ MainScreen {
     }
 
     confirmBtnMouseArea.onClicked: {
-        if(Cp.integTime !== Number(confirmTextField.text)){
-            Cp.integTime = Number(confirmTextField.text)
-            //console.log("integrationTime:",Cp.integTime,Number(confirmTextField.text))
+        if(Cp.integrationTime !== Number(confirmTextField.text)){
+            Cp.integrationTime = Number(confirmTextField.text)
+            console.log("integrationTime:",Cp.integrationTime,Number(confirmTextField.text))
         }
     }
     autoSettingBtnMouseArea.onClicked: {
-        if(Cp.integTime !== Number(confirmTextField.text)){
-            Cp.integTime = Number(confirmTextField.text)
-            //console.log("integrationTime:",Cp.integTime,Number(confirmTextField.text))
+        if(Cp.integrationTime !== Number(confirmTextField.text)){
+            Cp.integrationTime = Number(confirmTextField.text)
+            console.log("integrationTime:",Cp.integrationTime,Number(confirmTextField.text))
         }
     }
     scanBtnMouseArea.onClicked: {
@@ -49,7 +49,7 @@ MainScreen {
     SmartNIR{
         id:smartNIR
         visible:false
-        listView.model:dataModel
+        tableView.model:dataModel
     }
 
 
@@ -64,7 +64,11 @@ MainScreen {
             v1: randomValue,
             v2: (Math.random() * 5000).toFixed(0),
             v3: (Math.random() * 5000).toFixed(0),
-            v4: (Math.random() * 5000).toFixed(0)
+            v4: (Math.random() * 5000).toFixed(0),
+            v5: (Math.random() * 5000).toFixed(0),
+            v6: (Math.random() * 5000).toFixed(0),
+            v7: (Math.random() * 5000).toFixed(0)
         });
+        //console.log("dataModel",dataModel.get(0).time);
     }
 }
