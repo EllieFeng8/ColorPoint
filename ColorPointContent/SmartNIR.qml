@@ -8,11 +8,12 @@ import Core 1.0
 Rectangle {
     id: root
     color: "#00000000" // 背景深灰色
-    property var columnMap: ["time", "label", "v1", "v2", "v3", "v4"]
-    property var headerText: ["Time", "Label", "1", "2", "3", "4"]
-    property var columnWidths: [10, 240, 380, 480, 580, 680]
-    property alias listView : listView
-    // property ListModel dataModel: ListModel {}
+
+    property var headerText: ["Time", "Label", "1", "2", "3", "4","5","6","7"]
+    property var columnWidths: [200, 140, 100, 100, 100, 100,100,100,100]//[10, 240, 380, 480, 580, 680,780,880,980]
+    //property alias listView : listView
+    property alias tableView:tableView
+
     Rectangle {
         id: dataList
         width: parent.width
@@ -20,87 +21,73 @@ Rectangle {
         color: "#33424242"
         radius: 8
 
-        ColumnLayout {
-            anchors.fill: parent
-            spacing: 5
-            Rectangle {
-                    //Layout.fillWidth: true
-                Layout.fillWidth: true
-                Layout.preferredHeight: parent.height * 0.1
+        HorizontalHeaderView {
+            id: horizontalHeader
+            syncView: tableView
+            anchors.top: parent.top
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            anchors.topMargin: 0
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 37
+            clip: true
+            model: headerText
 
-                    //height: 50
-                    color: "transparent"
-                    Text {
-                        text: headerText[0]
-                        x: columnWidths[0]
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: "white"
-                        font.bold: true
-                        font.pixelSize: 26
-                    }
-                    Text {
-                        text: headerText[1]
-                        x: columnWidths[1]
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: "white"
-                        font.bold: true
-                        font.pixelSize: 26
-                    }
-                    Text {
-                        text: headerText[2]
-                        x: columnWidths[2]
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: "white"
-                        font.bold: true
-                        font.pixelSize: 26
-                    }
-                    Text {
-                        text: headerText[3]
-                        x: columnWidths[3]
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: "white"
-                        font.bold: true
-                        font.pixelSize: 26
-                    }
-                    Text {
-                        text: headerText[4]
-                        x: columnWidths[4]
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: "white"
-                        font.bold: true
-                        font.pixelSize: 26
-                    }
-                    Text {
-                        text: headerText[5]
-                        x: columnWidths[5]
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: "white"
-                        font.bold: true
-                        font.pixelSize: 26
-                    }
+            delegate: Rectangle {
+                implicitWidth: tableView.columnWidthProvider(model.index)
+                implicitHeight: 40
+                color: "transparent"
+
+                Text {
+                    text: headerText[model.index]//headerText[model.index]
+                    color: "white"
+                    font.bold: true
+                    font.pixelSize: 22
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: model.index === 0 ? Text.AlignLeft : Text.AlignHCenter
+                    leftPadding: model.index === 0 ? 15 : 0
                 }
+            }
+        }
+        // 3. 數據內容區
+        TableView {
+            id: tableView
+            anchors.top:horizontalHeader.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            clip: true // 關鍵：將 ListModel 直接作為 model
+            model: dataModel
+            // property var columnMap: ["time","label", "v1", "v2", "v3", "v4", "v5", "v6"]
+            //
+             columnWidthProvider: function (column) { return columnWidths[column] }
+            delegate: Rectangle {
+                id:test1
+                implicitHeight: 45
+                color: "transparent"
+                // Text{
+                //     text:  (model && tableView.columnMap[column]) ? model[tableView.columnMap[column]] : ""
+                //     anchors.centerIn: parent
+                //     color: "#e0e0e0"
+                //     font.pixelSize: 18
+                //     anchors.fill: parent
+                //     verticalAlignment: Text.AlignVCenter
+                //     horizontalAlignment: column === 0 ? Text.AlignLeft : Text.AlignHCenter
+                //     leftPadding: column === 0 ? 15 : 0
+                // }
 
-            ListView {
-                id: listView
-                Layout.fillWidth: true
-                Layout.preferredHeight: parent.height * 0.9
-                model: dataModel
-                //headerPositioning: ListView.OverlayHeader
-                clip: true
-                delegate: ItemDelegate {
-                    id:test1
-                    implicitHeight: 40
-                    Text{
-                        text: time
-                        anchors.centerIn: parent
-                        color: "#e0e0e0"
-                        font.pixelSize: 18
-                        anchors.fill: parent
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment:  Text.AlignLeft
-                        leftPadding: 10
-                    }
-
+                Text{
+                    text: time
+                    anchors.centerIn: parent
+                    color: "#e0e0e0"
+                    font.pixelSize: 18
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: column === 0 ? Text.AlignLeft : Text.AlignHCenter
+                    leftPadding: column === 0 ? 15 : 0
+                }
                 Text{
                     text: label
                     anchors.centerIn: parent
@@ -108,7 +95,8 @@ Rectangle {
                     font.pixelSize: 18
                     anchors.fill: parent
                     verticalAlignment: Text.AlignVCenter
-                    leftPadding: 250
+                    horizontalAlignment: column === 0 ? Text.AlignLeft : Text.AlignHCenter
+                    leftPadding: 240
                 }
                 Text{
                     text: v1
@@ -146,9 +134,39 @@ Rectangle {
                     verticalAlignment: Text.AlignVCenter
                     leftPadding: 670
                 }
+                Text{
+                    text: v5
+                    anchors.centerIn: parent
+                    color: "#e0e0e0"
+                    font.pixelSize: 18
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                    leftPadding: 770
+                }
+                Text{
+                    text: v6
+                    anchors.centerIn: parent
+                    color: "#e0e0e0"
+                    font.pixelSize: 18
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                    leftPadding: 870
+                }
+                Text{
+                    text: v7
+                    anchors.centerIn: parent
+                    color: "#e0e0e0"
+                    font.pixelSize: 18
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                    leftPadding: 970
+                }
+
             }
+
+
         }
-    }
+
     }
     //clear_List BTN
     Rectangle {
