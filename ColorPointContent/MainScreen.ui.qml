@@ -593,7 +593,7 @@ Rectangle {
                                                 TextField {
                                                     id: lableTextField
                                                     height: parent.height
-                                                    width: parent.width * 6 / 10
+                                                    width: parent.width * 29 / 30
                                                     //anchors.top: parent.bottom
                                                     //anchors.topMargin: 5
                                                     font.pixelSize: 22
