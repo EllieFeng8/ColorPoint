@@ -20,6 +20,7 @@ class ColorPointProxy : public QObject
     // ===== Array =====
     Q_PROPERTY(QVariantList chartData READ getChartData  NOTIFY chartDataChanged)
     Q_PROPERTY(QVariantList nirList   READ getNirList  NOTIFY nirListChanged)
+    Q_PROPERTY(QVariantList whiteScanList   READ getWhiteScanList  NOTIFY whiteScanListChanged)
 
     // ===== Buttons / States =====
     Q_PROPERTY(bool clearBtn   READ getClearBtn   WRITE setClearBtn   NOTIFY clearBtnChanged)
@@ -105,8 +106,8 @@ public:
     //         //m_chartData = value;
     //     emit chartDataChanged();
     // }
-    Q_INVOKABLE void setChartData(const std::vector<int>& x,
-                                    const std::vector<int>& y)
+    Q_INVOKABLE void setChartData(const std::vector<float>& x,
+                                    const std::vector<float>& y)
     {
         m_chartData.clear();
         m_chartData.reserve(static_cast<int>(x.size()));
@@ -120,36 +121,49 @@ public:
         emit chartDataChanged();
     }
     Q_INVOKABLE QVariantList getNirList() const { return m_nirList   ; }
-    // Q_INVOKABLE void setNirList(const std::vector<QString>& label,
-    //                                 const std::vector<QDateTime>& Time)
-    // {
-    //     m_nirList.clear();
-    //     m_nirList.reserve(static_cast<int>(label.size()));
-    //     for (size_t i = 0; i < label.size(); ++i) {
-    //         QVariantMap item;
-    //         item.insert("Time", Time[i]);
-    //         item.insert("label", label[i]);
-    //         m_nirList.append(item);
-    //     }
-    //     emit nirListChanged();
-    // }
-    Q_INVOKABLE void setNirList(const std::vector<QString>& labels,
-                                const std::vector<QDateTime>& times)
+
+    Q_INVOKABLE void setNirList(const std::vector<QString>& datalist)
     {
         // 1. 清理並預留空間，減少記憶體重分配
         m_nirList.clear();
-        m_nirList.reserve(static_cast<int>(labels.size()));
+        m_nirList.reserve(static_cast<int>(datalist.size()));
+        QString currentTime = QDateTime::currentDateTime().toString("hh:mm:ss");
+        QString label = getLabel();
 
-        // 2. 填充數據
-        for (size_t i = 0; i < labels.size(); ++i) {
-            // 使用初始化列表創建 QVariantMap，代碼更簡潔高效
-            m_nirList.append(QVariantMap{
-                {"Time", times[i]},
-                {"Label", labels[i]} // 修正了拼寫錯誤 Lable -> Label
-            });
+        // 3. 填充數據
+        for (const QString& data : datalist) {
+            QVariantMap item;
+            item.insert("time", currentTime);
+            item.insert("label", label);
+            item.insert("listData", data);
+
+            m_nirList.append(item);
         }
         // 4. 通知界面更新
         emit nirListChanged();
+    }
+
+    Q_INVOKABLE QVariantList getWhiteScanList() const { return m_whiteScanList   ; }
+
+    Q_INVOKABLE void setWhiteScanList(const std::vector<QString>& datalist)
+    {
+        // 1. 清理並預留空間，減少記憶體重分配
+        m_whiteScanList.clear();
+        m_whiteScanList.reserve(static_cast<int>(datalist.size()));
+        QString currentTime = QDateTime::currentDateTime().toString("hh:mm:ss");
+        QString label = "white";
+
+        // 3. 填充數據
+        for (const QString& data : datalist) {
+            QVariantMap item;
+            item.insert("time", currentTime);
+            item.insert("label", label);
+            item.insert("listData", data);
+
+            m_whiteScanList.append(item);
+        }
+        // 4. 通知界面更新
+        emit whiteScanListChanged();
     }
     Q_INVOKABLE bool getClearBtn() const { return m_clearBtn; }
     Q_INVOKABLE void setClearBtn(bool value)
@@ -217,6 +231,7 @@ public:
             m_whiteBtn = value;
         emit whiteBtnChanged(m_whiteBtn);
     }
+
     Q_INVOKABLE bool getSaveLabelBtn() const { return m_saveLabelBtn   ; }
     Q_INVOKABLE void setSaveLabelBtn(bool value)
     {
@@ -263,6 +278,7 @@ public:
     signals:
     void chartDataChanged();
     void nirListChanged();
+    void whiteScanListChanged();
 
     void clearBtnChanged(bool);
     void updateBtnChanged(bool);
@@ -287,6 +303,7 @@ private:
 
     QVariantList m_chartData;
     QVariantList m_nirList;
+    QVariantList m_whiteScanList;
 	QString m_lastFolderPath;
 	QString m_lastFolderName;
     bool m_clearBtn = false;

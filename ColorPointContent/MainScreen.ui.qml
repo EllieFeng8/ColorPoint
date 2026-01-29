@@ -11,7 +11,7 @@ Rectangle {
     // anchors.fill: parent
     clip: true
     color: "#16121c"
-    property alias saveLabelBtnMouseArea: saveLabelBtnMouseArea
+    //property alias saveLabelBtnMouseArea: saveLabelBtnMouseArea
     property alias fileNameTextField: fileNameTextField
     property alias lableTextField: lableTextField
     property alias average_TimestextField: average_TimestextField
@@ -602,6 +602,7 @@ Rectangle {
                                                     color: "#ffffff"
                                                     text: labelText
 
+
                                                     horizontalAlignment: Text.AlignLeft
                                                     verticalAlignment: Text.AlignVCenter
                                                     background: Rectangle {
@@ -610,42 +611,43 @@ Rectangle {
                                                     }
                                                 }
 
-                                                Rectangle {
-                                                    id: saveLabelButtom
-
-                                                    height: parent.height
-                                                    width: parent.width * 1 / 3
-                                                    //anchors.top: fileNameTextField.bottom
-                                                    //anchors.topMargin: 120
-                                                    color: "#e59263"
-                                                    radius: 5
-                                                    Text {
-                                                        id: saveLable
-                                                        color: "#ffffff"
-                                                        font.family: "Poppins"
-                                                        font.pixelSize: saveLabelBtnMouseArea.containsMouse ? 28 : 24
-                                                        font.weight: Font.Bold
-                                                        //horizontalAlignment: Text.AlignLeft
-                                                        text: "Save Label"
-                                                        textFormat: Text.PlainText
-                                                        verticalAlignment: Text.AlignTop
-                                                        wrapMode: Text.WordWrap
-                                                        anchors.verticalCenter: parent.verticalCenter //文字垂直置中
-                                                        anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
-                                                    }
-                                                    layer.enabled: true
-                                                    layer.effect: MultiEffect {
-                                                        shadowEnabled: saveLabelBtnMouseArea.containsMouse ? true : false
-                                                        shadowColor: "white"
-                                                        shadowBlur: 0.8
-                                                    }
-                                                    MouseArea {
-                                                        id: saveLabelBtnMouseArea
-                                                        anchors.fill: parent
-                                                        hoverEnabled: true
-                                                        cursorShape: Qt.PointingHandCursor
-                                                    }
-                                                }
+                                                // Rectangle {
+                                                //     id: saveLabelButtom
+                                                //
+                                                //     height: parent.height
+                                                //     width: parent.width * 1 / 3
+                                                //     //anchors.top: fileNameTextField.bottom
+                                                //     //anchors.topMargin: 120
+                                                //     color: "#e59263"
+                                                //     radius: 5
+                                                //     Text {
+                                                //         id: saveLable
+                                                //         color: "#ffffff"
+                                                //         font.family: "Poppins"
+                                                //         font.pixelSize: saveLabelBtnMouseArea.containsMouse ? 28 : 24
+                                                //         font.weight: Font.Bold
+                                                //         //horizontalAlignment: Text.AlignLeft
+                                                //         text: "Save Label"
+                                                //         textFormat: Text.PlainText
+                                                //         verticalAlignment: Text.AlignTop
+                                                //         wrapMode: Text.WordWrap
+                                                //         anchors.verticalCenter: parent.verticalCenter //文字垂直置中
+                                                //         anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
+                                                //     }
+                                                //     layer.enabled: true
+                                                //     layer.effect: MultiEffect {
+                                                //         shadowEnabled: saveLabelBtnMouseArea.containsMouse ? true : false
+                                                //         shadowColor: "white"
+                                                //         shadowBlur: 0.8
+                                                //     }
+                                                //     MouseArea {
+                                                //         id: saveLabelBtnMouseArea
+                                                //         anchors.fill: parent
+                                                //         hoverEnabled: true
+                                                //         cursorShape: Qt.PointingHandCursor
+                                                //     }
+                                                // }
+                                                //
                                             }
                                         }
                                     }

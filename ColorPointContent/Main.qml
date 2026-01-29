@@ -32,12 +32,19 @@ MainScreen {
         Cp.whiteBtn = true
         //console.log("whiteScanBtnMouseArea clicked",Cp.whiteBtn)
     }
-    saveLabelBtnMouseArea.onClicked: {
+    // saveLabelBtnMouseArea.onClicked: {
+    //     if (lableTextField.text !== labelText) {
+    //         Cp.label = lableTextField.text
+    //         //console.log("lableTextField: ", labelText, Cp.label, lableTextField.text)
+    //     }
+    // }
+    lableTextField.onTextChanged:{
         if (lableTextField.text !== labelText) {
             Cp.label = lableTextField.text
             //console.log("lableTextField: ", labelText, Cp.label, lableTextField.text)
         }
     }
+
     saveFileBtnMouseArea.onClicked: {
         if (fileNameTextField.text !== fileNameText  ){
             Cp.fileName = fileNameTextField.text
@@ -61,14 +68,9 @@ MainScreen {
         dataModel.append({
             time: "20260120-" + currentTime, // 更新為當前年份
             label: Cp.label,
-            v1: randomValue,
-            v2: (Math.random() * 5000).toFixed(0),
-            v3: (Math.random() * 5000).toFixed(0),
-            v4: (Math.random() * 5000).toFixed(0),
-            v5: (Math.random() * 5000).toFixed(0),
-            v6: (Math.random() * 5000).toFixed(0),
-            v7: (Math.random() * 5000).toFixed(0)
+            listData: randomValue
         });
-        //console.log("dataModel",dataModel.get(0).time);
+        console.log("dataModel",dataModel.count(0));
     }
 }
+//console.log("dataModel",dataModel[2].length);
