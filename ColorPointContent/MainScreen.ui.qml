@@ -150,7 +150,7 @@ Rectangle {
                         Rectangle {
                             id: linkDeviceRec
                             Layout.fillHeight: true
-                            Layout.preferredWidth: 350
+                            Layout.preferredWidth: parent.width * 0.2
                             color: "#4d474747"
                             radius: 20
 
@@ -284,7 +284,7 @@ Rectangle {
                         //integration time text
                         Rectangle {
                             id: integration_time_rec
-                            Layout.fillWidth: true
+                            Layout.fillWidth: parent.width * 0.3
                             Layout.fillHeight: true
 
                             color: "#4d474747"
@@ -463,7 +463,7 @@ Rectangle {
                         //Scan
                         Rectangle {
                             id: rectangle_59
-                            Layout.preferredWidth: 300
+                            Layout.preferredWidth: parent.width * 0.2
                             Layout.fillHeight: true
                             color: "#4d474747"
                             radius: 20
@@ -475,7 +475,7 @@ Rectangle {
                                 Rectangle {
                                     id: rectangle_48
                                     width: parent.width
-                                    height: 60
+                                    height: 120
                                     color: "#e59263"
                                     radius: 5
                                     //anchors.centerIn: parent
@@ -483,7 +483,7 @@ Rectangle {
                                         id: scan
                                         color: "#ffffff"
                                         font.family: "Poppins"
-                                        font.pixelSize: scanBtnMouseArea.containsMouse ? 28 : 24
+                                        font.pixelSize: scanBtnMouseArea.containsMouse ? 30 : 28
                                         font.weight: Font.Bold
                                         text: "Scan"
                                         textFormat: Text.PlainText
@@ -507,7 +507,7 @@ Rectangle {
                                 Rectangle {
                                     id: whiteScan
 
-                                    height: 166
+                                    height: 120
                                     width: parent.width
 
                                     color: "#ffffff"
@@ -520,7 +520,7 @@ Rectangle {
 
                                         color: "#000000"
                                         font.family: "Poppins"
-                                        font.pixelSize: whiteScanBtnMouseArea.containsMouse ? 28 : 24
+                                        font.pixelSize: whiteScanBtnMouseArea.containsMouse ? 30 : 28
                                         font.weight: Font.Bold
                                         horizontalAlignment: Text.AlignHCenter
                                         text: "White Scan"
