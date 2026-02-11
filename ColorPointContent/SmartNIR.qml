@@ -176,7 +176,7 @@ Rectangle {
     //property var columnWidths: [200, 140, 100, 100, 100, 100,100,100,100]//[10, 240, 380, 480, 580, 680,780,880,980]
     //property alias listView : listView
     property var columnMap: ["time", "label", "listData"]
-    property var headerText: ["Time", "Label", "Data"]
+    property var headerText: ["Time", "Label"]
     property var columnWidths: [220, 120, 100, 100, 100, 100, 100, 100, 100] // 請根據實際寬度調整
     property alias tableView:tableView
     //property ListModel dataModel: ListModel {}
@@ -188,7 +188,7 @@ Rectangle {
         color: "#33424242"
         radius: 8
         property var columnMap: ["time", "label", "listData"]
-        property var headerText: ["Time", "Label", "Data"]
+        property var headerText: ["Time", "Label"]
         property var columnWidths: [220, 120, 100, 100, 100, 100, 100, 100, 100,100,100] // 請根據實際寬度調整
 
         //readonly property var columnMap: ["time", "label", "v1", "v2", "v3", "v4", "v5", "v6", "v7"]
@@ -228,9 +228,6 @@ Rectangle {
             anchors.fill: parent
             anchors.top:horizontalHeader.bottom
             anchors.topMargin: 40
-            // anchors.left: scrollView.left
-            // anchors.right: scrollView.right
-            // anchors.bottom: scrollView.bottom
             clip: true // 關鍵：將 ListModel 直接作為 model
             model: dataModel
             columnWidthProvider: function (column) { return columnWidths[column] }
@@ -260,7 +257,6 @@ Rectangle {
                                 horizontalAlignment: index === 0 ? Text.AlignLeft : Text.AlignHCenter
                                 leftPadding: index === 0 ? 15 : 0
 
-                                // 2. 解決 undefined 報錯的方法：
                                 // 使用 JS 的邏輯運算符確保回傳的一定是字串
                                 text: {
                                     var key = dataList.columnMap[index]; // 取得對應的欄位名，如 "time"
@@ -312,7 +308,7 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: dataModel.remove(dataModel.count - 1)
+            onClicked: dataModel.clear()//dataModel.remove(dataModel.count - 1)
         }
     }
     function updateAllData() { // newJsonData 格式必須是：[{ "time": "...", "label": "..." }, { ... }]

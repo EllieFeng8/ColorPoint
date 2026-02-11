@@ -67,10 +67,9 @@ MainScreen {
         let randomValue = (Math.random() * 5000).toFixed(0);
         dataModel.append({
             time: "20260120-" + currentTime, // 更新為當前年份
-            label: Cp.label,
-            listData: randomValue
+            label: Cp.label
         });
-        console.log("dataModel",dataModel.count(0));
+        //console.log("dataModel",dataModel.count(0));
     }
 }
 //console.log("dataModel",dataModel[2].length);
