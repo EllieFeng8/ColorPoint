@@ -234,7 +234,7 @@ Rectangle {
             delegate: Item {
                 implicitWidth: tableView.width
                 implicitHeight: 45
-
+                readonly property int rowIndex: row
                 // 1. 關鍵：在每一行的最外層，先抓好這一行的 model 資料
                 // 這樣在裡面的 Repeater 就不會找不到資料，也不會跟 Repeater 的 index 搞混
                 readonly property var rowData: model
@@ -245,7 +245,8 @@ Rectangle {
                         model: dataList.columnMap.length // 這是 9 欄
 
                         delegate: Rectangle {
-                            width: dataList.columnWidths[index] // 這裡的 index 是「第幾欄」
+                            readonly property int colIndex: index
+                            width: dataList.columnWidths[colIndex] // 這裡的 index 是「第幾欄」
                             height: 45
                             color: "transparent"
 
@@ -267,7 +268,26 @@ Rectangle {
                         }
                     }
                 }
-
+                Image {
+                    id: b11
+                    width: 32
+                    height: 32
+                    x:365
+                    y:5
+                    source: "assets/refresh.png"
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        shadowEnabled: deleteButtonMouseArea.containsMouse ? true : false
+                        shadowColor: "gray"
+                        shadowBlur: 0.8
+                    }
+                    MouseArea {
+                        id:deleteButtonMouseArea
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: dataModel.remove(rowIndex, 1)//dataModel.count - 1
+                    }
+                }
             }
         }
 
@@ -320,9 +340,9 @@ Rectangle {
         dataModel.append({ time: "20260120-" +
             currentTime, // 更新為當前年份
            label: "Sensor_A", v1: randomValue,
-           v2: (Math.random() * 5000).toFixed(0),
-           v3: (Math.random() * 5000).toFixed(0),
-           v4: (Math.random() * 5000).toFixed(0)
+           // v2: (Math.random() * 5000).toFixed(0),
+           // v3: (Math.random() * 5000).toFixed(0),
+           // v4: (Math.random() * 5000).toFixed(0)
         });
     }
 
