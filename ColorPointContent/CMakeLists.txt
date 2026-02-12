@@ -20,6 +20,7 @@ qt6_add_qml_module(ColorPointContent
         "assets/image_2.png"
         "assets/image_3.png"
         "assets/refresh.png"
+        "assets/delete.png"
 )
 
 

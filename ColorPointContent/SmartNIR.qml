@@ -274,7 +274,7 @@ Rectangle {
                     height: 32
                     x:365
                     y:5
-                    source: "assets/refresh.png"
+                    source: "assets/delete.png"
                     layer.enabled: true
                     layer.effect: MultiEffect {
                         shadowEnabled: deleteButtonMouseArea.containsMouse ? true : false
