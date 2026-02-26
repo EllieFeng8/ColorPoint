@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import QtQml.Models
 import Core 1.0
+import QtQuick.Dialogs
 
 // Rectangle {
 //     id: root
@@ -180,6 +181,8 @@ Rectangle {
     property var columnWidths: [220, 120, 100, 100, 100, 100, 100, 100, 100] // 請根據實際寬度調整
     property alias tableView:tableView
     //property ListModel dataModel: ListModel {}
+    // 暫存 CSV（因為 FileDialog 是非同步）
+    property string _pendingCsv: ""
 
     Rectangle {
         id: dataList
@@ -358,8 +361,24 @@ Rectangle {
             }
             csv += line.join(",") + "\n"
         }
-        console.log("csv",csv)
-        Cp.saveCsvFile("",Cp.fileName,csv)
+
+        _pendingCsv = csv
+        folderDialog.open()
+        console.log("csv",_pendingCsv)
+        //Cp.saveCsvFile("",Cp.fileName,_pendingCsv)
         //return csv
+    }
+
+    FileDialog {
+        id: folderDialog
+        title: "選擇保存 CSV 的資料夾"
+        fileMode: FileDialog.Directory
+
+        onAccepted: {
+            // selectedFolder 是 QUrl
+            //Cp.saveCsvFileToFolder(selectedFolder, Cp.fileName, _pendingCsv)
+            console.log("選到:", selectedFiles)
+            Cp.saveCsvFile(selectedFiles,_pendingCsv)
+        }
     }
 }

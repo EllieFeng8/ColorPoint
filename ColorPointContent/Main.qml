@@ -46,10 +46,10 @@ MainScreen {
     }
 
     saveFileBtnMouseArea.onClicked: {
-        if (fileNameTextField.text !== fileNameText  ){
-            Cp.fileName = fileNameTextField.text
-            //console.log("fileNameTextField: ",Cp.fileName,fileNameText,fileNameTextField.text )
-        }
+        // if (fileNameTextField.text !== fileNameText  ){
+        //     Cp.fileName = fileNameTextField.text
+        //     //console.log("fileNameTextField: ",Cp.fileName,fileNameText,fileNameTextField.text )
+        // }
         smartNIR.listModelToCsv(dataModel);
     }
 

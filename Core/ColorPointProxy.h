@@ -53,34 +53,38 @@ public:
     //保存文字名字
     Q_INVOKABLE QUrl  lastFolderName() const { return m_lastFolderName; }
 
-    Q_INVOKABLE void saveCsvFile(const QString &relativePath,
-                            const QString &fileName,
+    Q_INVOKABLE void saveCsvFile(const QString &folderPath,
                             const QString &csvContent)
     {
         // ================================
         // 1. 基底路徑：執行檔所在路徑 + 相對資料夾
         // ================================
-        QDir appDir(QCoreApplication::applicationDirPath());
-        QString folderPath = appDir.filePath(relativePath);
+        QString filePath = folderPath;
+        // QML 可能傳 file:///... 或 file:/...
+        if (filePath.startsWith("file:/"))
+            filePath = QUrl(filePath).toLocalFile();
 
-        // 確保資料夾存在
-        QDir().mkpath(folderPath);
+        qWarning() << "save file path:" << filePath;
 
-        // ================================
-        // 2. 組合完整檔案路徑
-        // ================================
-        QString finalFileName = fileName;
-        if (!finalFileName.endsWith(".csv", Qt::CaseInsensitive)) {
-            finalFileName += ".csv";
+        if (filePath.isEmpty()) {
+            qWarning() << "Invalid file path";
+            return;
         }
-        QString fullFilePath = QDir(folderPath).filePath(finalFileName);
+        // 使用者若沒打 .csv，這裡補上
+        if (!filePath.endsWith(".csv", Qt::CaseInsensitive))
+            filePath += ".csv";
 
-        // ================================
-        // 3. 寫入 CSV（每次都新建 / 覆寫）
-        // ================================
-        QFile file(fullFilePath);
+        // ✅ 只建立「父資料夾」，不要對 filePath mkpath
+        QFileInfo fi(filePath);
+        QDir dir = fi.dir();
+        if (!dir.exists() && !dir.mkpath(".")) {
+            qWarning() << "Failed to create dir:" << dir.absolutePath();
+            return;
+        }
+
+        QFile file(filePath);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            qWarning() << u8"⚠ Failed to write CSV:" << fullFilePath;
+            qWarning() << u8"⚠ Failed to write CSV:" << filePath;
             return;
         }
 
@@ -89,23 +93,11 @@ public:
         out << csvContent;
         file.close();
 
-        qDebug() << u8"✔ CSV saved:" << fullFilePath;
+        qDebug() << u8"✔ CSV saved:" << filePath;
     }
 
     Q_INVOKABLE QVariantList getChartData() const { return m_chartData ; }
-    // Q_INVOKABLE void setChartData(const QVariantList &value)
-    // {
-    //     if (m_chartData != value)
-    //     {
-    //         for(int i = 0; i < value.size(); ++i) {
-    //             QStringList item;
-    //             //item["name"] = listLeft[i];;
-    //             m_chartData.append(item);
-    //         }
-    //     }
-    //         //m_chartData = value;
-    //     emit chartDataChanged();
-    // }
+
     Q_INVOKABLE void setChartData(const std::vector<float>& x,
                                     const std::vector<float>& y)
     {

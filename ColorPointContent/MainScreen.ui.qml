@@ -12,7 +12,7 @@ Rectangle {
     clip: true
     color: "#16121c"
     //property alias saveLabelBtnMouseArea: saveLabelBtnMouseArea
-    property alias fileNameTextField: fileNameTextField
+    //property alias fileNameTextField: fileNameTextField
     property alias lableTextField: lableTextField
     property alias average_TimestextField: average_TimestextField
     property alias confirmTextField: confirmTextField
@@ -768,7 +768,7 @@ Rectangle {
                                 Column {
                                     id: lableColumn
                                     anchors.centerIn: parent // ⭐ 上下左右置中
-                                    spacing: 95
+                                    spacing: 120
                                     anchors.fill: parent
                                     topPadding: 40
 
@@ -818,130 +818,130 @@ Rectangle {
                                                     }
                                                 }
 
-                                                // Rectangle {
-                                                //     id: saveLabelButtom
-                                                //
-                                                //     height: parent.height
-                                                //     width: parent.width * 1 / 3
-                                                //     //anchors.top: fileNameTextField.bottom
-                                                //     //anchors.topMargin: 120
-                                                //     color: "#e59263"
-                                                //     radius: 5
-                                                //     Text {
-                                                //         id: saveLable
-                                                //         color: "#ffffff"
-                                                //         font.family: "Poppins"
-                                                //         font.pixelSize: saveLabelBtnMouseArea.containsMouse ? 28 : 24
-                                                //         font.weight: Font.Bold
-                                                //         //horizontalAlignment: Text.AlignLeft
-                                                //         text: "Save Label"
-                                                //         textFormat: Text.PlainText
-                                                //         verticalAlignment: Text.AlignTop
-                                                //         wrapMode: Text.WordWrap
-                                                //         anchors.verticalCenter: parent.verticalCenter //文字垂直置中
-                                                //         anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
-                                                //     }
-                                                //     layer.enabled: true
-                                                //     layer.effect: MultiEffect {
-                                                //         shadowEnabled: saveLabelBtnMouseArea.containsMouse ? true : false
-                                                //         shadowColor: "white"
-                                                //         shadowBlur: 0.8
-                                                //     }
-                                                //     MouseArea {
-                                                //         id: saveLabelBtnMouseArea
-                                                //         anchors.fill: parent
-                                                //         hoverEnabled: true
-                                                //         cursorShape: Qt.PointingHandCursor
-                                                //     }
-                                                // }
-                                                //
                                             }
                                         }
                                     }
+                                    //savebotton
+                                    Rectangle {
+                                        id: saveButtom
 
+                                        height: parent.height *0.3
+                                        width: parent.width  * 29 / 30
+                                        //anchors.top: fileNameTextField.bottom
+                                        //anchors.topMargin: 120
+                                        color: "#e59263"
+                                        radius: 5
+                                        Text {
+                                            id: save_File
+                                            color: "#ffffff"
+                                            font.family: "Poppins"
+                                            font.pixelSize: saveFileBtnMouseArea.containsMouse ? 28 : 24
+                                            font.weight: Font.Bold
+                                            //horizontalAlignment: Text.AlignLeft
+                                            text: "Save File"
+                                            textFormat: Text.PlainText
+                                            verticalAlignment: Text.AlignTop
+                                            wrapMode: Text.WordWrap
+                                            anchors.verticalCenter: parent.verticalCenter //文字垂直置中
+                                            anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
+                                        }
+                                        layer.enabled: true
+                                        layer.effect: MultiEffect {
+                                            shadowEnabled: saveFileBtnMouseArea.containsMouse ? true : false
+                                            shadowColor: "white"
+                                            shadowBlur: 0.8
+                                        }
+                                        MouseArea {
+                                            id: saveFileBtnMouseArea
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            cursorShape: Qt.PointingHandCursor
+                                        }
+                                    }
                                     //filename
-                                    Text {
-                                        id: fileName_text
-                                        height: 33
-                                        width: parent.width
-                                        color: "#ffffff"
-                                        font.family: "Poppins"
-                                        font.pixelSize: 26
-                                        font.weight: Font.Bold
-                                        horizontalAlignment: Text.AlignLeft
-                                        text: "File Name"
-                                        textFormat: Text.PlainText
-                                        verticalAlignment: Text.AlignTop
-                                        wrapMode: Text.WordWrap
-                                        Rectangle {
-                                            height: 48
-                                            width: parent.width
-                                            anchors.top: parent.bottom
-                                            anchors.topMargin: 5
-                                            color: "transparent"
-                                            Row {
-                                                //id: lableColumn
-                                                anchors.centerIn: parent // ⭐ 上下左右置中
-                                                spacing: 12
-                                                anchors.fill: parent
-                                                TextField {
-                                                    id: fileNameTextField
-                                                    height: parent.height
-                                                    width: parent.width * 6 / 10
-                                                    // anchors.top: parent.bottom
-                                                    // anchors.topMargin: 5
-                                                    font.pixelSize: 22
-                                                    font.weight: Font.Bold
-                                                    font.family: "Poppins"
-                                                    text: fileNameText
-                                                    color: "#ffffff"
-                                                    horizontalAlignment: Text.AlignLeft
-                                                    verticalAlignment: Text.AlignVCenter
-                                                    background: Rectangle {
-                                                        color: "#4de59263" // 背景黑色
-                                                        radius: 5 // 圓角
-                                                    }
-                                                }
-                                                //savebotton
-                                                Rectangle {
-                                                    id: saveButtom
-
-                                                    height: parent.height
-                                                    width: parent.width * 1 / 3
-                                                    //anchors.top: fileNameTextField.bottom
-                                                    //anchors.topMargin: 120
-                                                    color: "#e59263"
-                                                    radius: 5
-                                                    Text {
-                                                        id: save_File
-                                                        color: "#ffffff"
-                                                        font.family: "Poppins"
-                                                        font.pixelSize: saveFileBtnMouseArea.containsMouse ? 28 : 24
-                                                        font.weight: Font.Bold
-                                                        //horizontalAlignment: Text.AlignLeft
-                                                        text: "Save File"
-                                                        textFormat: Text.PlainText
-                                                        verticalAlignment: Text.AlignTop
-                                                        wrapMode: Text.WordWrap
-                                                        anchors.verticalCenter: parent.verticalCenter //文字垂直置中
-                                                        anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
-                                                    }
-                                                    layer.enabled: true
-                                                    layer.effect: MultiEffect {
-                                                        shadowEnabled: saveFileBtnMouseArea.containsMouse ? true : false
-                                                        shadowColor: "white"
-                                                        shadowBlur: 0.8
-                                                    }
-                                                    MouseArea {
-                                                        id: saveFileBtnMouseArea
-                                                        anchors.fill: parent
-                                                        hoverEnabled: true
-                                                        cursorShape: Qt.PointingHandCursor
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                                    // Text {
+                                    //     id: fileName_text
+                                    //     height: 33
+                                    //     width: parent.width
+                                    //     color: "#ffffff"
+                                    //     font.family: "Poppins"
+                                    //     font.pixelSize: 26
+                                    //     font.weight: Font.Bold
+                                    //     horizontalAlignment: Text.AlignLeft
+                                    //     text: "File Name"
+                                    //     textFormat: Text.PlainText
+                                    //     verticalAlignment: Text.AlignTop
+                                    //     wrapMode: Text.WordWrap
+                                    //     Rectangle {
+                                    //         height: 48
+                                    //         width: parent.width
+                                    //         anchors.top: parent.bottom
+                                    //         anchors.topMargin: 5
+                                    //         color: "transparent"
+                                    //         Row {
+                                    //             //id: lableColumn
+                                    //             anchors.centerIn: parent // ⭐ 上下左右置中
+                                    //             spacing: 12
+                                    //             anchors.fill: parent
+                                    //             TextField {
+                                    //                 id: fileNameTextField
+                                    //                 height: parent.height
+                                    //                 width: parent.width * 6 / 10
+                                    //                 // anchors.top: parent.bottom
+                                    //                 // anchors.topMargin: 5
+                                    //                 font.pixelSize: 22
+                                    //                 font.weight: Font.Bold
+                                    //                 font.family: "Poppins"
+                                    //                 text: fileNameText
+                                    //                 color: "#ffffff"
+                                    //                 horizontalAlignment: Text.AlignLeft
+                                    //                 verticalAlignment: Text.AlignVCenter
+                                    //                 background: Rectangle {
+                                    //                     color: "#4de59263" // 背景黑色
+                                    //                     radius: 5 // 圓角
+                                    //                 }
+                                    //             }
+                                    //             //savebotton
+                                    //             Rectangle {
+                                    //                 id: saveButtom
+                                    //
+                                    //                 height: parent.height
+                                    //                 width: parent.width * 1 / 3
+                                    //                 //anchors.top: fileNameTextField.bottom
+                                    //                 //anchors.topMargin: 120
+                                    //                 color: "#e59263"
+                                    //                 radius: 5
+                                    //                 Text {
+                                    //                     id: save_File
+                                    //                     color: "#ffffff"
+                                    //                     font.family: "Poppins"
+                                    //                     font.pixelSize: saveFileBtnMouseArea.containsMouse ? 28 : 24
+                                    //                     font.weight: Font.Bold
+                                    //                     //horizontalAlignment: Text.AlignLeft
+                                    //                     text: "Save File"
+                                    //                     textFormat: Text.PlainText
+                                    //                     verticalAlignment: Text.AlignTop
+                                    //                     wrapMode: Text.WordWrap
+                                    //                     anchors.verticalCenter: parent.verticalCenter //文字垂直置中
+                                    //                     anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
+                                    //                 }
+                                    //                 layer.enabled: true
+                                    //                 layer.effect: MultiEffect {
+                                    //                     shadowEnabled: saveFileBtnMouseArea.containsMouse ? true : false
+                                    //                     shadowColor: "white"
+                                    //                     shadowBlur: 0.8
+                                    //                 }
+                                    //                 MouseArea {
+                                    //                     id: saveFileBtnMouseArea
+                                    //                     anchors.fill: parent
+                                    //                     hoverEnabled: true
+                                    //                     cursorShape: Qt.PointingHandCursor
+                                    //                 }
+                                    //             }
+                                    //         }
+                                    //     }
+                                    // }
+                                    //
                                 }
                             }
                         }
