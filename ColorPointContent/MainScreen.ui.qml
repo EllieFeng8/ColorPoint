@@ -917,7 +917,7 @@ Rectangle {
                                             font.pixelSize: importFileBtnMouseArea.containsMouse ? 28 : 24
                                             font.weight: Font.Bold
                                             //horizontalAlignment: Text.AlignLeft
-                                            text: "Import File"
+                                            text: "Import model"
                                             textFormat: Text.PlainText
                                             verticalAlignment: Text.AlignTop
                                             wrapMode: Text.WordWrap
