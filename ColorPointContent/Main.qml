@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import Core 1.0
+import QtQuick.Dialogs
 
 MainScreen {
     id: mainScreen
@@ -12,16 +13,16 @@ MainScreen {
     }
 
     confirmBtnMouseArea.onClicked: {
-        if(Cp.integrationTime !== Number(confirmTextField.text)){
-            Cp.integrationTime = Number(confirmTextField.text)
-            console.log("integrationTime:",Cp.integrationTime,Number(confirmTextField.text))
-        }
+        Cp.integrationTime = confirmTextField.text
+        console.log("integrationTime:",Cp.integrationTime,confirmTextField.text,typeof(Cp.integrationTime))
+    }
+    confirmAveTimeBtnMouseArea.onClicked: {
+        Cp.avgTime = average_TimestextField.text
+        console.log("integrationTime:",Cp.avgTime,average_TimestextField.text,typeof(average_TimestextField.text))
     }
     autoSettingBtnMouseArea.onClicked: {
-        if(Cp.integrationTime !== Number(confirmTextField.text)){
-            Cp.integrationTime = Number(confirmTextField.text)
-            console.log("integrationTime:",Cp.integrationTime,Number(confirmTextField.text))
-        }
+        // Cp.integrationTime = confirmTextField.text
+        console.log("autoSettingBtnMouseArea Clicked")
     }
     scanBtnMouseArea.onClicked: {
         Cp.scanBtn = true
@@ -32,12 +33,7 @@ MainScreen {
         Cp.whiteBtn = true
         //console.log("whiteScanBtnMouseArea clicked",Cp.whiteBtn)
     }
-    // saveLabelBtnMouseArea.onClicked: {
-    //     if (lableTextField.text !== labelText) {
-    //         Cp.label = lableTextField.text
-    //         //console.log("lableTextField: ", labelText, Cp.label, lableTextField.text)
-    //     }
-    // }
+
     lableTextField.onTextChanged:{
         if (lableTextField.text !== labelText) {
             Cp.label = lableTextField.text
@@ -46,19 +42,27 @@ MainScreen {
     }
 
     saveFileBtnMouseArea.onClicked: {
-        // if (fileNameTextField.text !== fileNameText  ){
-        //     Cp.fileName = fileNameTextField.text
-        //     //console.log("fileNameTextField: ",Cp.fileName,fileNameText,fileNameTextField.text )
-        // }
         smartNIR.listModelToCsv(dataModel);
     }
-
     SmartNIR{
         id:smartNIR
         visible:false
         tableView.model:dataModel
     }
 
+    importFileBtnMouseArea.onClicked: {
+        fileDialog.open()
+    }
+    FileDialog {
+        id: fileDialog
+        title: "選擇本地檔案"
+        currentFolder: "file:///"   // 開啟本地磁碟
+        nameFilters: ["All files (*)", "Text files (*.txt)"]
+
+        onAccepted: {
+            console.log("選到的檔案:", selectedFile)
+        }
+    }
 
     //test
     function addData(){
