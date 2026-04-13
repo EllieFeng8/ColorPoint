@@ -6,12 +6,15 @@ import QtQuick.Dialogs
 MainScreen {
     id: mainScreen
     property ListModel dataModel: ListModel {}
+    //nav
+    inferenceMouseArea.onClicked: {
+        imference.visible = true
+    }
 
     linkBtnMouseArea.onClicked: {
         Cp.connectBtn = true
         //console.log("linkBtnMouseArea clicked",Cp.connectBtn)
     }
-
     confirmBtnMouseArea.onClicked: {
         Cp.integrationTime = confirmTextField.text
         console.log("integrationTime:",Cp.integrationTime,confirmTextField.text,typeof(Cp.integrationTime))
@@ -35,10 +38,9 @@ MainScreen {
     }
 
     lableTextField.onTextChanged:{
-        if (lableTextField.text !== labelText) {
-            Cp.label = lableTextField.text
-            //console.log("lableTextField: ", labelText, Cp.label, lableTextField.text)
-        }
+        Cp.label = lableTextField.text
+        console.log("lableTextField: ",  Cp.label, lableTextField.text)
+
     }
 
     saveFileBtnMouseArea.onClicked: {
@@ -62,6 +64,12 @@ MainScreen {
         onAccepted: {
             console.log("選到的檔案:", selectedFile)
         }
+    }
+    Imference{
+        id: imference
+        visible:false
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
     }
 
     //test

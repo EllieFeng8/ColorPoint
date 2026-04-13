@@ -11,6 +11,8 @@ Rectangle {
     // anchors.fill: parent
     clip: true
     color: "#16121c"
+    property alias intakeMouseArea: intakeMouseArea
+    property alias inferenceMouseArea: inferenceMouseArea
     property alias lableTextField: lableTextField
     property alias average_TimestextField: average_TimestextField
     property alias confirmTextField: confirmTextField
@@ -30,8 +32,108 @@ Rectangle {
         anchors.bottomMargin: 20
         anchors.leftMargin: 20
         anchors.rightMargin: 20
+        Rectangle {
+            y: 28
+            height: parent.height * 0.9
+            width: parent.width * 0.07
+
+            color: "#21555353"
+            radius: 50
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.verticalCenter: parent.verticalCenter //垂直置中
+                anchors.horizontalCenter: parent.horizontalCenter //水平置中
+                spacing: 10
+                Image {
+                    Layout.alignment: Qt.AlignHCenter
+                    source: "assets/Rectangle 65.png"
+                    scale: intakeMouseArea.containsMouse ? 1.6 : 1.5
+                    Image {
+                        y: 6
+                        // anchors.verticalCenter: parent.verticalCenter //垂直置中
+                        anchors.horizontalCenter: parent.horizontalCenter //水平置中
+                        source: "assets/folder 1.png"
+                        // scale: 1.3
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            shadowEnabled: intakeMouseArea.containsMouse ? true : false
+                            shadowColor: "white"
+                            shadowBlur: 0.8
+                        }
+                    }
+                    Text {
+                        // text:"intake"
+                        // id: aEYEOT_SMART_NIR
+                        y: 47
+                        x: -16
+                        height: 30
+                        width: parent.width
+                        color: "#ffffff"
+                        font.family: "Poppins"
+                        font.pixelSize: 14
+                        font.weight: Font.Bold
+                        // horizontalAlignment: Text.AlignHCenter
+                        text: "intake"
+                        textFormat: Text.PlainText
+                        // verticalAlignment: Text.AlignVCenter
+                        wrapMode: Text.WordWrap
+                        leftPadding: 20
+                    }
+
+                    MouseArea {
+                        id: intakeMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                    }
+                }
+                Image {
+                    // anchors.verticalCenter: parent.verticalCenter //垂直置中
+                    anchors.horizontalCenter: parent.horizontalCenter //水平置中
+                    source: "assets/Rectangle 66.png"
+                    scale: inferenceMouseArea.containsMouse ? 1.6 : 1.5
+                    Image {
+                        y: 6
+                        // anchors.verticalCenter: parent.verticalCenter //垂直置中
+                        anchors.horizontalCenter: parent.horizontalCenter //水平置中
+                        source: "assets/ai1.png"
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            shadowEnabled: inferenceMouseArea.containsMouse ? true : false
+                            shadowColor: "white"
+                            shadowBlur: 0.8
+                        }
+                    }
+                    Text {
+                        // text:"intake"
+                        // id: aEYEOT_SMART_NIR
+                        y: 47
+                        x: -30
+                        height: 30
+                        width: parent.width
+                        color: "#ffffff"
+                        font.family: "Poppins"
+                        font.pixelSize: 14
+                        font.weight: Font.Bold
+                        // horizontalAlignment: Text.AlignHCenter
+                        text: "Inference"
+                        textFormat: Text.PlainText
+                        // verticalAlignment: Text.AlignVCenter
+                        wrapMode: Text.WordWrap
+                        leftPadding: 20
+                    }
+                    MouseArea {
+                        id: inferenceMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                    }
+                }
+            }
+        }
         ColumnLayout {
             anchors.fill: parent
+            anchors.leftMargin: 138
             spacing: -60
 
             Rectangle {
@@ -127,202 +229,7 @@ Rectangle {
                                     }
                                 }
                                 
-                                Rectangle {
-                                    id: smartNIR2
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    color: "#21555353"
-                                    radius: 20
-                                    Rectangle {
-                                        id: nirHeight
-                                        width: parent.width * 0.9
-                                        height: 36
-                                        anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
-                                        color: "#e59263"
-                                        radius: 10
-                                        Text {
 
-                                            height: 30
-                                            width: parent.width
-                                            color: "#ffffff"
-                                            font.family: "Poppins"
-                                            font.pixelSize: 20
-                                            font.weight: Font.Bold
-                                            horizontalAlignment: Text.AlignLeft
-                                            text: "AEYEOT - NIR Height"
-                                            textFormat: Text.PlainText
-                                            verticalAlignment: Text.AlignVCenter
-                                            wrapMode: Text.WordWrap
-                                            leftPadding: 20
-                                        }
-                                    }
-                                    Text {
-                                        id: heighttxt
-                                        anchors.top: nirHeight.bottom
-                                        anchors.topMargin: 40
-                                        anchors.left: nirHeight.left
-                                        anchors.leftMargin: 5
-                                        height: 30
-                                        width: parent.width
-                                        color: "#ffffff"
-                                        font.family: "Poppins"
-                                        font.pixelSize: 20
-                                        font.weight: Font.Bold
-                                        horizontalAlignment: Text.AlignLeft
-                                        text: "Height:"
-                                        textFormat: Text.PlainText
-                                        verticalAlignment: Text.AlignVCenter
-                                        wrapMode: Text.WordWrap
-                                        leftPadding: 20
-                                        Rectangle {
-                                            id: rect1
-                                            color: "#4de59263" // 背景黑色
-                                            radius: 5 // 圓角
-                                            height: parent.height * 1.4
-                                            width: parent.width * 0.8
-                                            anchors.top: heighttxt.bottom
-                                            anchors.topMargin: 10
-                                            anchors.left: heighttxt.left
-                                            anchors.leftMargin: 20
-                                            Text {
-                                                id: heightText
-                                                height: parent.height
-                                                width: parent.width
-
-                                                anchors.left: rect1.left
-                                                anchors.leftMargin: 15
-                                                font.pixelSize: 22
-                                                font.weight: Font.Bold
-                                                font.family: "Poppins"
-                                                color: "#ffffff"
-                                                text: "100"
-                                                horizontalAlignment: Text.AlignLeft
-                                                verticalAlignment:Text.AlignVCenter
-                                            }
-                                        }
-                                    }
-                                    Text {
-                                        id: heightset
-                                        anchors.top: heighttxt.bottom
-                                        anchors.topMargin: 100
-                                        anchors.left: heighttxt.left
-                                        height: 30
-                                        width: parent.width
-                                        color: "#ffffff"
-                                        font.family: "Poppins"
-                                        font.pixelSize: 20
-                                        font.weight: Font.Bold
-                                        horizontalAlignment: Text.AlignLeft
-                                        text: "Height Set:"
-                                        textFormat: Text.PlainText
-                                        verticalAlignment: Text.AlignVCenter
-                                        wrapMode: Text.WordWrap
-                                        leftPadding: 20
-                                        Rectangle {
-                                            id: heightRec
-                                            color: "#4de59263" // 背景黑色
-                                            radius: 5 // 圓角
-                                            height: parent.height * 1.4
-                                            width: parent.width * 0.8
-                                            anchors.top: heightset.bottom
-                                            anchors.topMargin: 10
-                                            anchors.left: heightset.left
-                                            anchors.leftMargin: 20
-                                            TextField {
-                                                id: heightSet1
-                                                height: parent.height
-                                                width: parent.width
-                                                anchors.top: heightRec.top
-                                                font.pixelSize: 22
-                                                font.weight: Font.Bold
-                                                font.family: "Poppins"
-                                                color: "#ffffff"
-                                                text: "100"
-                                                horizontalAlignment: Text.AlignLeft
-                                                verticalAlignment: Text.AlignVCenter
-
-                                        }
-                                    }
-                                        Rectangle {
-                                            id: resetzeroButton
-
-                                            anchors.left: heightset.left
-                                            anchors.leftMargin: 20
-                                            anchors.top: heightset.bottom
-                                            anchors.topMargin: 207
-
-                                            //anchors.topMargin: 15
-                                            height: heightSet1.height
-                                            width: parent.width * 0.4
-
-                                            color: "#e59263"
-                                            radius: 10
-                                            Text {
-                                                id: resetbuttom
-                                                color: "#ffffff"
-                                                font.family: "Poppins"
-                                                font.pixelSize: resetbuttomMouseArea.containsMouse ? 22 : 20
-                                                font.weight: Font.Bold
-                                                anchors.verticalCenter: parent.verticalCenter //文字垂直置中
-                                                anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
-                                                text: "Reset"
-                                                textFormat: Text.PlainText
-                                                wrapMode: Text.WordWrap
-                                            }
-                                            layer.enabled: true
-                                            layer.effect: MultiEffect {
-                                                shadowEnabled: resetbuttomMouseArea.containsMouse ? true : false
-                                                shadowColor: "white"
-                                                shadowBlur: 0.8
-                                            }
-                                            MouseArea {
-                                                id: resetbuttomMouseArea
-                                                anchors.fill: parent
-                                                hoverEnabled: true
-                                                cursorShape: Qt.PointingHandCursor
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            id: heightConfirmButton
-
-                                            anchors.left: resetzeroButton.right
-                                            anchors.leftMargin: 40
-                                            anchors.top: resetzeroButton.top
-
-                                            //anchors.topMargin: 15
-                                            height: heightSet1.height
-                                            width: parent.width * 0.3
-
-                                            color: "#e59263"
-                                            radius: 10
-                                            Text {
-                                                id: heightconfirm
-                                                color: "#ffffff"
-                                                font.family: "Poppins"
-                                                font.pixelSize: heightconfirmBtnMouseArea.containsMouse ? 22 : 20
-                                                font.weight: Font.Bold
-                                                anchors.verticalCenter: parent.verticalCenter //文字垂直置中
-                                                anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
-                                                text: "OK"
-                                                textFormat: Text.PlainText
-                                                wrapMode: Text.WordWrap
-                                            }
-                                            layer.enabled: true
-                                            layer.effect: MultiEffect {
-                                                shadowEnabled: heightconfirmBtnMouseArea.containsMouse ? true : false
-                                                shadowColor: "white"
-                                                shadowBlur: 0.8
-                                            }
-                                            MouseArea {
-                                                id: heightconfirmBtnMouseArea
-                                                anchors.fill: parent
-                                                hoverEnabled: true
-                                                cursorShape: Qt.PointingHandCursor
-                                            }
-                                        }
-                                    }
-                                }
                             }
                         }
                     }
@@ -444,38 +351,6 @@ Rectangle {
                                     font.weight: Font.Bold
                                     horizontalAlignment: Text.AlignLeft
                                     text: "Linking Status"
-                                    textFormat: Text.PlainText
-                                    verticalAlignment: Text.AlignTop
-                                    wrapMode: Text.WordWrap
-                                }
-                            }
-
-                            //saveStatusIndicator
-                            Rectangle {
-                                id: saveStatusIndicator
-                                anchors.top: linkStatusIndicator.bottom
-                                anchors.topMargin: 15
-                                anchors.left: parent.left
-                                anchors.leftMargin: 20
-                                height: 28
-                                width: 28
-
-                                color: Cp.savedLight ? "#8deb85" : "red"
-                                radius: 8
-
-                                Text {
-                                    id: save_Status
-
-                                    anchors.left: parent.right
-                                    anchors.leftMargin: 15
-                                    height: 33
-                                    width: 161
-                                    color: "#ffffff"
-                                    font.family: "Poppins"
-                                    font.pixelSize: 22
-                                    font.weight: Font.Bold
-                                    horizontalAlignment: Text.AlignLeft
-                                    text: "Saving Status"
                                     textFormat: Text.PlainText
                                     verticalAlignment: Text.AlignTop
                                     wrapMode: Text.WordWrap

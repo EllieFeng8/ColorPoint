@@ -15,12 +15,17 @@ qt6_add_qml_module(ColorPointContent
         "SmartNIR.qml"
         "Main.qml"
         "MainScreen.ui.qml"
+        "Imference.qml"
     RESOURCES
         "assets/image_1.png"
         "assets/image_2.png"
         "assets/image_3.png"
         "assets/refresh.png"
         "assets/delete.png"
+        "assets/Rectangle 66.png"
+        "assets/folder 1.png"
+        "assets/Rectangle 65.png"
+        "assets/ai1.png"
 )
 
 

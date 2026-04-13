@@ -176,7 +176,7 @@ Rectangle {
     //property var headerText: ["Time", "Label", "1", "2", "3", "4","5","6","7"]
     //property var columnWidths: [200, 140, 100, 100, 100, 100,100,100,100]//[10, 240, 380, 480, 580, 680,780,880,980]
     //property alias listView : listView
-    property var columnMap: ["time", "label", "listData"]
+    property var columnMap: ["time", "label","wavelength", "listData"]
     property var headerText: ["Time", "Label"]
     property var columnWidths: [220, 120, 100, 100, 100, 100, 100, 100, 100] // 請根據實際寬度調整
     property alias tableView:tableView
@@ -190,8 +190,8 @@ Rectangle {
         height: parent.height * 6 / 7
         color: "#33424242"
         radius: 8
-        property var columnMap: ["time", "label", "listData"]
-        property var headerText: ["Time", "Label"]
+        property var columnMap: ["time", "label", "wavelength","listData",]
+        property var headerText: ["Time", "Label",]
         property var columnWidths: [220, 120, 100, 100, 100, 100, 100, 100, 100,100,100] // 請根據實際寬度調整
 
         //readonly property var columnMap: ["time", "label", "v1", "v2", "v3", "v4", "v5", "v6", "v7"]

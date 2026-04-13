@@ -43,7 +43,22 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(QString label    READ getLabel    WRITE setLabel    NOTIFY labelChanged)
     Q_PROPERTY(QString fileName READ getFileName WRITE setFileName NOTIFY fileNameChanged)
 
+    //======inference======
+    Q_PROPERTY(bool inferConnectBtn READ getInferConnectBtn WRITE setInferConnectBtn NOTIFY inferConnectBtnChanged)
+    Q_PROPERTY(bool inferConnectedLight  READ getInferConnectedLight  WRITE setInferConnectedLight NOTIFY inferConnectedLightChanged)
 
+    Q_PROPERTY(int  inferIntegrationTime READ getInferIntegrationTime WRITE setInferIntegrationTime NOTIFY inferIntegrationTimeChanged)
+    Q_PROPERTY(int  inferAvgTime   READ getInferAvgTime   WRITE setInferAvgTime   NOTIFY inferAvgTimeChanged)
+
+    Q_PROPERTY(bool inferScanBtn    READ getInferScanBtn    WRITE setInferScanBtn    NOTIFY inferScanBtnChanged)
+    Q_PROPERTY(bool inferAutoScanBtn    READ getInferAutoScanBtn    WRITE setInferAutoScanBtn    NOTIFY inferAutoScanBtnChanged)
+    Q_PROPERTY(bool inferWhiteBtn   READ getInferWhiteBtn   WRITE setInferWhiteBtn   NOTIFY inferWhiteBtnChanged)
+    Q_PROPERTY(QString inferLabel    READ getInferLabel    WRITE setInferLabel    NOTIFY inferLabelChanged)
+
+    // =====inference Array =====
+    Q_PROPERTY(QVariantList inferChartData READ getInferChartData  NOTIFY inferChartDataChanged)
+    Q_PROPERTY(QVariantList inferNirList   READ getInferNirList  NOTIFY inferNirListChanged)
+    Q_PROPERTY(QVariantList inferWhiteScanList   READ getInferWhiteScanList  NOTIFY inferWhiteScanListChanged)
 
 public:
 
@@ -267,6 +282,124 @@ public:
         emit fileNameChanged(m_fileName);
     }
 
+
+    //=====inference======
+    Q_INVOKABLE bool getInferConnectBtn() const { return m_inferConnectBtn ; }
+    Q_INVOKABLE void setInferConnectBtn(bool value)
+    {
+        m_inferConnectBtn = value;
+        qDebug() << value << "InferConnectBtnconnectBtnChanged" << m_inferConnectBtn;
+        emit inferConnectBtnChanged(m_inferConnectBtn);
+    }
+    Q_INVOKABLE bool getInferConnectedLight() const { return m_inferConnectedLight   ; }
+    Q_INVOKABLE void setInferConnectedLight(bool value)
+    {
+        m_connectedLight = value;
+        emit inferConnectedLightChanged(m_inferConnectedLight);
+    }
+    Q_INVOKABLE int getInferIntegrationTime() const { return m_inferIntegrationTime ; }
+    Q_INVOKABLE void setInferIntegrationTime(int value)
+    {
+        m_inferIntegrationTime = value;
+        emit inferIntegrationTimeChanged(m_inferIntegrationTime);
+    }
+    Q_INVOKABLE int getInferAvgTime() const { return m_inferAvgTime   ; }
+    Q_INVOKABLE void setInferAvgTime(int value)
+    {
+        if (m_inferAvgTime != value)
+            m_inferAvgTime = value;
+        emit inferAvgTimeChanged(m_inferAvgTime);
+    }
+
+    Q_INVOKABLE bool getInferScanBtn() const { return m_inferScanBtn   ; }
+    Q_INVOKABLE void setInferScanBtn(bool value)
+    {
+        m_inferScanBtn = value;
+        qDebug() << value << "scanBtnChanged" << m_inferScanBtn;
+        emit inferScanBtnChanged(m_inferScanBtn);
+    }
+    Q_INVOKABLE bool getInferAutoScanBtn() const { return m_inferAutoScanBtn   ; }
+    Q_INVOKABLE void setInferAutoScanBtn(bool value)
+    {
+        m_inferAutoScanBtn = value;
+        qDebug() << value << "AutoscanBtnChanged" << m_inferAutoScanBtn;
+        emit inferAutoScanBtnChanged(m_inferAutoScanBtn);
+    }
+    Q_INVOKABLE bool getInferWhiteBtn() const { return m_inferWhiteBtn ; }
+    Q_INVOKABLE void setInferWhiteBtn(bool value)
+    {
+        m_inferWhiteBtn = value;
+        emit inferWhiteBtnChanged(m_inferWhiteBtn);
+    }
+
+    Q_INVOKABLE QString getInferLabel() const { return m_inferLabel ; }
+    Q_INVOKABLE void setInferLabel(const QString &value)
+    {
+        m_inferLabel = value;
+        emit inferLabelChanged(m_inferLabel);
+    }
+
+    Q_INVOKABLE QVariantList getInferChartData() const { return m_inferChartData ; }
+
+    Q_INVOKABLE void setInferChartData(const std::vector<float>& x,
+                                    const std::vector<float>& y)
+    {
+        m_inferChartData.clear();
+        m_inferChartData.reserve(static_cast<int>(x.size()));
+        for (size_t i = 0; i < x.size(); ++i) {
+            QVariantMap item;
+            item.insert("x", x[i]);
+            item.insert("y", y[i]);
+            m_inferChartData.append(item);
+        }
+        //m_chartData = value;
+        emit inferChartDataChanged();
+    }
+    Q_INVOKABLE QVariantList getInferNirList() const { return m_inferNirList   ; }
+
+    Q_INVOKABLE void setInferNirList(const std::vector<QString>& datalist)
+    {
+        // 1. 清理並預留空間，減少記憶體重分配
+        m_inferNirList.clear();
+        m_inferNirList.reserve(static_cast<int>(datalist.size()));
+        QString currentTime = QDateTime::currentDateTime().toString("hh:mm:ss");
+        QString label = getLabel();
+
+        // 3. 填充數據
+        for (const QString& data : datalist) {
+            QVariantMap item;
+            item.insert("time", currentTime);
+            item.insert("label", label);
+            item.insert("listData", data);
+
+            m_inferNirList.append(item);
+        }
+        // 4. 通知界面更新
+        emit inferNirListChanged();
+    }
+
+    Q_INVOKABLE QVariantList getInferWhiteScanList() const { return m_inferWhiteScanList   ; }
+
+    Q_INVOKABLE void setInferWhiteScanList(const std::vector<QString>& datalist)
+    {
+        // 1. 清理並預留空間，減少記憶體重分配
+        m_inferWhiteScanList.clear();
+        m_inferWhiteScanList.reserve(static_cast<int>(datalist.size()));
+        QString currentTime = QDateTime::currentDateTime().toString("hh:mm:ss");
+        QString label = "white";
+
+        // 3. 填充數據
+        for (const QString& data : datalist) {
+            QVariantMap item;
+            item.insert("time", currentTime);
+            item.insert("label", label);
+            item.insert("listData", data);
+
+            m_inferWhiteScanList.append(item);
+        }
+        // 4. 通知界面更新
+        emit inferWhiteScanListChanged();
+    }
     signals:
     void chartDataChanged();
     void nirListChanged();
@@ -289,6 +422,20 @@ public:
 
     void labelChanged( QString text);
     void fileNameChanged( QString text);
+
+    //====inference======
+    void inferConnectBtnChanged(bool);
+    void inferConnectedLightChanged(bool);
+    void inferIntegrationTimeChanged(int);
+    void inferAvgTimeChanged(int);
+    void inferScanBtnChanged(bool);
+    void inferAutoScanBtnChanged(bool);
+    void inferWhiteBtnChanged(bool);
+    void inferLabelChanged(QString text);
+    void inferChartDataChanged();
+    void inferNirListChanged();
+    void inferWhiteScanListChanged();
+    // void inferLabelChanged();
 
 
 private:
@@ -315,6 +462,18 @@ private:
 
     QString m_label ="123ab";
     QString m_fileName="aa123";
+
+    bool m_inferConnectBtn = false;
+    bool m_inferConnectedLight = false;
+    int m_inferIntegrationTime = 0;
+    int m_inferAvgTime = 0;
+    bool m_inferScanBtn = false;
+    bool m_inferAutoScanBtn = false;
+    bool m_inferWhiteBtn = false;
+    QString m_inferLabel = "123";
+    QVariantList m_inferChartData;
+    QVariantList m_inferNirList;
+    QVariantList m_inferWhiteScanList;
 };
 
 
