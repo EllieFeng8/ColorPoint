@@ -6,6 +6,7 @@ import QtQuick.Dialogs
 MainScreen {
     id: mainScreen
     property ListModel dataModel: ListModel {}
+    property int whiteScanReminderMs: 60 * 60 * 1000
     //nav
     inferenceMouseArea.onClicked: {
         imference.visible = true
@@ -46,6 +47,17 @@ MainScreen {
     saveFileBtnMouseArea.onClicked: {
         smartNIR.listModelToCsv(dataModel);
     }
+    heightconfirmBtnMouseArea.onClicked: {
+        Cp.heightSet = Number(heightSet1.text)
+        console.log("lableTextField: ",  Cp.heightSet, heightSet1.text)
+
+    }
+
+    resetbuttomMouseArea.onClicked: {
+        Cp.resetBtn = true
+        console.log("resetBtn: ",  Cp.resetBtn)
+
+    }
     SmartNIR{
         id:smartNIR
         visible:false
@@ -63,6 +75,27 @@ MainScreen {
 
         onAccepted: {
             console.log("選到的檔案:", selectedFile)
+        }
+    }
+    Timer {
+        id: whiteScanReminderTimer
+        interval: mainScreen.whiteScanReminderMs
+        repeat: false
+        onTriggered: whiteScanReminderDialog.open()
+    }
+    Dialog {
+        id: whiteScanReminderDialog
+        modal: true
+        focus: true
+        anchors.centerIn: parent
+        title: "提醒"
+        standardButtons: Dialog.Ok
+
+        contentItem: Label {
+            text: "白板量測已超過 1 小時，請重新量測。"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WordWrap
         }
     }
     Imference{
