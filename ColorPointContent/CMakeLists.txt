@@ -15,7 +15,7 @@ qt6_add_qml_module(ColorPointContent
         "SmartNIR.qml"
         "Main.qml"
         "MainScreen.ui.qml"
-        "Imference.qml"
+        "Inference.qml"
     RESOURCES
         "assets/image_1.png"
         "assets/image_2.png"
