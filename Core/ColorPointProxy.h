@@ -9,6 +9,9 @@
 #include <QDir>
 #include <QGuiApplication>
 #include <QFile>
+#include <QFileInfo>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QTextStream>
 #include <QCoreApplication>
 #include <QDebug>
@@ -38,9 +41,13 @@ class ColorPointProxy : public QObject
     // ===== Settings =====
     Q_PROPERTY(int  integrationTime READ getIntegrationTime WRITE setIntegrationTime NOTIFY integrationTimeChanged)
     Q_PROPERTY(int  avgTime   READ getAvgTime   WRITE setAvgTime   NOTIFY avgTimeChanged)
+    Q_PROPERTY(int  height   READ getHeight   WRITE setHeight   NOTIFY heightChanged)
+    Q_PROPERTY(int  heightSet   READ getHeightSet  WRITE setHeightSet  NOTIFY heightSetChanged)
+    Q_PROPERTY(bool  resetBtn   READ getResetBtn  WRITE setResetBtn NOTIFY resetBtnChanged)
 
     // ===== Text =====
     Q_PROPERTY(QString label    READ getLabel    WRITE setLabel    NOTIFY labelChanged)
+    Q_PROPERTY(QString whiteLabel    READ getWhiteLabel    WRITE setWhiteLabel    NOTIFY whiteLabelChanged)
     Q_PROPERTY(QString fileName READ getFileName WRITE setFileName NOTIFY fileNameChanged)
 
     //======inference======
@@ -62,7 +69,22 @@ class ColorPointProxy : public QObject
 
 public:
 
-    explicit ColorPointProxy(QObject *parent = nullptr) : QObject(parent) {}
+    explicit ColorPointProxy(QObject *parent = nullptr) : QObject(parent)
+    {
+
+        // QVariantMap item1;
+        // item1["time"] = "20260120-09:28:33";
+        // item1["label"] = "123";
+        // item1["wavelength"] = 0;
+        // item1["listData"] = 1;
+        //
+        //
+        //
+        // m_nirList.append(item1);
+        // m_nirList.append(item2);
+
+
+    }
     //保存路徑
     Q_INVOKABLE QUrl  lastFolderPath() const { return QUrl::fromLocalFile(m_lastFolderPath); }
     //保存文字名字
@@ -109,6 +131,29 @@ public:
         file.close();
 
         qDebug() << u8"✔ CSV saved:" << filePath;
+
+        const QString jsonPath = dir.absoluteFilePath("instrument_config.json");
+        saveInstrumentConfigFile(jsonPath);
+    }
+
+    Q_INVOKABLE void saveInstrumentConfigFile(const QString &filePath)
+    {
+        QFile jsonFile(filePath);
+        if (!jsonFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qWarning() << u8"⚠ Failed to write JSON:" << filePath;
+            return;
+        }
+
+        QJsonObject jsonObject;
+        jsonObject.insert("height_cm", static_cast<double>(getHeight()));
+        jsonObject.insert("integration_time_us", static_cast<double>(getIntegrationTime()));
+        jsonObject.insert("average_count", getAvgTime());
+
+        const QJsonDocument jsonDocument(jsonObject);
+        jsonFile.write(jsonDocument.toJson(QJsonDocument::Indented));
+        jsonFile.close();
+
+        qDebug() << u8"✔ JSON saved:" << filePath;
     }
 
     Q_INVOKABLE QVariantList getChartData() const { return m_chartData ; }
@@ -140,10 +185,10 @@ public:
         // 3. 填充數據
         for (const QString& data : datalist) {
             QVariantMap item;
-            item.insert("time", currentTime);
-            item.insert("label", label);
-            item.insert("listData", data);
-
+            item.insert("Time", currentTime);
+            item.insert("Label", label);
+            item.insert("Wavelength", 0);
+            item.insert("", data);
             m_nirList.append(item);
         }
         // 4. 通知界面更新
@@ -165,6 +210,7 @@ public:
             QVariantMap item;
             item.insert("time", currentTime);
             item.insert("label", label);
+            item.insert("Wavelength", 0);
             item.insert("listData", data);
 
             m_whiteScanList.append(item);
@@ -267,12 +313,39 @@ public:
             m_avgTime = value;
         emit avgTimeChanged(m_avgTime);
     }
+    Q_INVOKABLE int getHeight() const { return m_height   ; }
+    Q_INVOKABLE void setHeight(int value)
+    {
+        m_height = value;
+        emit heightChanged(m_height);
+    }
+    Q_INVOKABLE int getHeightSet() const { return m_heightSet   ; }
+    Q_INVOKABLE void setHeightSet(int value)
+    {
+        m_heightSet = value;
+        emit heightSetChanged(m_heightSet);
+    }
+    Q_INVOKABLE bool getResetBtn() const { return m_resetBtn  ; }
+    Q_INVOKABLE void setResetBtn(bool value)
+    {
+        m_resetBtn = value;
+        emit resetBtnChanged(m_resetBtn);
+    }
+
     Q_INVOKABLE QString getLabel() const { return m_label ; }
     Q_INVOKABLE void setLabel(const QString &value)
     {
         if (m_label != value)
             m_label = value;
         emit labelChanged(m_label);
+    }
+
+    Q_INVOKABLE QString getWhiteLabel() const { return m_whiteLabel ; }
+    Q_INVOKABLE void setWhiteLabel(const QString &value)
+    {
+        if (m_whiteLabel != value)
+            m_whiteLabel = value;
+        emit whiteLabelChanged(m_whiteLabel);
     }
     Q_INVOKABLE QString getFileName() const { return m_fileName   ; }
     Q_INVOKABLE void setFileName(const QString &value)
@@ -419,8 +492,12 @@ public:
 
     void integrationTimeChanged(int);
     void avgTimeChanged(int);
+    void heightChanged(int);
+    void heightSetChanged(int);
+    void resetBtnChanged(bool);
 
     void labelChanged( QString text);
+    void whiteLabelChanged( QString text);
     void fileNameChanged( QString text);
 
     //====inference======
@@ -459,9 +536,13 @@ private:
 
     int m_integrationTime = 100;
     int m_avgTime   = 101;
+    int m_height   = 100;
+    int m_heightSet   = 100;
+    bool m_resetBtn = false;
 
-    QString m_label ="123ab";
-    QString m_fileName="aa123";
+    QString m_label ="";
+    QString m_whiteLabel ="White";
+    QString m_fileName="";
 
     bool m_inferConnectBtn = false;
     bool m_inferConnectedLight = false;
@@ -470,7 +551,7 @@ private:
     bool m_inferScanBtn = false;
     bool m_inferAutoScanBtn = false;
     bool m_inferWhiteBtn = false;
-    QString m_inferLabel = "123";
+    QString m_inferLabel = "";
     QVariantList m_inferChartData;
     QVariantList m_inferNirList;
     QVariantList m_inferWhiteScanList;
