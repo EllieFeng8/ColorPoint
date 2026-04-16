@@ -5,11 +5,31 @@ import QtQuick.Dialogs
 
 MainScreen {
     id: mainScreen
-    property ListModel dataModel: ListModel {}
+    property ListModel mainDataModel: ListModel {}
     property int whiteScanReminderMs: 60 * 60 * 1000
+    function addData(label){
+        let now = new Date()
+
+        // 取得日期
+        let year = now.getFullYear()
+        let month = String(now.getMonth() + 1).padStart(2, '0')
+        let day = String(now.getDate()).padStart(2, '0')
+
+        // 取得時間
+        let time = now.toLocaleTimeString(Qt.locale("zh_TW"), "hh:mm:ss")
+
+        let currentDateTime = `${year}${month}${day}-${time}`
+        mainDataModel.append({
+            time: currentDateTime, // 更新為當前年份
+            label: label,
+            // wavelength:0,
+            // listData:1
+        });
+        console.log("mainDataModel",mainDataModel);
+    }
     //nav
     inferenceMouseArea.onClicked: {
-        imference.visible = true
+        inference.visible = true
     }
 
     linkBtnMouseArea.onClicked: {
@@ -21,7 +41,7 @@ MainScreen {
         console.log("integrationTime:",Cp.integrationTime,confirmTextField.text,typeof(Cp.integrationTime))
     }
     confirmAveTimeBtnMouseArea.onClicked: {
-        Cp.avgTime = average_TimestextField.text
+        Cp.avgTime = Number(average_TimestextField.text)
         console.log("integrationTime:",Cp.avgTime,average_TimestextField.text,typeof(average_TimestextField.text))
     }
     autoSettingBtnMouseArea.onClicked: {
@@ -29,39 +49,50 @@ MainScreen {
         console.log("autoSettingBtnMouseArea Clicked")
     }
     scanBtnMouseArea.onClicked: {
+
+        addData(Cp.label);//test
         Cp.scanBtn = true
-        addData();//test
-        // console.log("scanBtnMouseArea clicked",Cp.scanBtn)
+        console.log("scanBtnMouseArea Main clicked",Cp.scanBtn)
     }
     whiteScanBtnMouseArea.onClicked: {
         Cp.whiteBtn = true
+        addData(Cp.whiteLabel);
+        whiteScanReminderTimer.restart()
         //console.log("whiteScanBtnMouseArea clicked",Cp.whiteBtn)
     }
 
     lableTextField.onTextChanged:{
         Cp.label = lableTextField.text
         console.log("lableTextField: ",  Cp.label, lableTextField.text)
-
     }
 
     saveFileBtnMouseArea.onClicked: {
-        smartNIR.listModelToCsv(dataModel);
+        smartNIR.listModelToCsv(mainDataModel);
     }
     heightconfirmBtnMouseArea.onClicked: {
-        Cp.heightSet = Number(heightSet1.text)
-        console.log("lableTextField: ",  Cp.heightSet, heightSet1.text)
+        // if(Cp.autoSetHeightBtn === true) return
+        if(heightSet1.text < 70 ) {
+            Cp.heightSet = 70
+        }
+        else if(heightSet1.text > 120) {
+            Cp.heightSet = 120
+        }
+        else {
+            Cp.heightSet = Number(heightSet1.text)
+        }
 
+        console.log("heightSet1: ",  Cp.heightSet, heightSet1.text,Cp.autoSetHeightBtn )
     }
 
     resetbuttomMouseArea.onClicked: {
         Cp.resetBtn = true
+        Cp.heightSet = 120
         console.log("resetBtn: ",  Cp.resetBtn)
-
     }
     SmartNIR{
         id:smartNIR
         visible:false
-        tableView.model:dataModel
+        tableView.model:mainDataModel
     }
 
     importFileBtnMouseArea.onClicked: {
@@ -83,6 +114,7 @@ MainScreen {
         repeat: false
         onTriggered: whiteScanReminderDialog.open()
     }
+    //標準白校正提醒
     Dialog {
         id: whiteScanReminderDialog
         modal: true
@@ -90,31 +122,42 @@ MainScreen {
         anchors.centerIn: parent
         title: "提醒"
         standardButtons: Dialog.Ok
+        width: 300
+        height: 150
 
         contentItem: Label {
-            text: "白板量測已超過 1 小時，請重新量測。"
+            text: "標準白校正已超過 1 小時，請重新量測。"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap
         }
     }
-    Imference{
-        id: imference
+    //光源亮度不足
+    Dialog {
+        id: lightLowerReminderDialog
+        modal: true
+        focus: true
+        anchors.centerIn: parent
+        title: "⚠ 提醒"
+        standardButtons: Dialog.Ok
+        width: 300
+        height: 150
+
+        contentItem: Label {
+            text: "光源亮度不足。"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WordWrap
+        }
+    }
+    Inference{
+        id: inference
         visible:false
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
     }
 
     //test
-    function addData(){
-        let currentTime = new Date().toLocaleTimeString(Qt.locale("zh_TW"), "hh:mm:ss");
-        // 隨機生成一個數值
-        let randomValue = (Math.random() * 5000).toFixed(0);
-        dataModel.append({
-            time: "20260120-" + currentTime, // 更新為當前年份
-            label: Cp.label
-        });
-        //console.log("dataModel",dataModel.count(0));
-    }
+
 }
 //console.log("dataModel",dataModel[2].length);

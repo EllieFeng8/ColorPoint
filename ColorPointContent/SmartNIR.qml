@@ -6,168 +6,6 @@ import QtQml.Models
 import Core 1.0
 import QtQuick.Dialogs
 
-// Rectangle {
-//     id: root
-//     color: "#00000000" // 背景深灰色
-//
-//     property var headerText: ["Time", "Label", "1", "2", "3", "4","5","6","7"]
-//     property var columnWidths: [200, 140, 100, 100, 100, 100,100,100,100]//[10, 240, 380, 480, 580, 680,780,880,980]
-//     //property alias listView : listView
-//     property alias tableView:tableView
-//
-//     Rectangle {
-//         id: dataList
-//         width: parent.width
-//         height: parent.height * 6 / 7
-//         color: "#33424242"
-//         radius: 8
-//         readonly property var columnMap: ["time", "label", "v1", "v2", "v3", "v4", "v5", "v6", "v7"]
-//         HorizontalHeaderView {
-//             id: horizontalHeader
-//             syncView: tableView
-//             anchors.top: parent.top
-//             anchors.leftMargin: 0
-//             anchors.rightMargin: 0
-//             anchors.topMargin: 0
-//             anchors.left: parent.left
-//             anchors.right: parent.right
-//             height: 37
-//             clip: true
-//             model: headerText
-//
-//             delegate: Rectangle {
-//                 implicitWidth: tableView.columnWidthProvider(model.index)
-//                 implicitHeight: 40
-//                 color: "transparent"
-//
-//                 Text {
-//                     text: headerText[model.index]//headerText[model.index]
-//                     color: "white"
-//                     font.bold: true
-//                     font.pixelSize: 22
-//                     anchors.fill: parent
-//                     verticalAlignment: Text.AlignVCenter
-//                     horizontalAlignment: model.index === 0 ? Text.AlignLeft : Text.AlignHCenter
-//                     leftPadding: model.index === 0 ? 15 : 0
-//                 }
-//             }
-//         }
-//         // 3. 數據內容區
-//         TableView {
-//             id: tableView
-//             anchors.top:horizontalHeader.bottom
-//             anchors.left: parent.left
-//             anchors.right: parent.right
-//             anchors.bottom: parent.bottom
-//             clip: true // 關鍵：將 ListModel 直接作為 model
-//             model: dataModel
-//             // property var columnMap: ["time","label", "v1", "v2", "v3", "v4", "v5", "v6"]
-//             //
-//             columnWidthProvider: function (column) { return columnWidths[column] }
-//             delegate: Rectangle {
-//                 id:test1
-//                 implicitHeight: 45
-//                 color: "transparent"
-//                 // Text {
-//                 //     // 關鍵：使用 model[dataList.columnMap[column]]
-//                 //     // 這會根據目前的列索引(column)，去抓取 model 裡對應的 role (如 "time" 或 "v1")
-//                 //     text: {
-//                 //         let roleName = dataList.columnMap[column];
-//                 //         return model[roleName] !== undefined ? model[roleName] : ""
-//                 //     }
-//                 //     anchors.fill: parent
-//                 //     color: "#e0e0e0"
-//                 //     font.pixelSize: 18
-//                 //     verticalAlignment: Text.AlignVCenter
-//                 //     horizontalAlignment: column === 0 ? Text.AlignLeft : Text.AlignHCenter
-//                 //     leftPadding: column === 0 ? 15 : 0
-//                 // }
-//                 Text{
-//                     text: time
-//                     anchors.centerIn: parent
-//                     color: "#e0e0e0"
-//                     font.pixelSize: 18
-//                     anchors.fill: parent
-//                     verticalAlignment: Text.AlignVCenter
-//                     horizontalAlignment: column === 0 ? Text.AlignLeft : Text.AlignHCenter
-//                     leftPadding: column === 0 ? 15 : 0
-//                 }
-//                 Text{
-//                     text: label
-//                     anchors.centerIn: parent
-//                     color: "#e0e0e0"
-//                     font.pixelSize: 18
-//                     anchors.fill: parent
-//                     verticalAlignment: Text.AlignVCenter
-//                     horizontalAlignment: column === 0 ? Text.AlignLeft : Text.AlignHCenter
-//                     leftPadding: 240
-//                 }
-//                 Text{
-//                     text: v1
-//                     anchors.centerIn: parent
-//                     color: "#e0e0e0"
-//                     font.pixelSize: 18
-//                     anchors.fill: parent
-//                     verticalAlignment: Text.AlignVCenter
-//                     leftPadding: 370
-//                 }
-//                 Text{
-//                     text: v2
-//                     anchors.centerIn: parent
-//                     color: "#e0e0e0"
-//                     font.pixelSize: 18
-//                     anchors.fill: parent
-//                     verticalAlignment: Text.AlignVCenter
-//                     leftPadding: 470
-//                 }
-//                 Text{
-//                     text: v3
-//                     anchors.centerIn: parent
-//                     color: "#e0e0e0"
-//                     font.pixelSize: 18
-//                     anchors.fill: parent
-//                     verticalAlignment: Text.AlignVCenter
-//                     leftPadding: 570
-//                 }
-//                 Text{
-//                     text: v4
-//                     anchors.centerIn: parent
-//                     color: "#e0e0e0"
-//                     font.pixelSize: 18
-//                     anchors.fill: parent
-//                     verticalAlignment: Text.AlignVCenter
-//                     leftPadding: 670
-//                 }
-//                 Text{
-//                     text: v5
-//                     anchors.centerIn: parent
-//                     color: "#e0e0e0"
-//                     font.pixelSize: 18
-//                     anchors.fill: parent
-//                     verticalAlignment: Text.AlignVCenter
-//                     leftPadding: 770
-//                 }
-//                 Text{
-//                     text: v6
-//                     anchors.centerIn: parent
-//                     color: "#e0e0e0"
-//                     font.pixelSize: 18
-//                     anchors.fill: parent
-//                     verticalAlignment: Text.AlignVCenter
-//                     leftPadding: 870
-//                 }
-//                 Text{
-//                     text: v7
-//                     anchors.centerIn: parent
-//                     color: "#e0e0e0"
-//                     font.pixelSize: 18
-//                     anchors.fill: parent
-//                     verticalAlignment: Text.AlignVCenter
-//                     leftPadding: 970
-//                 }
-//             }
-//         }
-//     }
 Rectangle {
     id: root
     color: "#00000000" // 背景深灰色
@@ -176,11 +14,11 @@ Rectangle {
     //property var headerText: ["Time", "Label", "1", "2", "3", "4","5","6","7"]
     //property var columnWidths: [200, 140, 100, 100, 100, 100,100,100,100]//[10, 240, 380, 480, 580, 680,780,880,980]
     //property alias listView : listView
-    property var columnMap: ["time", "label","wavelength", "listData"]
+    property var columnMap: ["time", "label"]
     property var headerText: ["Time", "Label"]
     property var columnWidths: [220, 120, 100, 100, 100, 100, 100, 100, 100] // 請根據實際寬度調整
     property alias tableView:tableView
-    //property ListModel dataModel: ListModel {}
+    property ListModel dataModel: ListModel {}
     // 暫存 CSV（因為 FileDialog 是非同步）
     property string _pendingCsv: ""
 
@@ -288,7 +126,7 @@ Rectangle {
                         id:deleteButtonMouseArea
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: dataModel.remove(rowIndex, 1)//dataModel.count - 1
+                        onClicked: tableView.model.remove(rowIndex, 1)//dataModel.count - 1
                     }
                 }
             }
@@ -331,7 +169,7 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: dataModel.clear()//dataModel.remove(dataModel.count - 1)
+            onClicked: tableView.model.clear()//dataModel.remove(dataModel.count - 1)
         }
     }
     function updateAllData() { // newJsonData 格式必須是：[{ "time": "...", "label": "..." }, { ... }]
@@ -363,6 +201,7 @@ Rectangle {
         }
 
         _pendingCsv = csv
+        folderDialog.currentFile = "file:///" + encodeURIComponent("新增資料" + ".csv")
         folderDialog.open()
         console.log("csv",_pendingCsv)
         //Cp.saveCsvFile("",Cp.fileName,_pendingCsv)
@@ -371,14 +210,14 @@ Rectangle {
 
     FileDialog {
         id: folderDialog
-        title: "選擇保存 CSV 的資料夾"
-        fileMode: FileDialog.Directory
+        title: "保存 CSV 檔案"
+        fileMode: FileDialog.SaveFile
+        nameFilters: ["CSV files (*.csv)"]
+        defaultSuffix: "csv"
 
         onAccepted: {
-            // selectedFolder 是 QUrl
-            //Cp.saveCsvFileToFolder(selectedFolder, Cp.fileName, _pendingCsv)
-            console.log("選到:", selectedFiles)
-            Cp.saveCsvFile(selectedFiles,_pendingCsv)
+            console.log("選到:", selectedFile)
+            Cp.saveCsvFile(selectedFile,_pendingCsv)
         }
     }
 }

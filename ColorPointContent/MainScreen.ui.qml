@@ -27,7 +27,10 @@ Rectangle {
     property alias heightconfirmBtnMouseArea : heightconfirmBtnMouseArea
     property alias resetbuttomMouseArea : resetbuttomMouseArea
     property alias heightSet1 : heightSet1
-
+    property alias autoCheckBox : autoCheckBox
+    MouseArea {
+        anchors.fill: parent
+    }
 
     Item {
         anchors.fill: parent
@@ -92,7 +95,7 @@ Rectangle {
                 }
                 Image {
                     // anchors.verticalCenter: parent.verticalCenter //垂直置中
-                    anchors.horizontalCenter: parent.horizontalCenter //水平置中
+                    Layout.alignment: Qt.AlignHCenter
                     source: "assets/Rectangle 66.png"
                     scale: inferenceMouseArea.containsMouse ? 1.6 : 1.5
                     Image {
@@ -261,14 +264,14 @@ Rectangle {
                                         font.pixelSize: 20
                                         font.weight: Font.Bold
                                         horizontalAlignment: Text.AlignLeft
-                                        text: "Height Set:"
+                                        text: "Height Set:(70~120)"
                                         textFormat: Text.PlainText
                                         verticalAlignment: Text.AlignVCenter
                                         wrapMode: Text.WordWrap
                                         leftPadding: 20
                                         Rectangle {
                                             id: heightRec
-                                            color: "#4de59263" // 背景黑色
+                                            color: autoCheckBox.checked ?"#4DB5917D":"#4de59263" // 背景橘色
                                             radius: 5 // 圓角
                                             height: parent.height * 1.4
                                             width: parent.width * 0.8
@@ -285,11 +288,58 @@ Rectangle {
                                                 font.weight: Font.Bold
                                                 font.family: "Poppins"
                                                 color: "#ffffff"
-                                                text: Cp.heightSet
+                                                text: Number(Cp.heightSet)
+                                                enabled: autoCheckBox.checked ? false : true
                                                 horizontalAlignment: Text.AlignLeft
                                                 verticalAlignment: Text.AlignVCenter
                                             }
                                         }
+                                        CheckBox {
+                                            id: autoCheckBox
+                                            width: 166
+                                            height: 42
+                                            anchors.left: heightset.left
+                                            anchors.leftMargin: 20
+                                            anchors.topMargin: 19
+                                            anchors.top: heightRec.bottom
+                                            text: checked ? "自動設定" : "手動設定"
+                                            checked: Cp.autoSetHeightBtn
+                                            onCheckedChanged: {
+                                                Cp.autoSetHeightBtn = checked
+                                                // console.log("checked 改變:", checked,Cp.autoSetHeightBtn)
+                                            }
+                                            contentItem: Text {
+                                                x: 54
+                                                y: 17
+                                                text: autoCheckBox.text
+                                                font.pixelSize: 24
+                                                horizontalAlignment: Text.AlignHCenter // ⭐ 字體大小
+                                                font.bold: true // 可選：加粗
+                                                color: "white"
+                                                verticalAlignment: Text.AlignVCenter
+                                            }
+
+                                            indicator: Rectangle {
+                                                x: 5
+                                                y: 12
+                                                width: 20
+                                                height: 20
+                                                radius: 4
+                                                border.width: 2
+                                                border.color: autoCheckBox.checked ? "#e59263" : "#888"
+                                                color: autoCheckBox.checked ? "#e59263" : "transparent"
+
+                                                // 打勾符號
+                                                Text {
+                                                    anchors.centerIn: parent
+                                                    text: "✔"
+                                                    color: "white"
+                                                    visible: autoCheckBox.checked
+                                                    font.bold: true
+                                                }
+                                            }
+                                        }
+
                                         Rectangle {
                                             id: resetzeroButton
 
@@ -341,7 +391,7 @@ Rectangle {
                                             height: heightSet1.height
                                             width: parent.width * 0.3
 
-                                            color: "#e59263"
+                                            color: autoCheckBox.checked ?"#AC6D4A":"#e59263"
                                             radius: 10
                                             Text {
                                                 id: heightconfirm
@@ -355,7 +405,7 @@ Rectangle {
                                                 textFormat: Text.PlainText
                                                 wrapMode: Text.WordWrap
                                             }
-                                            layer.enabled: true
+                                            layer.enabled: autoCheckBox.checked ? false : true
                                             layer.effect: MultiEffect {
                                                 shadowEnabled: heightconfirmBtnMouseArea.containsMouse ? true : false
                                                 shadowColor: "white"
@@ -364,6 +414,7 @@ Rectangle {
                                             MouseArea {
                                                 id: heightconfirmBtnMouseArea
                                                 anchors.fill: parent
+                                                enabled: autoCheckBox.checked ? false : true
                                                 hoverEnabled: true
                                                 cursorShape: Qt.PointingHandCursor
                                             }
@@ -422,8 +473,9 @@ Rectangle {
                                             SmartNIR {
                                                 id: table
                                                 anchors.fill: parent
-                                                    anchors.verticalCenter: parent.verticalCenter //垂直置中
-                                                    anchors.horizontalCenter: parent.horizontalCenter //水平置中
+                                                anchors.verticalCenter: parent.verticalCenter //垂直置中
+                                                anchors.horizontalCenter: parent.horizontalCenter //水平置中
+                                                tableView.model:mainDataModel
                                             }
                                         }
                                     }

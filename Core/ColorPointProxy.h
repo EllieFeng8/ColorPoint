@@ -44,6 +44,7 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(int  height   READ getHeight   WRITE setHeight   NOTIFY heightChanged)
     Q_PROPERTY(int  heightSet   READ getHeightSet  WRITE setHeightSet  NOTIFY heightSetChanged)
     Q_PROPERTY(bool  resetBtn   READ getResetBtn  WRITE setResetBtn NOTIFY resetBtnChanged)
+    Q_PROPERTY(bool  autoSetHeightBtn   READ getAutoSetHeightBtn  WRITE setAutoSetHeightBtn NOTIFY autoSetHeightBtnChanged)
 
     // ===== Text =====
     Q_PROPERTY(QString label    READ getLabel    WRITE setLabel    NOTIFY labelChanged)
@@ -56,6 +57,7 @@ class ColorPointProxy : public QObject
 
     Q_PROPERTY(int  inferIntegrationTime READ getInferIntegrationTime WRITE setInferIntegrationTime NOTIFY inferIntegrationTimeChanged)
     Q_PROPERTY(int  inferAvgTime   READ getInferAvgTime   WRITE setInferAvgTime   NOTIFY inferAvgTimeChanged)
+    Q_PROPERTY(int  inferHeight   READ getInferHeight WRITE setInferHeight   NOTIFY inferHeightChanged)
 
     Q_PROPERTY(bool inferScanBtn    READ getInferScanBtn    WRITE setInferScanBtn    NOTIFY inferScanBtnChanged)
     Q_PROPERTY(bool inferAutoScanBtn    READ getInferAutoScanBtn    WRITE setInferAutoScanBtn    NOTIFY inferAutoScanBtnChanged)
@@ -66,6 +68,9 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(QVariantList inferChartData READ getInferChartData  NOTIFY inferChartDataChanged)
     Q_PROPERTY(QVariantList inferNirList   READ getInferNirList  NOTIFY inferNirListChanged)
     Q_PROPERTY(QVariantList inferWhiteScanList   READ getInferWhiteScanList  NOTIFY inferWhiteScanListChanged)
+    Q_PROPERTY(QVariantList inferPredictList   READ getInferPredictList  NOTIFY inferPredictListChanged)
+    Q_PROPERTY(QVariantList inferModelSetList   READ getInferModelSetList  NOTIFY inferModelSetListChanged)
+    Q_PROPERTY(QVariantList inferWhiteScanList   READ getInferWhiteScanList  NOTIFY inferWhiteScanListChanged)
 
 public:
 
@@ -73,15 +78,14 @@ public:
     {
 
         // QVariantMap item1;
-        // item1["time"] = "20260120-09:28:33";
-        // item1["label"] = "123";
-        // item1["wavelength"] = 0;
-        // item1["listData"] = 1;
-        //
-        //
-        //
-        // m_nirList.append(item1);
-        // m_nirList.append(item2);
+        // QVariantMap item2;
+        // item1["name"] = "target 1";
+        // item1["data"] = "12.2";
+        // item2["name"] = "target 2";
+        // item2["data"] = "0000000";
+
+        // m_inferPredictList.append(item1);
+        // m_inferModelSetList.append(item2);
 
 
     }
@@ -332,6 +336,13 @@ public:
         emit resetBtnChanged(m_resetBtn);
     }
 
+    Q_INVOKABLE bool getAutoSetHeightBtn() const { return m_autoSetHeightBtn  ; }
+    Q_INVOKABLE void setAutoSetHeightBtn(bool value)
+    {
+        m_autoSetHeightBtn = value;
+        emit autoSetHeightBtnChanged(m_autoSetHeightBtn);
+    }
+
     Q_INVOKABLE QString getLabel() const { return m_label ; }
     Q_INVOKABLE void setLabel(const QString &value)
     {
@@ -382,6 +393,13 @@ public:
         if (m_inferAvgTime != value)
             m_inferAvgTime = value;
         emit inferAvgTimeChanged(m_inferAvgTime);
+    }
+    Q_INVOKABLE int getInferHeight() const { return m_inferHeight  ; }
+    Q_INVOKABLE void setInferHeight(int value)
+    {
+        if (m_inferHeight != value)
+            m_inferHeight = value;
+        emit inferHeightChanged(m_inferHeight);
     }
 
     Q_INVOKABLE bool getInferScanBtn() const { return m_inferScanBtn   ; }
@@ -473,6 +491,33 @@ public:
         // 4. 通知界面更新
         emit inferWhiteScanListChanged();
     }
+
+    Q_INVOKABLE QVariantList getInferPredictList() const
+    {
+        qDebug() << u8"m_inferPredictList" << m_inferPredictList;
+        return m_inferPredictList   ;
+    }
+    Q_INVOKABLE void setInferPredictList(const std::vector<QString>& dataList)
+    {
+        for (size_t i = 0; i < dataList.size(); ++i) {
+            QVariantMap item;
+            // item.insert("name", dataList[i]);
+            m_inferPredictList.append(item);
+        }
+        qDebug() << u8"m_inferPredictList" << m_inferPredictList;
+        emit inferPredictListChanged();
+    }
+
+    Q_INVOKABLE QVariantList getInferModelSetList() const { return m_inferModelSetList   ; }
+    Q_INVOKABLE void setInferModelSetList(const std::vector<QString>& dataList)
+    {
+        for (size_t i = 0; i < dataList.size(); ++i) {
+            QVariantMap item;
+            // item.insert("name", dataList[i]);
+            m_inferModelSetList.append(item);
+        }
+        emit inferModelSetListChanged();
+    }
     signals:
     void chartDataChanged();
     void nirListChanged();
@@ -495,6 +540,7 @@ public:
     void heightChanged(int);
     void heightSetChanged(int);
     void resetBtnChanged(bool);
+    void autoSetHeightBtnChanged(bool);
 
     void labelChanged( QString text);
     void whiteLabelChanged( QString text);
@@ -505,6 +551,7 @@ public:
     void inferConnectedLightChanged(bool);
     void inferIntegrationTimeChanged(int);
     void inferAvgTimeChanged(int);
+    void inferHeightChanged(int);
     void inferScanBtnChanged(bool);
     void inferAutoScanBtnChanged(bool);
     void inferWhiteBtnChanged(bool);
@@ -512,6 +559,9 @@ public:
     void inferChartDataChanged();
     void inferNirListChanged();
     void inferWhiteScanListChanged();
+    void inferPredictListChanged();
+    void inferModelSetListChanged();
+
     // void inferLabelChanged();
 
 
@@ -525,7 +575,7 @@ private:
     bool m_clearBtn = false;
     bool m_updateBtn = false;
     bool m_connectBtn = false;
-    bool m_connectedLight = true;
+    bool m_connectedLight = false;
     bool m_savedLight = false;
     bool m_confirmBtn = false;
     bool m_autoBtn = false;
@@ -534,11 +584,12 @@ private:
     bool m_saveLabelBtn = false;
     bool m_saveFileNameBtn = false;
 
-    int m_integrationTime = 100;
-    int m_avgTime   = 101;
-    int m_height   = 100;
-    int m_heightSet   = 100;
+    int m_integrationTime = 0;
+    int m_avgTime   = 0;
+    int m_height   = 0;
+    int m_heightSet   = 120;
     bool m_resetBtn = false;
+    bool m_autoSetHeightBtn = true;
 
     QString m_label ="";
     QString m_whiteLabel ="White";
@@ -548,6 +599,7 @@ private:
     bool m_inferConnectedLight = false;
     int m_inferIntegrationTime = 0;
     int m_inferAvgTime = 0;
+    int m_inferHeight = 0;
     bool m_inferScanBtn = false;
     bool m_inferAutoScanBtn = false;
     bool m_inferWhiteBtn = false;
@@ -555,6 +607,8 @@ private:
     QVariantList m_inferChartData;
     QVariantList m_inferNirList;
     QVariantList m_inferWhiteScanList;
+    QVariantList m_inferPredictList;
+    QVariantList m_inferModelSetList;
 };
 
 

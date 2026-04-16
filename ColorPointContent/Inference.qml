@@ -6,7 +6,7 @@ import QtQuick.Controls
 import Core 1.0
 
 Rectangle {
-    id:imference
+    id:inference
     height: 1080
     width: 1920
     // anchors.fill: parent
@@ -26,7 +26,56 @@ Rectangle {
     property int integrationTime: 50
     property string labelText: "label"
     property string fileNameText: "file123"
+    property ListModel inferDataModel: ListModel {}
 
+    property int whiteScanReminderMs:60 * 60 * 1000
+    Timer {
+        id: whiteScanReminderTimer
+        interval: inference.whiteScanReminderMs
+        repeat: false
+        onTriggered: whiteScanReminderDialog.open()
+    }
+    Dialog {
+        id: whiteScanReminderDialog
+        modal: true
+        focus: true
+        anchors.centerIn: parent
+        title: "提醒"
+        standardButtons: Dialog.Ok
+        width: 300
+        height: 150
+
+        contentItem: Label {
+            text: "白板量測已超過 1 小時，請重新量測。"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WordWrap
+        }
+    }
+
+    function inferAddData(label){
+        let now = new Date()
+
+        // 取得日期
+        let year = now.getFullYear()
+        let month = String(now.getMonth() + 1).padStart(2, '0')
+        let day = String(now.getDate()).padStart(2, '0')
+
+        // 取得時間
+        let time = now.toLocaleTimeString(Qt.locale("zh_TW"), "hh:mm:ss")
+
+        let currentDateTime = `${year}${month}${day}-${time}`
+        inferDataModel.append({
+            time: currentDateTime, // 更新為當前年份
+            label: label,
+            // wavelength:0,
+            // listData:1
+        });
+        //console.log("dataModel",dataModel.count(0));
+    }
+    MouseArea {
+        anchors.fill: parent
+    }
     Item {
         anchors.fill: parent
         Layout.fillHeight: true
@@ -89,12 +138,13 @@ Rectangle {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onClicked:imference.visible = false
+                        onClicked:inference.visible = false
                     }
                 }
                 Image {
                     // anchors.verticalCenter: parent.verticalCenter //垂直置中
-                    anchors.horizontalCenter: parent.horizontalCenter //水平置中
+                    // anchors.horizontalCenter: parent.horizontalCenter //水平置中
+                    Layout.alignment:Qt.AlignHCenter
                     source: "assets/Rectangle 66.png"
                     scale: inferenceMouseArea.containsMouse ? 1.6 : 1.5
                     Image {
@@ -195,27 +245,8 @@ Rectangle {
                                         anchors.fill: parent
                                         anchors.leftMargin:20
                                         anchors.topMargin:36
-                                        model: ListModel {
-                                            ListElement {
-                                                name: "Target 1"
-                                                colorCode: "red"
-                                            }
+                                        model: Cp.inferPredictList
 
-                                            ListElement {
-                                                name: "Target 2"
-                                                colorCode: "green"
-                                            }
-
-                                            ListElement {
-                                                name: "Target 3"
-                                                colorCode: "blue"
-                                            }
-
-                                            ListElement {
-                                                name: "Target 4"
-                                                colorCode: "white"
-                                            }
-                                        }
                                         delegate: Column {
                                             spacing: 5
                                             padding:10
@@ -227,17 +258,17 @@ Rectangle {
                                                 font.pixelSize: 20
                                                 font.weight: Font.Bold
                                                 horizontalAlignment: Text.AlignLeft
-                                                text: name
+                                                text: modelData.name
                                             }
 
                                             Text {
-                                                width: 100
+                                                width: 300
                                                 color:"#e59263"
                                                 font.family: "Poppins"
-                                                font.pixelSize: 20
+                                                font.pixelSize: 25
                                                 font.weight: Font.Bold
                                                 horizontalAlignment: Text.AlignRight
-                                                text: colorCode
+                                                text: modelData.data
                                             }
                                         }
                                     }
@@ -255,47 +286,49 @@ Rectangle {
                                         Layout.fillWidth: true
                                         color: "#21555353"
                                         radius: 20
-                                        Row{
+                                        RowLayout{
                                             anchors.fill: parent
-                                            spacing:50
+                                            spacing:80
+                                            // anchors.leftMargin: 50
+                                            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                            Text{
+                                                // anchors.fill: parent
 
-                                        Text{
-                                            anchors.fill: parent
-                                            color:"#ffffff"
-                                            font.family: "Poppins"
-                                            font.pixelSize: 25
-                                            font.weight: Font.Bold
-                                            horizontalAlignment: Text.AlignLeft
-                                            verticalAlignment: Text.AlignVCenter
-                                            anchors.leftMargin: 10
-                                            text: "高度"
+                                                color:"#ffffff"
+                                                font.family: "Poppins"
+                                                font.pixelSize: 25
+                                                font.weight: Font.Bold
+                                                horizontalAlignment: Text.AlignLeft
+                                                verticalAlignment: Text.AlignVCenter
+                                                anchors.leftMargin: 10
+                                                text: "高度"
+                                                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                            }
+                                            Text{
+                                                // anchors.fill: parent
 
-                                        }
-                                        Text{
-                                            anchors.fill: parent
-                                            // x:250
-                                            color:"#ffffff"
-                                            font.family: "Poppins"
-                                            font.pixelSize: 35
-                                            font.weight: Font.Normal
-                                            horizontalAlignment: Text.AlignHCenter
-                                            verticalAlignment: Text.AlignVCenter
-                                            text: "753"
+                                                color:"#ffffff"
+                                                font.family: "Poppins"
+                                                font.pixelSize: 35
+                                                font.weight: Font.Normal
+                                                horizontalAlignment: Text.AlignHCenter
+                                                verticalAlignment: Text.AlignVCenter
+                                                text: Cp.inferHeight
+                                                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                            }
+                                            Text{
+                                                // anchors.fill: parent
 
-                                        }
-                                        Text{
-                                            anchors.fill: parent
-                                            // x:250
-                                            color:"#ffffff"
-                                            font.family: "Poppins"
-                                            font.pixelSize: 25
-                                            font.weight: Font.Normal
-                                            horizontalAlignment: Text.AlignRight
-                                            verticalAlignment: Text.AlignVCenter
-                                            anchors.rightMargin: 20
-                                            text: "cm"
-
-                                        }
+                                                color:"#ffffff"
+                                                font.family: "Poppins"
+                                                font.pixelSize: 25
+                                                font.weight: Font.Normal
+                                                horizontalAlignment: Text.AlignRight
+                                                verticalAlignment: Text.AlignVCenter
+                                                anchors.rightMargin: 20
+                                                text: "cm"
+                                                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                            }
                                         }
 
                                     }
@@ -345,10 +378,12 @@ Rectangle {
                                             radius: 8
                                             color: "transparent"
                                             SmartNIR {
-                                                id: table
+                                                id: smartNIRtable
                                                 anchors.fill: parent
                                                 anchors.verticalCenter: parent.verticalCenter //垂直置中
                                                 anchors.horizontalCenter: parent.horizontalCenter //水平置中
+                                                tableView.model:inferDataModel
+
                                             }
                                         }
                                     }
@@ -632,7 +667,7 @@ Rectangle {
                                         hoverEnabled: true
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            addData();//test
+                                            inferAddData(Cp.inferLabel);//test
                                             Cp.inferScanBtn = true
                                             console.log("scanBtnMouseArea clicked",Cp.inferScanBtn)
                                         }
@@ -712,7 +747,8 @@ Rectangle {
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
                                             Cp.inferWhiteBtn = true
-                                            Cp.whiteScanList
+                                            inferAddData(Cp.whiteLabel)
+                                            whiteScanReminderTimer.restart()
                                             console.log("whiteScanBtnMouseArea clicked",Cp.inferWhiteBtn)
                                         }
                                     }
@@ -747,27 +783,29 @@ Rectangle {
                                 anchors.fill: parent
                                 anchors.leftMargin:20
                                 anchors.topMargin:39
-                                model: ListModel {
-                                    ListElement {
-                                        name: "Target 1"
-                                        colorCode: "red"
-                                    }
-
-                                    ListElement {
-                                        name: "Target 2"
-                                        colorCode: "green"
-                                    }
-
-                                    ListElement {
-                                        name: "Target 3"
-                                        colorCode: "blue"
-                                    }
-
-                                    ListElement {
-                                        name: "Target 4"
-                                        colorCode: "white"
-                                    }
-                                }
+                                model: Cp.inferModelSetList
+                                //     ListModel {
+                                //     ListElement {
+                                //         name: "Target 1"
+                                //         colorCode: "red"
+                                //     }
+                                //
+                                //     ListElement {
+                                //         name: "Target 2"
+                                //         colorCode: "green"
+                                //     }
+                                //
+                                //     ListElement {
+                                //         name: "Target 3"
+                                //         colorCode: "blue"
+                                //     }
+                                //
+                                //     ListElement {
+                                //         name: "Target 4"
+                                //         colorCode: "white"
+                                //     }
+                                // }
+                                //
                                 delegate: Row {
                                     spacing: 20
                                     padding:10
@@ -779,7 +817,7 @@ Rectangle {
                                         font.pixelSize: 20
                                         font.weight: Font.Bold
                                         horizontalAlignment: Text.AlignLeft
-                                        text: name
+                                        text: modelData.name
                                     }
 
                                     Text {
@@ -788,7 +826,7 @@ Rectangle {
                                         font.family: "Poppins"
                                         font.pixelSize: 20
                                         horizontalAlignment: Text.AlignRight
-                                        text: colorCode
+                                        text: modelData.data
                                     }
                                 }
                             }
@@ -911,7 +949,11 @@ Rectangle {
                                                             anchors.fill: parent
                                                             hoverEnabled: true
                                                             cursorShape: Qt.PointingHandCursor
+                                                            onClicked: {
+                                                                smartNIRtable.listModelToCsv(inferDataModel);
+                                                            }
                                                         }
+
                                                     }
                                                 }
                                             }
@@ -926,5 +968,6 @@ Rectangle {
                 }
             }
         }
+
     }
 }
