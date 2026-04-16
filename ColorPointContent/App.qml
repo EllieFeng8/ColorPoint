@@ -83,6 +83,7 @@ Window {
                     font.pointSize: 10
                     Layout.alignment: Qt.AlignHCenter
                     onClicked: {
+
                         Cp.heightSet = 120;
                         abnormalDialog.close();
                         console.log("Cp.heightSet",Cp.heightSet)

@@ -214,6 +214,7 @@ Rectangle {
 
                         ChartUI {
                             id: chartUI
+                            chartData : Cp.inferChartData
                             // anchors.verticalCenter: parent.verticalCenter //垂直置中
                             // anchors.horizontalCenter: parent.horizontalCenter //水平置中
                         }

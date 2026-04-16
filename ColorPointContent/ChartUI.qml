@@ -129,6 +129,7 @@ Rectangle {
 
                 PathSvg {
                     // 調用函數，根據數據生成路徑
+
                     path: chart_container.generatePath(chart_container.chartData)
                 }
             }

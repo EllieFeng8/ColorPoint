@@ -567,7 +567,7 @@ public:
 
 private:
 
-    QVariantList m_chartData;
+    QVariantList m_chartData={};
     QVariantList m_nirList;
     QVariantList m_whiteScanList;
 	QString m_lastFolderPath;
@@ -604,7 +604,7 @@ private:
     bool m_inferAutoScanBtn = false;
     bool m_inferWhiteBtn = false;
     QString m_inferLabel = "";
-    QVariantList m_inferChartData;
+    QVariantList m_inferChartData={};
     QVariantList m_inferNirList;
     QVariantList m_inferWhiteScanList;
     QVariantList m_inferPredictList;
