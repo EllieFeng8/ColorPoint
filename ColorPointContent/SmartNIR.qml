@@ -169,7 +169,11 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: tableView.model.clear()//dataModel.remove(dataModel.count - 1)
+            onClicked: {
+                Cp.clearNirListBtn = true
+                tableView.model.clear()
+            // console.log("Cp.clearNirListBtn",Cp.clearNirListBtn)
+            }
         }
     }
     function updateAllData() { // newJsonData 格式必須是：[{ "time": "...", "label": "..." }, { ... }]
