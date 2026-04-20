@@ -68,7 +68,7 @@ MainScreen {
     }
 
     saveFileBtnMouseArea.onClicked: {
-        smartNIR.listModelToCsv(mainDataModel);
+        // smartNIR.listModelToCsv(mainDataModel);
         Cp.saveFileNameBtn = true
     }
     heightconfirmBtnMouseArea.onClicked: {
