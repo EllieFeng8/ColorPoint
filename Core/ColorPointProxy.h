@@ -63,6 +63,7 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(bool inferScanBtn    READ getInferScanBtn    WRITE setInferScanBtn    NOTIFY inferScanBtnChanged)
     Q_PROPERTY(bool inferAutoScanBtn    READ getInferAutoScanBtn    WRITE setInferAutoScanBtn    NOTIFY inferAutoScanBtnChanged)
     Q_PROPERTY(bool inferWhiteBtn   READ getInferWhiteBtn   WRITE setInferWhiteBtn   NOTIFY inferWhiteBtnChanged)
+    Q_PROPERTY(bool inferSaveBtn   READ getInferSaveBtn   WRITE setInferSaveBtn   NOTIFY inferSaveBtnChanged)
     Q_PROPERTY(QString inferLabel    READ getInferLabel    WRITE setInferLabel    NOTIFY inferLabelChanged)
 
     // =====inference Array =====
@@ -405,6 +406,13 @@ public:
         qDebug() << value << "AutoscanBtnChanged" << m_inferAutoScanBtn;
         emit inferAutoScanBtnChanged(m_inferAutoScanBtn);
     }
+    Q_INVOKABLE bool getInferSaveBtn() const { return m_inferSaveBtn   ; }
+    Q_INVOKABLE void setInferSaveBtn(bool value)
+    {
+        m_inferSaveBtn = value;
+        qDebug() << value << "SaveBtnChanged" << m_inferSaveBtn;
+        emit inferSaveBtnChanged(m_inferSaveBtn);
+    }
     Q_INVOKABLE bool getInferWhiteBtn() const { return m_inferWhiteBtn ; }
     Q_INVOKABLE void setInferWhiteBtn(bool value)
     {
@@ -545,6 +553,7 @@ public:
     void inferScanBtnChanged(bool);
     void inferAutoScanBtnChanged(bool);
     void inferWhiteBtnChanged(bool);
+    void inferSaveBtnChanged(bool);
     void inferLabelChanged(QString text);
     void inferChartDataChanged();
     void inferNirListChanged();
@@ -594,6 +603,7 @@ private:
     bool m_inferScanBtn = false;
     bool m_inferAutoScanBtn = false;
     bool m_inferWhiteBtn = false;
+    bool m_inferSaveBtn = false;
     QString m_inferLabel = "";
     QVariantList m_inferChartData={};
     QVariantList m_inferNirList;

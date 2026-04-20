@@ -952,6 +952,8 @@ Rectangle {
                                                             cursorShape: Qt.PointingHandCursor
                                                             onClicked: {
                                                                 smartNIRtable.listModelToCsv(inferDataModel);
+                                                                Cp.inferSaveBtn = true
+                                                                console.log("inferSaveBtn",Cp.inferSaveBtn)
                                                             }
                                                         }
 
