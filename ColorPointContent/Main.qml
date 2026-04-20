@@ -57,6 +57,7 @@ MainScreen {
     whiteScanBtnMouseArea.onClicked: {
         Cp.whiteBtn = true
         addData(Cp.whiteLabel);
+        Cp.saveCurrentInstrumentConfigFile()
         whiteScanReminderTimer.restart()
         //console.log("whiteScanBtnMouseArea clicked",Cp.whiteBtn)
     }

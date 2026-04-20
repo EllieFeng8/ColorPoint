@@ -19,6 +19,7 @@ Rectangle {
     property var columnWidths: [220, 120, 100, 100, 100, 100, 100, 100, 100] // 請根據實際寬度調整
     property alias tableView:tableView
     property ListModel dataModel: ListModel {}
+    property bool useInferConfig: false
     // 暫存 CSV（因為 FileDialog 是非同步）
     property string _pendingCsv: ""
 
@@ -221,7 +222,11 @@ Rectangle {
 
         onAccepted: {
             console.log("選到:", selectedFile)
-            Cp.saveCsvFile(selectedFile,_pendingCsv)
+            if (root.useInferConfig) {
+                Cp.saveInferCsvFile(selectedFile, _pendingCsv)
+            } else {
+                Cp.saveCsvFile(selectedFile, _pendingCsv)
+            }
         }
     }
 }

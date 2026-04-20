@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QTextStream>
 #include <QCoreApplication>
@@ -99,67 +100,24 @@ public:
     Q_INVOKABLE void saveCsvFile(const QString &folderPath,
                             const QString &csvContent)
     {
-        // ================================
-        // 1. 基底路徑：執行檔所在路徑 + 相對資料夾
-        // ================================
-        QString filePath = folderPath;
-        // QML 可能傳 file:///... 或 file:/...
-        if (filePath.startsWith("file:/"))
-            filePath = QUrl(filePath).toLocalFile();
+        saveCsvFileInternal(folderPath, csvContent, false);
+    }
 
-        qWarning() << "save file path:" << filePath;
-
-        if (filePath.isEmpty()) {
-            qWarning() << "Invalid file path";
-            return;
-        }
-        // 使用者若沒打 .csv，這裡補上
-        if (!filePath.endsWith(".csv", Qt::CaseInsensitive))
-            filePath += ".csv";
-
-        // ✅ 只建立「父資料夾」，不要對 filePath mkpath
-        QFileInfo fi(filePath);
-        QDir dir = fi.dir();
-        if (!dir.exists() && !dir.mkpath(".")) {
-            qWarning() << "Failed to create dir:" << dir.absolutePath();
-            return;
-        }
-
-        QFile file(filePath);
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            qWarning() << u8"⚠ Failed to write CSV:" << filePath;
-            return;
-        }
-
-        QTextStream out(&file);
-        out.setEncoding(QStringConverter::Utf8);
-        out << csvContent;
-        file.close();
-
-        qDebug() << u8"✔ CSV saved:" << filePath;
-
-        const QString jsonPath = dir.absoluteFilePath("instrument_config.json");
-        saveInstrumentConfigFile(jsonPath);
+    Q_INVOKABLE void saveInferCsvFile(const QString &folderPath,
+                            const QString &csvContent)
+    {
+        saveCsvFileInternal(folderPath, csvContent, true);
     }
 
     Q_INVOKABLE void saveInstrumentConfigFile(const QString &filePath)
     {
-        QFile jsonFile(filePath);
-        if (!jsonFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            qWarning() << u8"⚠ Failed to write JSON:" << filePath;
-            return;
-        }
+        saveInstrumentConfigFile(filePath, false);
+    }
 
-        QJsonObject jsonObject;
-        jsonObject.insert("height_cm", static_cast<double>(getHeight()));
-        jsonObject.insert("integration_time_us", static_cast<double>(getIntegrationTime()));
-        jsonObject.insert("average_count", getAvgTime());
-
-        const QJsonDocument jsonDocument(jsonObject);
-        jsonFile.write(jsonDocument.toJson(QJsonDocument::Indented));
-        jsonFile.close();
-
-        qDebug() << u8"✔ JSON saved:" << filePath;
+    Q_INVOKABLE void saveCurrentInstrumentConfigFile()
+    {
+        const QString jsonPath = QCoreApplication::applicationDirPath() + "/instrument_config.json";
+        saveInstrumentConfigFile(jsonPath);
     }
 
     Q_INVOKABLE QVariantList getChartData() const { return m_chartData ; }
@@ -187,7 +145,6 @@ public:
         m_nirList.reserve(static_cast<int>(datalist.size()));
         QString currentTime = QDateTime::currentDateTime().toString("hh:mm:ss");
         QString label = getLabel();
-
         // 3. 填充數據
         for (const QString& data : datalist) {
             QVariantMap item;
@@ -565,6 +522,98 @@ public:
 
 
 private:
+
+    void saveCsvFileInternal(const QString &folderPath,
+                             const QString &csvContent,
+                             bool useInferConfig)
+    {
+        QString filePath = folderPath;
+        if (filePath.startsWith("file:/"))
+            filePath = QUrl(filePath).toLocalFile();
+
+        qWarning() << "save file path:" << filePath;
+
+        if (filePath.isEmpty()) {
+            qWarning() << "Invalid file path";
+            return;
+        }
+
+        if (!filePath.endsWith(".csv", Qt::CaseInsensitive))
+            filePath += ".csv";
+
+        QFileInfo fi(filePath);
+        QDir dir = fi.dir();
+        if (!dir.exists() && !dir.mkpath(".")) {
+            qWarning() << "Failed to create dir:" << dir.absolutePath();
+            return;
+        }
+
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qWarning() << u8"⚠ Failed to write CSV:" << filePath;
+            return;
+        }
+
+        QTextStream out(&file);
+        out.setEncoding(QStringConverter::Utf8);
+        out << csvContent;
+        file.close();
+
+        qDebug() << u8"✔ CSV saved:" << filePath;
+
+        const QString jsonPath = dir.absoluteFilePath("instrument_config.json");
+        saveInstrumentConfigFile(jsonPath, useInferConfig);
+    }
+
+    void saveInstrumentConfigFile(const QString &filePath, bool useInferConfig)
+    {
+        QFile jsonFile(filePath);
+        if (!jsonFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qWarning() << u8"⚠ Failed to write JSON:" << filePath;
+            return;
+        }
+
+        QJsonObject jsonObject;
+        if (useInferConfig) {
+            jsonObject.insert("height_cm", static_cast<double>(getInferHeight()));
+            jsonObject.insert("integration_time_us", static_cast<double>(getInferIntegrationTime()));
+            jsonObject.insert("average_count", getInferAvgTime());
+        } else {
+            jsonObject.insert("height_cm", static_cast<double>(getHeight()));
+            jsonObject.insert("integration_time_us", static_cast<double>(getIntegrationTime()));
+            jsonObject.insert("average_count", getAvgTime());
+        }
+        jsonObject.insert("white_ref", buildWhiteRefObject(useInferConfig));
+
+        const QJsonDocument jsonDocument(jsonObject);
+        jsonFile.write(jsonDocument.toJson(QJsonDocument::Indented));
+        jsonFile.close();
+
+        qDebug() << u8"✔ JSON saved:" << filePath;
+    }
+
+    QJsonObject buildWhiteRefObject(bool useInferConfig) const
+    {
+        QJsonArray rawSamples;
+        rawSamples.append(QJsonObject{{"height_cm", 110.0}, {"intensity", 1000.0}});
+        rawSamples.append(QJsonObject{{"height_cm", 111.0}, {"intensity", 1500.0}});
+        rawSamples.append(QJsonObject{{"height_cm", 112.0}, {"intensity", 2000.0}});
+        rawSamples.append(QJsonObject{{"height_cm", 113.0}, {"intensity", 2500.0}});
+        rawSamples.append(QJsonObject{{"height_cm", 114.0}, {"intensity", 3000.0}});
+
+        QJsonObject whiteRefObject;
+        if (useInferConfig) {
+            whiteRefObject.insert("height_cm", static_cast<double>(getInferHeight()));
+            whiteRefObject.insert("integration_time_us", static_cast<double>(getInferIntegrationTime()));
+            whiteRefObject.insert("average_count", getInferAvgTime());
+        } else {
+            whiteRefObject.insert("height_cm", static_cast<double>(getHeight()));
+            whiteRefObject.insert("integration_time_us", static_cast<double>(getIntegrationTime()));
+            whiteRefObject.insert("average_count", getAvgTime());
+        }
+        whiteRefObject.insert("raw_samples", rawSamples);
+        return whiteRefObject;
+    }
 
     QVariantList m_chartData={};
     QVariantList m_nirList;
