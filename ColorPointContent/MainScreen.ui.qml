@@ -23,7 +23,6 @@ Rectangle {
     property alias scanBtnMouseArea: scanBtnMouseArea
     property alias whiteScanBtnMouseArea: whiteScanBtnMouseArea
     property alias saveFileBtnMouseArea: saveFileBtnMouseArea
-    property alias importFileBtnMouseArea : importFileBtnMouseArea
     property alias heightconfirmBtnMouseArea : heightconfirmBtnMouseArea
     property alias resetbuttomMouseArea : resetbuttomMouseArea
     property alias heightSet1 : heightSet1
@@ -926,14 +925,14 @@ Rectangle {
                                         anchors.fill: parent
                                         anchors.leftMargin: 30
                                         anchors.rightMargin: 30
-                                                anchors.topMargin: 30
-                                                anchors.bottomMargin: 10
+                                        anchors.topMargin: 30
+                                        anchors.bottomMargin: 10
                                         Column {
                                             id: lableColumn
                                             anchors.centerIn: parent // ⭐ 上下左右置中
-                                                    spacing: 10
+                                            spacing: 10
                                             anchors.fill: parent
-                                                    topPadding: 5
+                                            topPadding: 5
 
                                             //LABLE
                                             Text {
@@ -951,116 +950,73 @@ Rectangle {
                                                 wrapMode: Text.WordWrap
                                             }
                                             Rectangle {
-                                                    height: 48
-                                                    width: parent.width
-                                                        // anchors.top: label_text.bottom
-                                                    anchors.topMargin: 5
-                                                    color: "transparent"
-                                                    Row {
-                                                        //id: lableColumn
-                                                        anchors.centerIn: parent // ⭐ 上下左右置中
-                                                        spacing: 12
-                                                        anchors.fill: parent
-                                                        TextField {
-                                                            id: lableTextField
-                                                            height: parent.height
-                                                                width: parent.width * 19 / 30
-                                                            //anchors.top: parent.bottom
-                                                            //anchors.topMargin: 5
-                                                            font.pixelSize: 22
-                                                            font.weight: Font.Bold
-                                                            font.family: "Poppins"
-                                                            color: "#ffffff"
-                                                            text: Cp.label
+                                                height: 48
+                                                width: parent.width
+                                                    // anchors.top: label_text.bottom
+                                                anchors.topMargin: 5
+
+                                                color: "transparent"
+                                                Column {
+                                                    //id: lableColumn
+                                                    anchors.centerIn: parent // ⭐ 上下左右置中
+                                                    spacing: 140
+                                                    anchors.fill: parent
+                                                    TextField {
+                                                        id: lableTextField
+                                                        height: parent.height
+                                                            width: parent.width
+                                                        //anchors.top: parent.bottom
+                                                        //anchors.topMargin: 5
+                                                        font.pixelSize: 22
+                                                        font.weight: Font.Bold
+                                                        font.family: "Poppins"
+                                                        color: "#ffffff"
+                                                        text: Cp.label
 
 
-                                                            horizontalAlignment: Text.AlignLeft
-                                                            verticalAlignment: Text.AlignVCenter
-                                                            background: Rectangle {
-                                                                color: "#4de59263" // 背景黑色
-                                                                radius: 5 // 圓角
-                                                            }
+                                                        horizontalAlignment: Text.AlignLeft
+                                                        verticalAlignment: Text.AlignVCenter
+                                                        background: Rectangle {
+                                                            color: "#4de59263" // 背景黑色
+                                                            radius: 5 // 圓角
                                                         }
-                                                        //savebotton
-                                                        Rectangle {
-                                                            id: saveButtom
-                                                            height: parent.height
-                                                            width: parent.width * 10 / 30
-                                                            color: "#e59263"
-                                                            radius: 5
-                                                            Text {
-                                                                id: save_File
-                                                                color: "#ffffff"
-                                                                font.family: "Poppins"
-                                                                font.pixelSize: saveFileBtnMouseArea.containsMouse ? 28 : 24
-                                                                font.weight: Font.Bold
-                                                                //horizontalAlignment: Text.AlignLeft
-                                                                text: "Save File"
-                                                                textFormat: Text.PlainText
-                                                                verticalAlignment: Text.AlignTop
-                                                                wrapMode: Text.WordWrap
-                                                                anchors.verticalCenter: parent.verticalCenter //文字垂直置中
-                                                                anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
-                                                            }
-                                                            layer.enabled: true
-                                                            layer.effect: MultiEffect {
-                                                                shadowEnabled: saveFileBtnMouseArea.containsMouse ? true : false
-                                                                shadowColor: "white"
-                                                                shadowBlur: 0.8
-                                                            }
-                                                            MouseArea {
-                                                                id: saveFileBtnMouseArea
-                                                                anchors.fill: parent
-                                                                hoverEnabled: true
-                                                                cursorShape: Qt.PointingHandCursor
-                                                            }
+                                                    }
+                                                    //savebotton
+                                                    Rectangle {
+                                                        id: saveButtom
+                                                        height: 60
+                                                        width: parent.width
+                                                        color: "#e59263"
+                                                        radius: 5
+                                                        Text {
+                                                            id: save_File
+                                                            color: "#ffffff"
+                                                            font.family: "Poppins"
+                                                            font.pixelSize: saveFileBtnMouseArea.containsMouse ? 28 : 24
+                                                            font.weight: Font.Bold
+                                                            //horizontalAlignment: Text.AlignLeft
+                                                            text: "Save File"
+                                                            textFormat: Text.PlainText
+                                                            verticalAlignment: Text.AlignTop
+                                                            wrapMode: Text.WordWrap
+                                                            anchors.verticalCenter: parent.verticalCenter //文字垂直置中
+                                                            anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
+                                                        }
+                                                        layer.enabled: true
+                                                        layer.effect: MultiEffect {
+                                                            shadowEnabled: saveFileBtnMouseArea.containsMouse ? true : false
+                                                            shadowColor: "white"
+                                                            shadowBlur: 0.8
+                                                        }
+                                                        MouseArea {
+                                                            id: saveFileBtnMouseArea
+                                                            anchors.fill: parent
+                                                            hoverEnabled: true
+                                                            cursorShape: Qt.PointingHandCursor
                                                         }
                                                     }
                                                 }
-                                        }
-                                    }
-                                }
-                                Rectangle {
-                                    // id: lable
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    color: "#4d474747"
-                                    radius: 10
-                                    //savebotton
-                                    Rectangle {
-                                        id: importButtom
-                                        anchors.centerIn: parent
-                                        height: parent.height * 0.4
-                                        width: parent.width * 19 / 30
-                                        border.color: "#e59263"
-                                        border.width: 5
-                                        color: "#00e59263"
-                                        radius: 5
-                                        Text {
-                                            id: importFile
-                                            color: "#e59263"
-                                            font.family: "Poppins"
-                                            font.pixelSize: importFileBtnMouseArea.containsMouse ? 28 : 24
-                                            font.weight: Font.Bold
-                                            //horizontalAlignment: Text.AlignLeft
-                                            text: "Import model"
-                                            textFormat: Text.PlainText
-                                            verticalAlignment: Text.AlignTop
-                                            wrapMode: Text.WordWrap
-                                            anchors.verticalCenter: parent.verticalCenter //文字垂直置中
-                                            anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
-                                        }
-                                        layer.enabled: true
-                                        layer.effect: MultiEffect {
-                                            shadowEnabled: importFileBtnMouseArea.containsMouse ? true : false
-                                            shadowColor: "#e59263"
-                                            shadowBlur: 0.8
-                                        }
-                                        MouseArea {
-                                            id: importFileBtnMouseArea
-                                            anchors.fill: parent
-                                            hoverEnabled: true
-                                            cursorShape: Qt.PointingHandCursor
+                                            }
                                         }
                                     }
                                 }

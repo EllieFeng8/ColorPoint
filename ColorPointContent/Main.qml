@@ -97,19 +97,7 @@ MainScreen {
         tableView.model:mainDataModel
     }
 
-    importFileBtnMouseArea.onClicked: {
-        fileDialog.open()
-    }
-    FileDialog {
-        id: fileDialog
-        title: "選擇本地檔案"
-        currentFolder: "file:///"   // 開啟本地磁碟
-        nameFilters: ["All files (*)", "Text files (*.txt)"]
 
-        onAccepted: {
-            console.log("選到的檔案:", selectedFile)
-        }
-    }
     Timer {
         id: whiteScanReminderTimer
         interval: mainScreen.whiteScanReminderMs
