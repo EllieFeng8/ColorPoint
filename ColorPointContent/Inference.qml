@@ -7,7 +7,7 @@ import Core 1.0
 
 Rectangle {
     id:inference
-    height: 1080
+    height: 1180
     width: 1920
     // anchors.fill: parent
     clip: true
@@ -27,6 +27,7 @@ Rectangle {
     property string labelText: "label"
     property string fileNameText: "file123"
     property ListModel inferDataModel: ListModel {}
+    property bool whiteScanClicked: false
 
     property int whiteScanReminderMs:60 * 60 * 1000
     Timer {
@@ -85,7 +86,36 @@ Rectangle {
         anchors.leftMargin: 20
         anchors.rightMargin: 20
 
+        Image{
+            anchors.right:parent.right
+            anchors.rightMargin:20
+            anchors.top:rec.top
+            anchors.topMargin:-18
+            scale:heightSetBtnMouseArea.containsMouse ? 1.2 : 1.1
+            source:"assets/refresh.png"
+
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: heightSetBtnMouseArea.containsMouse ? true : false
+                shadowColor: "white"
+                shadowBlur: 0.8
+            }
+            MouseArea {
+                id: heightSetBtnMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    //inferAddData(Cp.inferLabel);//test
+                    Cp.inferHeightSetBtn = true
+                    console.log("inferHeightSetBtn clicked",Cp.inferHeightSetBtn)
+                }
+            }
+        }
+
+
         Rectangle {
+            id:rec
             y: 28
             height: parent.height * 0.9
             width: parent.width * 0.07
@@ -283,55 +313,108 @@ Rectangle {
                                     //anchors.fill: parent
                                     // anchors.rightMargin: 467
                                     Rectangle{
-                                        Layout.preferredHeight: parent.height * 0.15
-                                        Layout.fillWidth: true
+                                        Layout.preferredHeight: parent.height * 0.25
+                                        Layout.preferredWidth: parent.width
                                         color: "#21555353"
                                         radius: 20
-                                        RowLayout{
-                                            anchors.fill: parent
-                                            spacing:80
-                                            // anchors.leftMargin: 50
+                                        ColumnLayout {
+                                            // id: scanRow
                                             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                                            Text{
-                                                // anchors.fill: parent
+                                            Layout.preferredWidth: parent.width
+                                            Layout.fillHeight: true
 
-                                                color:"#ffffff"
-                                                font.family: "Poppins"
-                                                font.pixelSize: 25
-                                                font.weight: Font.Bold
-                                                horizontalAlignment: Text.AlignLeft
-                                                verticalAlignment: Text.AlignVCenter
-                                                anchors.leftMargin: 10
-                                                text: "高度"
-                                                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                                            }
-                                            Text{
-                                                // anchors.fill: parent
+                                            spacing: 15
 
-                                                color:"#ffffff"
-                                                font.family: "Poppins"
-                                                font.pixelSize: 35
-                                                font.weight: Font.Normal
-                                                horizontalAlignment: Text.AlignHCenter
-                                                verticalAlignment: Text.AlignVCenter
-                                                text: Cp.inferHeight
+                                            RowLayout {
+                                                Layout.fillWidth: true
                                                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                                            }
-                                            Text{
-                                                // anchors.fill: parent
 
-                                                color:"#ffffff"
-                                                font.family: "Poppins"
-                                                font.pixelSize: 25
-                                                font.weight: Font.Normal
-                                                horizontalAlignment: Text.AlignRight
-                                                verticalAlignment: Text.AlignVCenter
-                                                anchors.rightMargin: 20
-                                                text: "cm"
-                                                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                spacing: 20
+                                                // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                Text {
+                                                    color: "#ffffff"
+                                                    font.family: "Poppins"
+                                                    font.pixelSize: 25
+                                                    font.weight: Font.Bold
+                                                    Layout.fillWidth: true
+                                                    horizontalAlignment: Text.AlignLeft
+                                                    verticalAlignment: Text.AlignVCenter
+                                                    text: "          高度                  "
+                                                    // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                }
+                                                Text {
+                                                    // anchors.fill: parent
+                                                    text: Cp.inferHeight
+                                                    color: "#ffffff"
+                                                    font.family: "Poppins"
+                                                    font.pixelSize: 35
+                                                    font.weight: Font.Normal
+                                                    Layout.fillWidth: true
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    verticalAlignment: Text.AlignVCenter
+
+                                                    // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                }
+                                                Text {
+                                                    // anchors.fill: parent
+                                                    text: "              cm"
+                                                    color: "#ffffff"
+                                                    font.family: "Poppins"
+                                                    font.pixelSize: 25
+                                                    font.weight: Font.Normal
+                                                    Layout.fillWidth: true
+                                                    horizontalAlignment: Text.AlignRight
+                                                    verticalAlignment: Text.AlignVCenter
+
+                                                    // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                }
                                             }
+                                            RowLayout {
+                                                Layout.fillWidth: true
+                                                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+
+                                                spacing: 20
+                                                // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                Text {
+                                                    color: "#ffffff"
+                                                    font.family: "Poppins"
+                                                    font.pixelSize: 25
+                                                    font.weight: Font.Bold
+                                                    Layout.fillWidth: true
+                                                    horizontalAlignment: Text.AlignLeft
+                                                    verticalAlignment: Text.AlignVCenter
+                                                    text: "    目前高度                 "
+                                                    // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                }
+                                                Text {
+                                                    // anchors.fill: parent
+                                                    text: Cp.inferCurrentHeight
+                                                    color: "#ffffff"
+                                                    font.family: "Poppins"
+                                                    font.pixelSize: 35
+                                                    font.weight: Font.Normal
+                                                    Layout.fillWidth: true
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    verticalAlignment: Text.AlignVCenter
+
+                                                    // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                }
+                                                Text {
+                                                    // anchors.fill: parent
+                                                    text: "              cm"
+                                                    color: "#ffffff"
+                                                    font.family: "Poppins"
+                                                    font.pixelSize: 25
+                                                    font.weight: Font.Normal
+                                                    Layout.fillWidth: true
+                                                    horizontalAlignment: Text.AlignRight
+                                                    verticalAlignment: Text.AlignVCenter
+
+                                                    // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                }
+                                            }
+
                                         }
-
                                     }
 
                                     Rectangle {
@@ -485,7 +568,7 @@ Rectangle {
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        Cp.inferConnectBtn = true
+                                        Cp.connectBtn = true
                                         console.log("linkBtnMouseArea clicked",Cp.inferConnectBtn)
                                     }
                                 }
@@ -500,7 +583,7 @@ Rectangle {
                                 anchors.leftMargin: 20
                                 height: 28
                                 width: 28
-                                color: Cp.inferConnectedLight ? "#8deb85" : "red"
+                                color: Cp.connectedLight ? "#8deb85" : "red"
                                 radius: 8
 
                                 Text {
@@ -544,7 +627,7 @@ Rectangle {
                                     // x: 304.90
                                     // y: 448.05
                                     anchors.top: parent.top
-                                    anchors.topMargin: 15
+                                    anchors.topMargin: 25
 
                                     // anchors.left: parent.left
                                     // anchors.leftMargin: 60
@@ -564,7 +647,7 @@ Rectangle {
                                 TextField {
                                     id: confirmTextField
                                     anchors.top: integration_Time_text.bottom
-                                    anchors.topMargin: 20
+                                    anchors.topMargin: 5
                                     anchors.left: integration_Time_text.left
                                     enabled:false
                                     height: 48
@@ -607,7 +690,7 @@ Rectangle {
                                 TextField {
                                     id: average_TimestextField
                                     anchors.top: average_Timestext.bottom
-                                    anchors.topMargin: 15
+                                    anchors.topMargin: 5
                                     enabled:false
                                     height: 48
                                     width: parent.width
@@ -624,6 +707,96 @@ Rectangle {
                                         radius: 5 // 圓角
                                     }
                                 }
+
+                                Text {
+                                    id: measure_Timestext
+
+                                    anchors.top: average_TimestextField.bottom
+                                    anchors.topMargin: 30
+
+                                    height: 33
+
+                                    width: parent.width
+                                    color: "#ffffff"
+                                    font.family: "Poppins"
+                                    font.pixelSize: 27
+                                    font.weight: Font.Bold
+                                    horizontalAlignment: Text.AlignLeft
+                                    text: "Measure period (s)"
+                                    textFormat: Text.PlainText
+                                    verticalAlignment: Text.AlignTop
+                                    wrapMode: Text.WordWrap
+                                }
+
+                                TextField {
+                                    id: measureTextField
+                                    anchors.top: measure_Timestext.bottom
+                                    anchors.topMargin: 5
+                                    enabled:true
+                                    height: 48
+                                    width: parent.width*0.6
+                                    font.pixelSize: 22
+                                    font.weight: Font.Bold
+                                    font.family: "Poppins"
+                                    text: Number(Cp.inferMeasurePeriod)
+                                    color: "#ffffff"
+                                    validator: IntValidator {}
+                                    horizontalAlignment: Text.AlignLeft
+                                    verticalAlignment: Text.AlignVCenter
+                                    background: Rectangle {
+                                        color: "#4de59263" // 背景黑色
+                                        radius: 5 // 圓角
+                                    }
+                                }
+                                Rectangle {
+                                    anchors.left: measureTextField.right
+                                    anchors.leftMargin: 15
+                                    anchors.top: measureTextField.top
+
+                                    //anchors.topMargin: 15
+
+                                    width: parent.width * 0.35
+                                    height: 48
+                                    color: "#e59263"
+                                    radius: 10
+                                    Text {
+
+                                        color: "#ffffff"
+                                        font.family: "Poppins"
+                                        font.pixelSize: measureBtnMouseArea.containsMouse ? 22 : 20
+                                        font.weight: Font.Bold
+                                        anchors.verticalCenter: parent.verticalCenter //文字垂直置中
+                                        anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
+                                        text: "OK"
+                                        textFormat: Text.PlainText
+                                        wrapMode: Text.WordWrap
+                                    }
+                                    layer.enabled: true
+                                    layer.effect: MultiEffect {
+                                        shadowEnabled: measureBtnMouseArea.containsMouse ? true : false
+                                        shadowColor: "white"
+                                        shadowBlur: 0.8
+                                    }
+                                    MouseArea {
+                                        id: measureBtnMouseArea
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked:{
+                                            Cp.inferPeriodBtn = true
+                                        if(Number(measureTextField.text)*1000 > Number(Cp.inferIntegrationTime) + 1){
+                                            Cp.inferMeasurePeriod = Number(measureTextField.text)
+                                            console.log("true Cp.inferMeasurePeriod",Cp.inferMeasurePeriod,measureTextField.text,typeof(Cp.inferMeasurePeriod))
+                                        }
+                                        else{
+                                            Cp.inferMeasurePeriod = Number(Cp.inferIntegrationTime)/1000
+                                            console.log("false Cp.inferMeasurePeriod",Cp.inferMeasurePeriod,Cp.inferIntegrationTime,typeof(Cp.inferMeasurePeriod))
+                                        }
+                                            console.log("inferPeriodBtn",Cp.inferPeriodBtn,Cp.inferMeasurePeriod)
+                                        }
+                                    }
+                                }
+
                             }
                         }
                         //Scan
@@ -642,7 +815,7 @@ Rectangle {
                                     id: rectangle_48
                                     width: parent.width
                                     height: 90
-                                    color: "#e59263"
+                                    color: whiteScanClicked ? "#e59263"  : "#8c573a"
                                     radius: 5
                                     //anchors.centerIn: parent
                                     Text {
@@ -666,7 +839,8 @@ Rectangle {
                                     MouseArea {
                                         id: scanBtnMouseArea
                                         anchors.fill: parent
-                                        hoverEnabled: true
+                                        hoverEnabled: whiteScanClicked ? true :false
+                                        enabled:whiteScanClicked ? true :false
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
                                             inferAddData(Cp.inferLabel);//test
@@ -679,7 +853,7 @@ Rectangle {
                                     id: rectangle11
                                     width: parent.width
                                     height: parent.height *0.3
-                                    color: Cp.inferAutoScanBtn? "red" : "#653e96"
+                                    color: whiteScanClicked ? Cp.inferAutoScanBtn? "red" : "#653e96" : "#40295f"
                                     radius: 5
                                     //anchors.centerIn: parent
                                     Text {
@@ -688,7 +862,7 @@ Rectangle {
                                         font.family: "Poppins"
                                         font.pixelSize: autoScanBtnMouseArea.containsMouse ? 30 : 28
                                         font.weight: Font.Bold
-                                        text: Cp.inferAutoScanBtn? "Stop" : "Auto"
+                                        text: Cp.inferAutoScanBtn? "Stop" : "Continue"
                                         textFormat: Text.PlainText
                                         anchors.verticalCenter: parent.verticalCenter //文字垂直置中
                                         anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
@@ -703,7 +877,8 @@ Rectangle {
                                     MouseArea {
                                         id: autoScanBtnMouseArea
                                         anchors.fill: parent
-                                        hoverEnabled: true
+                                        hoverEnabled: whiteScanClicked ? true :false
+                                        enabled:whiteScanClicked ? true :false
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
                                             Cp.inferAutoScanBtn = !Cp.inferAutoScanBtn
@@ -749,6 +924,7 @@ Rectangle {
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
                                             Cp.inferWhiteBtn = true
+                                            whiteScanClicked = true
                                             inferAddData(Cp.whiteLabel)
                                             whiteScanReminderTimer.restart()
                                             console.log("whiteScanBtnMouseArea clicked",Cp.inferWhiteBtn)

@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Core 1.0
 
 Window {
+    id:root
     width: mainScreen.width
     height: mainScreen.height
 
@@ -13,6 +14,27 @@ Window {
 
     Main {
         id: mainScreen
+    }
+    property var activeAppWindow: root
+
+    function toggleFullscreenForActiveWindow() {
+        var w = activeAppWindow || root
+        if (w.visibility === Window.FullScreen)
+            w.showNormal();
+        else
+            w.showFullScreen();
+    }
+
+
+
+    Component.onCompleted: {
+        root.showFullScreen();
+    }
+
+    // 鍵盤快捷鍵：對目前滑鼠點擊(Active)的視窗切換全螢幕
+    Shortcut {
+        sequence: "F11"
+        onActivated: root.toggleFullscreenForActiveWindow()
     }
     // ===== 對外呼叫 =====
     function showAbnormal(msg) {
@@ -83,10 +105,10 @@ Window {
                     font.pointSize: 10
                     Layout.alignment: Qt.AlignHCenter
                     onClicked: {
-
-                        Cp.heightSet = 120;
+                        Cp.powerOnResetBtn = true
+                        // Cp.heightSet = 120;
                         abnormalDialog.close();
-                        console.log("Cp.heightSet",Cp.heightSet)
+                        console.log("Cp.heightSet",Cp.heightSet,Cp.powerOnResetBtn)
                     }
                 }
             }

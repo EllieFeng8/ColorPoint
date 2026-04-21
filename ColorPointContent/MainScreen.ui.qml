@@ -6,7 +6,8 @@ import QtQuick.Controls
 import Core 1.0
 
 Rectangle {
-    height: 1080
+    id:root
+    height: 1180
     width: 1920
     // anchors.fill: parent
     clip: true
@@ -26,7 +27,7 @@ Rectangle {
     property alias heightconfirmBtnMouseArea : heightconfirmBtnMouseArea
     property alias resetbuttomMouseArea : resetbuttomMouseArea
     property alias heightSet1 : heightSet1
-    property alias autoCheckBox : autoCheckBox
+    property bool whiteScanClicked: false
     MouseArea {
         anchors.fill: parent
     }
@@ -271,7 +272,7 @@ Rectangle {
                                         leftPadding: 20
                                         Rectangle {
                                             id: heightRec
-                                            color: autoCheckBox.checked ?"#4DB5917D":"#4de59263" // 背景橘色
+                                            color: "#4de59263" // 背景橘色
                                             radius: 5 // 圓角
                                             height: parent.height * 1.4
                                             width: parent.width * 0.8
@@ -289,54 +290,9 @@ Rectangle {
                                                 font.family: "Poppins"
                                                 color: "#ffffff"
                                                 text: Number(Cp.heightSet)
-                                                enabled: autoCheckBox.checked ? false : true
+                                                enabled: true
                                                 horizontalAlignment: Text.AlignLeft
                                                 verticalAlignment: Text.AlignVCenter
-                                            }
-                                        }
-                                        CheckBox {
-                                            id: autoCheckBox
-                                            width: 166
-                                            height: 42
-                                            anchors.left: heightset.left
-                                            anchors.leftMargin: 20
-                                            anchors.topMargin: 19
-                                            anchors.top: heightRec.bottom
-                                            text: checked ? "自動設定" : "手動設定"
-                                            checked: Cp.autoSetHeightBtn
-                                            onCheckedChanged: {
-                                                Cp.autoSetHeightBtn = checked
-                                                // console.log("checked 改變:", checked,Cp.autoSetHeightBtn)
-                                            }
-                                            contentItem: Text {
-                                                x: 54
-                                                y: 17
-                                                text: autoCheckBox.text
-                                                font.pixelSize: 24
-                                                horizontalAlignment: Text.AlignHCenter // ⭐ 字體大小
-                                                font.bold: true // 可選：加粗
-                                                color: "white"
-                                                verticalAlignment: Text.AlignVCenter
-                                            }
-
-                                            indicator: Rectangle {
-                                                x: 5
-                                                y: 12
-                                                width: 20
-                                                height: 20
-                                                radius: 4
-                                                border.width: 2
-                                                border.color: autoCheckBox.checked ? "#e59263" : "#888"
-                                                color: autoCheckBox.checked ? "#e59263" : "transparent"
-
-                                                // 打勾符號
-                                                Text {
-                                                    anchors.centerIn: parent
-                                                    text: "✔"
-                                                    color: "white"
-                                                    visible: autoCheckBox.checked
-                                                    font.bold: true
-                                                }
                                             }
                                         }
 
@@ -391,7 +347,7 @@ Rectangle {
                                             height: heightSet1.height
                                             width: parent.width * 0.3
 
-                                            color: autoCheckBox.checked ?"#AC6D4A":"#e59263"
+                                            color: "#e59263"
                                             radius: 10
                                             Text {
                                                 id: heightconfirm
@@ -405,7 +361,7 @@ Rectangle {
                                                 textFormat: Text.PlainText
                                                 wrapMode: Text.WordWrap
                                             }
-                                            layer.enabled: autoCheckBox.checked ? false : true
+                                            layer.enabled: true
                                             layer.effect: MultiEffect {
                                                 shadowEnabled: heightconfirmBtnMouseArea.containsMouse ? true : false
                                                 shadowColor: "white"
@@ -414,7 +370,7 @@ Rectangle {
                                             MouseArea {
                                                 id: heightconfirmBtnMouseArea
                                                 anchors.fill: parent
-                                                enabled: autoCheckBox.checked ? false : true
+                                                enabled: true
                                                 hoverEnabled: true
                                                 cursorShape: Qt.PointingHandCursor
                                             }
@@ -837,7 +793,7 @@ Rectangle {
                                     id: rectangle_48
                                     width: parent.width
                                     height: 120
-                                    color: "#e59263"
+                                    color: whiteScanClicked ? "#e59263"  : "#8c573a"
                                     radius: 5
                                     //anchors.centerIn: parent
                                     Text {
@@ -852,7 +808,7 @@ Rectangle {
                                         anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
                                         wrapMode: Text.WordWrap
                                     }
-                                    layer.enabled: true
+                                    layer.enabled:whiteScanClicked ? true : false
                                     layer.effect: MultiEffect {
                                         shadowEnabled: scanBtnMouseArea.containsMouse ? true : false
                                         shadowColor: "white"
@@ -861,7 +817,8 @@ Rectangle {
                                     MouseArea {
                                         id: scanBtnMouseArea
                                         anchors.fill: parent
-                                        hoverEnabled: true
+                                        hoverEnabled: whiteScanClicked ? true :false
+                                        enabled:whiteScanClicked ? true :false
                                         cursorShape: Qt.PointingHandCursor
                                     }
                                 }

@@ -7,6 +7,7 @@ MainScreen {
     id: mainScreen
     property ListModel mainDataModel: ListModel {}
     property int whiteScanReminderMs: 60 * 60 * 1000
+
     function addData(label){
         let now = new Date()
 
@@ -46,6 +47,7 @@ MainScreen {
     }
     autoSettingBtnMouseArea.onClicked: {
         // Cp.integrationTime = confirmTextField.text
+        Cp.autoBtn = true
         console.log("autoSettingBtnMouseArea Clicked")
     }
     scanBtnMouseArea.onClicked: {
@@ -59,7 +61,7 @@ MainScreen {
         addData(Cp.whiteLabel);
         Cp.saveCurrentInstrumentConfigFile()
         whiteScanReminderTimer.restart()
-        //console.log("whiteScanBtnMouseArea clicked",Cp.whiteBtn)
+        whiteScanClicked = true
     }
 
     lableTextField.onTextChanged:{

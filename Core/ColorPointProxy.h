@@ -39,6 +39,7 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(bool saveLabelBtn    READ getSaveLabelBtn    WRITE setSaveLabelBtn    NOTIFY saveLabelBtnChanged)
     Q_PROPERTY(bool saveFileNameBtn    READ getSaveFileNameBtn    WRITE setSaveFileNameBtn    NOTIFY saveFileNameBtnChanged)
     Q_PROPERTY(bool clearNirListBtn    READ getClearNirListBtn    WRITE setClearNirListBtn    NOTIFY clearNirListBtnChanged)
+    Q_PROPERTY(bool powerOnResetBtn    READ getPowerOnResetBtn    WRITE setPowerOnResetBtn    NOTIFY powerOnResetBtnChanged)
 
     // ===== Settings =====
     Q_PROPERTY(int  integrationTime READ getIntegrationTime WRITE setIntegrationTime NOTIFY integrationTimeChanged)
@@ -60,11 +61,15 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(int  inferIntegrationTime READ getInferIntegrationTime WRITE setInferIntegrationTime NOTIFY inferIntegrationTimeChanged)
     Q_PROPERTY(int  inferAvgTime   READ getInferAvgTime   WRITE setInferAvgTime   NOTIFY inferAvgTimeChanged)
     Q_PROPERTY(int  inferHeight   READ getInferHeight WRITE setInferHeight   NOTIFY inferHeightChanged)
+    Q_PROPERTY(int  inferCurrentHeight   READ getInferCurrentHeight WRITE setInferCurrentHeight   NOTIFY inferCurrentHeightChanged)
+    Q_PROPERTY(int  inferMeasurePeriod   READ getInferMeasurePeriod  WRITE setInferMeasurePeriod    NOTIFY inferMeasurePeriodChanged)
 
     Q_PROPERTY(bool inferScanBtn    READ getInferScanBtn    WRITE setInferScanBtn    NOTIFY inferScanBtnChanged)
     Q_PROPERTY(bool inferAutoScanBtn    READ getInferAutoScanBtn    WRITE setInferAutoScanBtn    NOTIFY inferAutoScanBtnChanged)
     Q_PROPERTY(bool inferWhiteBtn   READ getInferWhiteBtn   WRITE setInferWhiteBtn   NOTIFY inferWhiteBtnChanged)
     Q_PROPERTY(bool inferSaveBtn   READ getInferSaveBtn   WRITE setInferSaveBtn   NOTIFY inferSaveBtnChanged)
+    Q_PROPERTY(bool inferHeightSetBtn   READ getInferHeightSetBtn   WRITE setInferHeightSetBtn   NOTIFY inferHeightSetBtnChanged)
+    Q_PROPERTY(bool inferPeriodBtn   READ getInferPeriodBtn   WRITE setInferPeriodBtn   NOTIFY inferPeriodBtnChanged)
     Q_PROPERTY(QString inferLabel    READ getInferLabel    WRITE setInferLabel    NOTIFY inferLabelChanged)
 
     // =====inference Array =====
@@ -257,6 +262,12 @@ public:
         m_clearNirListBtn = value;
         emit clearNirListBtnChanged(m_clearNirListBtn);
     }
+    Q_INVOKABLE bool getPowerOnResetBtn() const { return m_powerOnResetBtn   ; }
+    Q_INVOKABLE void setPowerOnResetBtn(bool value)
+    {
+        m_powerOnResetBtn = value;
+        emit powerOnResetBtnChanged(m_powerOnResetBtn);
+    }
     Q_INVOKABLE int getIntegrationTime() const { return m_integrationTime ; }
     Q_INVOKABLE void setIntegrationTime(int value)
     {
@@ -348,6 +359,19 @@ public:
         m_inferHeight = value;
         emit inferHeightChanged(m_inferHeight);
     }
+    Q_INVOKABLE int getInferCurrentHeight() const { return m_inferCurrentHeight  ; }
+    Q_INVOKABLE void setInferCurrentHeight(int value)
+    {
+        m_inferCurrentHeight = value;
+        emit inferCurrentHeightChanged(m_inferCurrentHeight);
+    }
+
+    Q_INVOKABLE int getInferMeasurePeriod () const { return m_inferMeasurePeriod   ; }
+    Q_INVOKABLE void setInferMeasurePeriod (int value)
+    {
+        m_inferMeasurePeriod  = value;
+        emit inferMeasurePeriodChanged(m_inferMeasurePeriod );
+    }
 
     Q_INVOKABLE bool getInferScanBtn() const { return m_inferScanBtn   ; }
     Q_INVOKABLE void setInferScanBtn(bool value)
@@ -369,6 +393,20 @@ public:
         m_inferSaveBtn = value;
         qDebug() << value << "SaveBtnChanged" << m_inferSaveBtn;
         emit inferSaveBtnChanged(m_inferSaveBtn);
+    }
+    Q_INVOKABLE bool getInferHeightSetBtn() const { return m_inferHeightSetBtn   ; }
+    Q_INVOKABLE void setInferHeightSetBtn(bool value)
+    {
+        m_inferHeightSetBtn = value;
+        qDebug() << value << "HeightSetBtnChanged" << m_inferHeightSetBtn;
+        emit inferHeightSetBtnChanged(m_inferHeightSetBtn);
+    }
+    Q_INVOKABLE bool getInferPeriodBtn() const { return m_inferPeriodBtn   ; }
+    Q_INVOKABLE void setInferPeriodBtn(bool value)
+    {
+        m_inferPeriodBtn = value;
+        qDebug() << value << "PeriodBtnChanged" << m_inferPeriodBtn;
+        emit inferPeriodBtnChanged(m_inferPeriodBtn);
     }
     Q_INVOKABLE bool getInferWhiteBtn() const { return m_inferWhiteBtn ; }
     Q_INVOKABLE void setInferWhiteBtn(bool value)
@@ -489,6 +527,7 @@ public:
     void saveLabelBtnChanged(bool);
     void saveFileNameBtnChanged(bool);
     void clearNirListBtnChanged(bool);
+    void powerOnResetBtnChanged(bool);
 
     void integrationTimeChanged(int);
     void avgTimeChanged(int);
@@ -507,10 +546,14 @@ public:
     void inferIntegrationTimeChanged(int);
     void inferAvgTimeChanged(int);
     void inferHeightChanged(int);
+    void inferCurrentHeightChanged(int);
+    void inferMeasurePeriodChanged(int);
     void inferScanBtnChanged(bool);
     void inferAutoScanBtnChanged(bool);
     void inferWhiteBtnChanged(bool);
     void inferSaveBtnChanged(bool);
+    void inferHeightSetBtnChanged(bool);
+    void inferPeriodBtnChanged(bool);
     void inferLabelChanged(QString text);
     void inferChartDataChanged();
     void inferNirListChanged();
@@ -632,6 +675,7 @@ private:
     bool m_saveLabelBtn = false;
     bool m_saveFileNameBtn = false;
     bool m_clearNirListBtn = false;
+    bool m_powerOnResetBtn = false;
 
     int m_integrationTime = 0;
     int m_avgTime   = 0;
@@ -649,10 +693,14 @@ private:
     int m_inferIntegrationTime = 0;
     int m_inferAvgTime = 0;
     int m_inferHeight = 0;
+    int m_inferCurrentHeight = 0;
+    int m_inferMeasurePeriod = 1;
     bool m_inferScanBtn = false;
     bool m_inferAutoScanBtn = false;
     bool m_inferWhiteBtn = false;
     bool m_inferSaveBtn = false;
+    bool m_inferHeightSetBtn = false;
+    bool m_inferPeriodBtn = false;
     QString m_inferLabel = "";
     QVariantList m_inferChartData={};
     QVariantList m_inferNirList;
