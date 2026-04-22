@@ -10,6 +10,18 @@ class Spectrometer : public QObject
 {
 	Q_OBJECT
 public:
+	struct ScanResult {
+		QString time;
+		QString label;
+		vector<float> data;
+	};
+
+	struct ScanRecord {
+		QString time;
+		QString label;
+		std::vector<float> data;
+	};
+	std::vector<ScanRecord> m_pendingRecords;
 	unsigned int status=0; 
 	vector<uint32_t> VIDPID; //存放得到的VIDPID list
 	vector<void*> handles; //儲存各設備的handle
@@ -18,6 +30,7 @@ public:
 	vector<float> b_intensity;
 	vector<float> w_intensity;
 	vector<float> m_intensity;
+	vector<float> auto_intensity;
 
 	vector<float> wavelength;
 	unsigned int time;
@@ -25,13 +38,15 @@ public:
 	unsigned int count;
 	QVariantList list;
 	QString m_label;
-	int Avg =10 ;
-	int Time = 50000 ;
+	int Avg =1 ;
+	int Time = 10000 ;
 	bool Run = true;
 	QTimer* m_timer = nullptr;
 public slots:
 	QString SearchSpectrometer();//尋找設備
-	void saveToCSV();
+	void autoset(bool v);
+	void clearlist(bool v);
+	void saveToCSV(bool v);
 	void OpenSpectrometer(bool v);//開啟
 
 	void CloseSpectrometer(int dev);//關閉
@@ -80,6 +95,7 @@ signals:
 	void DataIntensity(vector<float>);
 private:
 	QMutex m_mutex;
+	
 };
 
 

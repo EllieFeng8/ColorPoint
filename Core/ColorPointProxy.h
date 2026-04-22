@@ -37,6 +37,7 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(bool whiteBtn   READ getWhiteBtn   WRITE setWhiteBtn   NOTIFY whiteBtnChanged)
     Q_PROPERTY(bool saveLabelBtn    READ getSaveLabelBtn    WRITE setSaveLabelBtn    NOTIFY saveLabelBtnChanged)
     Q_PROPERTY(bool saveFileNameBtn    READ getSaveFileNameBtn    WRITE setSaveFileNameBtn    NOTIFY saveFileNameBtnChanged)
+    Q_PROPERTY(bool clearNirListBtn    READ getClearNirListBtn    WRITE setClearNirListBtn    NOTIFY clearNirListBtnChanged)
 
     // ===== Settings =====
     Q_PROPERTY(int  integrationTime READ getIntegrationTime WRITE setIntegrationTime NOTIFY integrationTimeChanged)
@@ -62,6 +63,7 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(bool inferScanBtn    READ getInferScanBtn    WRITE setInferScanBtn    NOTIFY inferScanBtnChanged)
     Q_PROPERTY(bool inferAutoScanBtn    READ getInferAutoScanBtn    WRITE setInferAutoScanBtn    NOTIFY inferAutoScanBtnChanged)
     Q_PROPERTY(bool inferWhiteBtn   READ getInferWhiteBtn   WRITE setInferWhiteBtn   NOTIFY inferWhiteBtnChanged)
+    Q_PROPERTY(bool inferSaveBtn   READ getInferSaveBtn   WRITE setInferSaveBtn   NOTIFY inferSaveBtnChanged)
     Q_PROPERTY(QString inferLabel    READ getInferLabel    WRITE setInferLabel    NOTIFY inferLabelChanged)
 
     // =====inference Array =====
@@ -225,96 +227,89 @@ public:
     Q_INVOKABLE bool getClearBtn() const { return m_clearBtn; }
     Q_INVOKABLE void setClearBtn(bool value)
     {
-        if (m_clearBtn != value)
-            m_clearBtn = value;
+        m_clearBtn = value;
         emit clearBtnChanged(m_clearBtn);
     }
     Q_INVOKABLE bool getUpdateBtn() const { return m_updateBtn; }
     Q_INVOKABLE void setUpdateBtn(bool value)
     {
-        if (m_updateBtn != value)
-            m_updateBtn = value;
+        m_updateBtn = value;
         emit updateBtnChanged(m_updateBtn);
     }
     Q_INVOKABLE bool getConnectBtn() const { return m_connectBtn ; }
     Q_INVOKABLE void setConnectBtn(bool value)
     {
-        if (m_connectBtn != value)
-            m_connectBtn = value;
+        m_connectBtn = value;
         qDebug() << value << "connectBtnChanged" << m_connectBtn;
         emit connectBtnChanged(m_connectBtn);
     }
     Q_INVOKABLE bool getConnectedLight() const { return m_connectedLight   ; }
     Q_INVOKABLE void setConnectedLight(bool value)
     {
-        if (m_connectedLight != value)
-            m_connectedLight = value;
+        m_connectedLight = value;
         emit connectedLightChanged(m_connectedLight);
     }
     Q_INVOKABLE bool getSavedLight() const { return m_savedLight ; }
     Q_INVOKABLE void setSavedLight(bool value)
     {
-        if (m_savedLight != value)
-            m_savedLight = value;
+        m_savedLight = value;
         emit savedLightChanged(m_savedLight);
     }
     Q_INVOKABLE bool getConfirmBtn() const { return m_confirmBtn; }
     Q_INVOKABLE void setConfirmBtn(bool value)
     {
-        if (m_confirmBtn != value)
-            m_confirmBtn = value;
+        m_confirmBtn = value;
         emit confirmBtnChanged(m_confirmBtn);
     }
     Q_INVOKABLE bool getAutoBtn() const { return m_autoBtn ; }
     Q_INVOKABLE void setAutoBtn(bool value)
     {
-        if (m_autoBtn != value)
-            m_autoBtn = value;
+        m_autoBtn = value;
         emit autoBtnChanged(m_autoBtn);
     }
 
     Q_INVOKABLE bool getScanBtn() const { return m_scanBtn   ; }
     Q_INVOKABLE void setScanBtn(bool value)
     {
-        if (m_scanBtn != value)
-            m_scanBtn = value;
+        m_scanBtn = value;
         qDebug() << value << "scanBtnChanged" << m_scanBtn;
         emit scanBtnChanged(m_scanBtn);
     }
     Q_INVOKABLE bool getWhiteBtn() const { return m_whiteBtn ; }
     Q_INVOKABLE void setWhiteBtn(bool value)
     {
-        if (m_whiteBtn != value)
-            m_whiteBtn = value;
+        m_whiteBtn = value;
         emit whiteBtnChanged(m_whiteBtn);
     }
 
     Q_INVOKABLE bool getSaveLabelBtn() const { return m_saveLabelBtn   ; }
     Q_INVOKABLE void setSaveLabelBtn(bool value)
     {
-        if (m_saveLabelBtn != value)
-            m_saveLabelBtn = value;
+        m_saveLabelBtn = value;
         emit saveLabelBtnChanged(m_saveLabelBtn);
     }
     Q_INVOKABLE bool getSaveFileNameBtn() const { return m_saveFileNameBtn   ; }
     Q_INVOKABLE void setSaveFileNameBtn(bool value)
     {
-        if (m_saveFileNameBtn != value)
-            m_saveFileNameBtn = value;
+        m_saveFileNameBtn = value;
         emit saveFileNameBtnChanged(m_saveFileNameBtn);
+    }
+    Q_INVOKABLE bool getClearNirListBtn() const { return m_clearNirListBtn   ; }
+    Q_INVOKABLE void setClearNirListBtn(bool value)
+    {
+        m_clearNirListBtn = value;
+        emit clearNirListBtnChanged(m_clearNirListBtn);
     }
     Q_INVOKABLE int getIntegrationTime() const { return m_integrationTime ; }
     Q_INVOKABLE void setIntegrationTime(int value)
     {
-        if (m_integrationTime != value)
-            m_integrationTime = value;
+        m_integrationTime = value;
         emit integrationTimeChanged(m_integrationTime);
     }
     Q_INVOKABLE int getAvgTime() const { return m_avgTime   ; }
     Q_INVOKABLE void setAvgTime(int value)
     {
-        if (m_avgTime != value)
-            m_avgTime = value;
+        m_avgTime = value;
         emit avgTimeChanged(m_avgTime);
     }
     Q_INVOKABLE int getHeight() const { return m_height   ; }
@@ -346,23 +341,20 @@ public:
     Q_INVOKABLE QString getLabel() const { return m_label ; }
     Q_INVOKABLE void setLabel(const QString &value)
     {
-        if (m_label != value)
-            m_label = value;
+        m_label = value;
         emit labelChanged(m_label);
     }
 
     Q_INVOKABLE QString getWhiteLabel() const { return m_whiteLabel ; }
     Q_INVOKABLE void setWhiteLabel(const QString &value)
     {
-        if (m_whiteLabel != value)
-            m_whiteLabel = value;
+        m_whiteLabel = value;
         emit whiteLabelChanged(m_whiteLabel);
     }
     Q_INVOKABLE QString getFileName() const { return m_fileName   ; }
     Q_INVOKABLE void setFileName(const QString &value)
     {
-        if (m_fileName != value)
-            m_fileName = value;
+        m_fileName = value;
         emit fileNameChanged(m_fileName);
     }
 
@@ -390,15 +382,13 @@ public:
     Q_INVOKABLE int getInferAvgTime() const { return m_inferAvgTime   ; }
     Q_INVOKABLE void setInferAvgTime(int value)
     {
-        if (m_inferAvgTime != value)
-            m_inferAvgTime = value;
+        m_inferAvgTime = value;
         emit inferAvgTimeChanged(m_inferAvgTime);
     }
     Q_INVOKABLE int getInferHeight() const { return m_inferHeight  ; }
     Q_INVOKABLE void setInferHeight(int value)
     {
-        if (m_inferHeight != value)
-            m_inferHeight = value;
+        m_inferHeight = value;
         emit inferHeightChanged(m_inferHeight);
     }
 
@@ -415,6 +405,13 @@ public:
         m_inferAutoScanBtn = value;
         qDebug() << value << "AutoscanBtnChanged" << m_inferAutoScanBtn;
         emit inferAutoScanBtnChanged(m_inferAutoScanBtn);
+    }
+    Q_INVOKABLE bool getInferSaveBtn() const { return m_inferSaveBtn   ; }
+    Q_INVOKABLE void setInferSaveBtn(bool value)
+    {
+        m_inferSaveBtn = value;
+        qDebug() << value << "SaveBtnChanged" << m_inferSaveBtn;
+        emit inferSaveBtnChanged(m_inferSaveBtn);
     }
     Q_INVOKABLE bool getInferWhiteBtn() const { return m_inferWhiteBtn ; }
     Q_INVOKABLE void setInferWhiteBtn(bool value)
@@ -534,6 +531,7 @@ public:
     void whiteBtnChanged(bool);
     void saveLabelBtnChanged(bool);
     void saveFileNameBtnChanged(bool);
+    void clearNirListBtnChanged(bool);
 
     void integrationTimeChanged(int);
     void avgTimeChanged(int);
@@ -555,6 +553,7 @@ public:
     void inferScanBtnChanged(bool);
     void inferAutoScanBtnChanged(bool);
     void inferWhiteBtnChanged(bool);
+    void inferSaveBtnChanged(bool);
     void inferLabelChanged(QString text);
     void inferChartDataChanged();
     void inferNirListChanged();
@@ -583,6 +582,7 @@ private:
     bool m_whiteBtn = false;
     bool m_saveLabelBtn = false;
     bool m_saveFileNameBtn = false;
+    bool m_clearNirListBtn = false;
 
     int m_integrationTime = 0;
     int m_avgTime   = 0;
@@ -603,6 +603,7 @@ private:
     bool m_inferScanBtn = false;
     bool m_inferAutoScanBtn = false;
     bool m_inferWhiteBtn = false;
+    bool m_inferSaveBtn = false;
     QString m_inferLabel = "";
     QVariantList m_inferChartData={};
     QVariantList m_inferNirList;

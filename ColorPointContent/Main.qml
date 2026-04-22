@@ -57,6 +57,7 @@ MainScreen {
     whiteScanBtnMouseArea.onClicked: {
         Cp.whiteBtn = true
         addData(Cp.whiteLabel);
+        Cp.saveCurrentInstrumentConfigFile()
         whiteScanReminderTimer.restart()
         //console.log("whiteScanBtnMouseArea clicked",Cp.whiteBtn)
     }
@@ -67,7 +68,8 @@ MainScreen {
     }
 
     saveFileBtnMouseArea.onClicked: {
-        smartNIR.listModelToCsv(mainDataModel);
+        // smartNIR.listModelToCsv(mainDataModel);
+        Cp.saveFileNameBtn = true
     }
     heightconfirmBtnMouseArea.onClicked: {
         // if(Cp.autoSetHeightBtn === true) return
@@ -86,7 +88,7 @@ MainScreen {
 
     resetbuttomMouseArea.onClicked: {
         Cp.resetBtn = true
-        Cp.heightSet = 120
+        //Cp.heightSet = 120
         console.log("resetBtn: ",  Cp.resetBtn)
     }
     SmartNIR{

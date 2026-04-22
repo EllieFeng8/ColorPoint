@@ -34,6 +34,7 @@ public slots:
 
     void setIntegrationTime(int v);
     void setAVG(int v);
+    void whiteScan(bool v);
     void OpenSpectrometer(bool v);
     void onDataAcquires(vector<float> values);
     void onModbusDataReceived(int address, QVector<quint16> data);
@@ -41,12 +42,14 @@ public slots:
     void Height(int h);
     void setHeight(int h);
     void onResetBtnChanged(bool v);
+    void saveData(bool v);
+    void saveConfigJson(QString filePath);
 private:
     explicit Core(QObject* parent = nullptr);
     ~Core();
     bool m_AutoHeight=false;
     bool direction = false;
-    int m_height = 0;
-    int m_targetHeight = 0;
+    double m_height = 0;
+    double m_targetHeight = 0;
     int m_currentDirection = 0;
 };

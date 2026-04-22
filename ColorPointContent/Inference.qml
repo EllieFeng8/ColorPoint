@@ -380,6 +380,7 @@ Rectangle {
                                             color: "transparent"
                                             SmartNIR {
                                                 id: smartNIRtable
+                                                // useInferConfig: true
                                                 anchors.fill: parent
                                                 anchors.verticalCenter: parent.verticalCenter //垂直置中
                                                 anchors.horizontalCenter: parent.horizontalCenter //水平置中
@@ -951,7 +952,9 @@ Rectangle {
                                                             hoverEnabled: true
                                                             cursorShape: Qt.PointingHandCursor
                                                             onClicked: {
-                                                                smartNIRtable.listModelToCsv(inferDataModel);
+                                                                // smartNIRtable.listModelToCsv(inferDataModel);
+                                                                Cp.inferSaveBtn = true
+                                                                console.log("inferSaveBtn",Cp.inferSaveBtn)
                                                             }
                                                         }
 

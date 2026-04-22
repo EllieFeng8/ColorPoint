@@ -48,12 +48,15 @@ void Spectrometer::OpenSpectrometer(bool v)
 			b_intensity.resize(framesize);
 			w_intensity.resize(framesize);
 			m_intensity.resize(framesize);
+			auto_intensity.resize(framesize);
+
 			//將intensity的大小設定為framesize
 			UAI_SpectrometerWavelengthAcquire(handles[0], wavelength.data());
 			if (!m_timer) {
 				m_timer = new QTimer(this);
 				connect(m_timer, &QTimer::timeout, this, &Spectrometer::StartAcq);
 			}
+			emit isOpen();
 		}
 		else
 		{
@@ -103,12 +106,15 @@ void Spectrometer::DataAcquires(int dev ,int Time ,int average)
 		//}
 		for (int i = 0; i < intensity.size(); i++)
 		{
-			float val = intensity[i] - b_intensity[i];
+			float val = intensity[i]-b_intensity[i];
 			m_intensity[i] = val;
-
-			//m_intensity[i] = (val < 0.0f) ? 0.0f : val;
-			//cout << intensity[i] << endl << endl;
 		}
+			ScanRecord record;
+			record.time = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+			record.label = m_label;
+			record.data = m_intensity; // 直接拷貝當前的 vector 內容
+			m_pendingRecords.push_back(record);
+		
 		cout << "Intensity DataAcquires FINISH" << endl << endl << endl;
 		emit DataIntensity(m_intensity);
 	}
@@ -152,8 +158,12 @@ void Spectrometer::Scan()
 	qDebug() << "on ScanBtn clicked";
 	if (!handles.empty() && handles[0] != nullptr)
 	{
-		UAI_SpectrometerSetShutterSwitch(handles[0], 1);// 1 = shutter enable;
-		QTimer::singleShot(300, this, &Spectrometer::CaptureDarkOneshot);
+		unsigned int x;
+
+		UAI_SpectrometerGetShutterSwitch(handles[0], &x);// 1 = shutter enable;
+		qDebug() << "shutter = " << x;
+		UAI_SpectrometerSetShutterSwitch(handles[0], 0);// 1 = shutter enable;
+		QTimer::singleShot(100, this, &Spectrometer::CaptureDarkOneshot);
 	}
 	else
 	{
@@ -165,11 +175,14 @@ void Spectrometer::CaptureDarkOneshot()
 {
 	if (!handles.empty() && handles[0] != nullptr)
 	{
-		UAI_SpectrometerDataAcquires(handles[0], Time, b_intensity.data(), Avg);
-		UAI_SpectrometerSetShutterSwitch(handles[0], 0);// 0 = shutter disable;
+		UAI_SpectrometerDataAcquires(handles[0], Time, b_intensity.data(), 1);
+		UAI_SpectrometerSetShutterSwitch(handles[0], 1);// 0 = shutter disable;
+		unsigned int x;
+		UAI_SpectrometerGetShutterSwitch(handles[0], &x);// 1 = shutter enable;
+		qDebug() << "shutter = " << x;
 		qDebug() << "CaptureDarkOneshot Finish";
 
-		QTimer::singleShot(300, this, [this]() {DataAcquires(0, Time, Avg); });
+		QTimer::singleShot(100, this, [this]() {DataAcquires(0, Time, Avg); });
 	}
 }
 
@@ -209,6 +222,72 @@ void Spectrometer::StopContinuousAcq()
 	}
 }
 
+void Spectrometer::autoset(bool v)
+{
+	// 確保設備已開啟
+	if (handles.empty() || handles[0] == nullptr) {
+		qDebug() << "Autoset failed: No device handle.";
+		return;
+	}
+
+	// 1. 確保 auto_intensity 空間足夠 (與 framesize 同大)
+	if (auto_intensity.size() != framesize) {
+		auto_intensity.resize(framesize);
+	}
+
+	// 進行 15 次讀取與調整循環
+	for (int i = 0; i < 15; i++)
+	{
+		// 2. 獲取當前曝光時間下的資料
+		// 注意：這裡使用的是成員變數 Time (單位通常為微秒)
+		status = UAI_SpectrometerDataAcquires(handles[0], Time, auto_intensity.data(), Avg);
+
+		if (status != 0) {
+			qDebug() << "Data acquisition failed during autoset, error code:" << status;
+			break;
+		}
+
+		// 3. 尋找目前光譜中的最大強度值 (Intensity)
+		float maxVal = 0;
+		for (float val : auto_intensity) {
+			if (val > maxVal) maxVal = val;
+		}
+
+		// 4. 根據邏輯調整曝光時間 (Time)
+		if (maxVal > 65535)
+		{
+			// 超過 65535：減少 30%
+			Time = static_cast<int>(Time * 0.7);
+		}
+		else if (maxVal > 50000)
+		{
+			// 大於 50000 且小於等於 65535：減少 10%
+			Time = static_cast<int>(Time * 0.9);
+		}
+		else if (maxVal < 45000)
+		{
+			// 小於 45000：增加 30%
+			Time = static_cast<int>(Time * 1.3);
+		}
+		else
+		{
+			// 在 45000 ~ 50000 之間：已達理想範圍，直接結束循環
+			qDebug() << "Optimization finished: Intensity within target range.";
+			break;
+		}
+
+		if (Time > 1000000)
+		{
+			Time = 1000000; 
+		}
+		if (Time < 1)
+		{
+			Time = 1; // 避免時間變為 0 導致錯誤
+		}
+	}
+
+	qDebug() << "Autoset finished. Final Integration Time:" << Time;
+}
 void Spectrometer::OnTimerAcq()
 {
 	if (!Run || handles.empty() || handles[0] == nullptr) return;
@@ -220,43 +299,57 @@ void Spectrometer::WhiteScan(int time,int avg)
 	if (handles[0] != nullptr)
 	{
 		UAI_SpectrometerDataAcquires(handles[0], time, w_intensity.data(), avg);
-		
+		ScanRecord record;
+		record.time = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+		record.label = "White";
+		record.data = w_intensity; // 直接拷貝當前的 vector 內容
+		m_pendingRecords.push_back(record);
+
 	}
 }
-
-void Spectrometer::saveToCSV()
+void Spectrometer::clearlist(bool v)
 {
+	m_pendingRecords.clear();
+}
+void Spectrometer::saveToCSV(bool v)
+{
+	if (m_pendingRecords.empty()) {
+		qDebug() << "No data to save.";
+		return;
+	}
+
 	QFile file("tmp.csv");
 	bool fileExists = file.exists();
 
 	if (!file.open(QIODevice::Append | QIODevice::Text)) {
-		qDebug() << "無法開啟檔案進行寫入";
+		qDebug() << "Failed to open file for writing";
 		return;
 	}
 
 	QTextStream out(&file);
 
-	// 1. 如果是新檔案，寫入簡化後的表頭
+	// 1. 寫入表頭 (僅在檔案剛建立時)
 	if (!fileExists || file.size() == 0) {
-		out << "Time,Label,Wavelength";
+		out << "Time,Label";
 		for (float w : wavelength) {
-			// 根據範例，波長取整數
-			out << "," << QString::number(w, 'f', 0);
+			out << "," << QString::number(w, 'f', 1); // 輸出波長作為欄位名
 		}
 		out << "\n";
 	}
 
-	// 2. 準備當前時間
-	QString currentTime = QDateTime::currentDateTime().toString("yyyyMMdd-hh:mm:ss");
+	// 2. 遍歷所有暫存記錄，確保每一筆掃描佔用一行
+	for (const auto& record : m_pendingRecords) {
+		out << record.time << "," << (record.label.isEmpty() ? "None" : record.label);
 
-	// 3. 寫入資料行 
-	out << currentTime << "," << m_label << ",0"; // Time, Label, Wavelength(0)
-
-	for (float val : m_intensity) {
-		// 寫入光譜數值
-		out << "," << QString::number(val, 'g', 10);
+		for (float val : record.data) {
+			out << "," << QString::number(val, 'g', 10); // 每一筆資料點接在同一行後方
+		}
+		out << "\n"; // 這筆記錄結束，換行
 	}
-	out << "\n";
 
 	file.close();
+
+	// 3. 儲存完畢後清空記憶體，避免下次儲存時重複寫入舊資料
+	m_pendingRecords.clear();
+	qDebug() << "All data saved to CSV and memory cleared.";
 }

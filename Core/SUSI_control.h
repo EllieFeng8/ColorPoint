@@ -18,13 +18,7 @@ public:
 public slots:
 	void init()
 	{
-		uint32_t supportInput, supportOutput;
 		SusiLibInitialize();
-
-		uint32_t d1 = 0; //0=output
-		uint32_t d2 = 0; //0=output
-		SusiGPIOSetDirection(1, 4, d1);
-		SusiGPIOSetDirection(1, 8, d2);
 
 		if (!m_timer) {
 			m_timer = new QTimer(this);
@@ -37,21 +31,31 @@ public slots:
 	}
 	void reset()
 	{
+		SusiGPIOSetDirection(3, 1, 0);
+		SusiGPIOSetDirection(2, 1, 0);
+		SusiGPIOSetLevel(3, 1, 0);//1=high 0=low
+		auto status = SusiGPIOSetLevel(2,1, 1);//1=high 0=low
+		qDebug() << "reset status =" << status << "set Direction"<< "bitmask 4  Direction 0";
+		qDebug() << "reset status =" << status << "set Direction" << "bitmask 4  Level"<<1;
 
-		auto status = SusiGPIOSetLevel(1,8, 1);//1=high 0=low
-		qDebug() << "reset status =" <<status;
 		m_WaitReset = true;
 
 	}
 
 	void setGPIO2(uint32_t value)
 	{
-		SusiGPIOSetLevel(1, 4, value);//1=high 0=low
+		SusiGPIOSetDirection(2, 1, 0);
+		SusiGPIOSetLevel(2, 1, value);//1=high 0=low
+		qDebug()  << "set Direction" << "bitmask 4  Direction "<< 0;
 
 	}
 	void setGPIO3(uint32_t value)
 	{
-		SusiGPIOSetLevel(1, 8, value);//1=high 0=low
+		SusiGPIOSetDirection(3, 1, 0);
+		SusiGPIOSetLevel(3, 1, value);//1=high 0=low
+		qDebug() << "set Direction" << "bitmask 8  Direction " << 0;
+		qDebug() << "set Direction" << "bitmask 8  Level " << value;
+
 
 	}
 	void test()
@@ -84,6 +88,7 @@ public slots:
 			if(currentLevel==0)
 			{
 				Check++;
+				qDebug() << "Check" <<Check;
 			}
 			if(currentLevel==1)
 			{
@@ -91,13 +96,16 @@ public slots:
 			}
 			if (Check > 600)
 			{
+				setGPIO2(0);
+				setGPIO3(0);
+
 				m_count = 0;
 				m_WaitReset = false;
 			}
 		}
 
 		lastLevel = currentLevel;
-		m_Height = 120 - m_count * 0.25;
+		m_Height = 122.5 - m_count * 0.25;
 		emit count(m_Height);
 	}
 	void uninit()
