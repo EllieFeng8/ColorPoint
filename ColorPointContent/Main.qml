@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import Core 1.0
 import QtQuick.Dialogs
+import QtQuick.Layouts
 
 MainScreen {
     id: mainScreen
@@ -48,6 +49,7 @@ MainScreen {
     autoSettingBtnMouseArea.onClicked: {
         // Cp.integrationTime = confirmTextField.text
         Cp.autoBtn = true
+        showAbnormal()
         console.log("autoSettingBtnMouseArea Clicked")
     }
     scanBtnMouseArea.onClicked: {
@@ -124,6 +126,10 @@ MainScreen {
             wrapMode: Text.WordWrap
         }
     }
+    function showAbnormal() {
+        lightLowerReminderDialog.open()
+        // abnormalDialog.message = msg
+    }
     //光源亮度不足
     Dialog {
         id: lightLowerReminderDialog
@@ -136,9 +142,10 @@ MainScreen {
         height: 150
 
         contentItem: Label {
-            text: "光源亮度不足。"
+            text: "光源亮度不足"
+            font.pixelSize: 20
             horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
+            // verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap
         }
     }
