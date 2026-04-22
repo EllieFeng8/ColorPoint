@@ -177,6 +177,16 @@ Rectangle {
                     Layout.alignment:Qt.AlignHCenter
                     source: "assets/Rectangle 66.png"
                     scale: inferenceMouseArea.containsMouse ? 1.6 : 1.5
+                    Rectangle{
+                        x:2.2
+                        width:45
+                        height:45
+                        radius:18
+                        color:"transparent"
+                        border.width:2
+                        border.color:"#FFB07F"
+
+                    }
                     Image {
                         y: 6
                         // anchors.verticalCenter: parent.verticalCenter //垂直置中

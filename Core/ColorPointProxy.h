@@ -680,7 +680,7 @@ private:
     int m_integrationTime = 0;
     int m_avgTime   = 0;
     int m_height   = 0;
-    int m_heightSet   = 120;
+    int m_heightSet   = 0;
     bool m_resetBtn = false;
     bool m_autoSetHeightBtn = true;
 
