@@ -562,6 +562,7 @@ public:
     void inferModelSetListChanged();
 
     // void inferLabelChanged();
+    void inferAddDataSignal(QString label);
 
 
 private:

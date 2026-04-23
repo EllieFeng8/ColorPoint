@@ -74,6 +74,14 @@ Rectangle {
         });
         //console.log("dataModel",dataModel.count(0));
     }
+
+    Connections {
+        target:Cp
+        function onInferAddDataSignal(label) {
+            inferAddData(label)
+        }
+    }
+
     MouseArea {
         anchors.fill: parent
     }
@@ -853,7 +861,7 @@ Rectangle {
                                         enabled:whiteScanClicked ? true :false
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
-                                            inferAddData(Cp.inferLabel);//test
+                                             //inferAddData(Cp.inferLabel);//test
                                             Cp.inferScanBtn = true
                                             console.log("scanBtnMouseArea clicked",Cp.inferScanBtn)
                                         }
