@@ -49,7 +49,7 @@ MainScreen {
     autoSettingBtnMouseArea.onClicked: {
         // Cp.integrationTime = confirmTextField.text
         Cp.autoBtn = true
-        showAbnormal()
+        //showAbnormal()
         console.log("autoSettingBtnMouseArea Clicked")
     }
     scanBtnMouseArea.onClicked: {
