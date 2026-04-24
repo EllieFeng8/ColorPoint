@@ -6,11 +6,15 @@
 #include "autogen/environment.h"
 
 #include "Core/ColorPointProxy.h"
+#include "Core/core.h"
 int main(int argc, char *argv[])
 {
     set_qt_environment();
     QApplication app(argc, argv);
-    ColorPointProxy *Cp = new ColorPointProxy();
+
+    Core& core = Core::instance();
+    core.init();
+    ColorPointProxy* Cp = core.m_proxy;
     qmlRegisterSingletonInstance<ColorPointProxy>("Core", 1, 0, "Cp", Cp);
 
     QQmlApplicationEngine engine;

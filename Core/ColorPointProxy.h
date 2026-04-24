@@ -510,7 +510,13 @@ public:
         }
         emit inferModelSetListChanged();
     }
+    //異常提醒
+    Q_INVOKABLE void raiseAbnormal() {
+        abnormalRaised();
+    }
     signals:
+
+    void abnormalRaised();
     void chartDataChanged();
     void nirListChanged();
     void whiteScanListChanged();
@@ -677,8 +683,8 @@ private:
     bool m_clearNirListBtn = false;
     bool m_powerOnResetBtn = false;
 
-    int m_integrationTime = 0;
-    int m_avgTime   = 0;
+    int m_integrationTime = 10;
+    int m_avgTime   = 1;
     int m_height   = 0;
     int m_heightSet   = 120;
     bool m_resetBtn = false;
@@ -690,8 +696,8 @@ private:
 
     bool m_inferConnectBtn = false;
     bool m_inferConnectedLight = false;
-    int m_inferIntegrationTime = 0;
-    int m_inferAvgTime = 0;
+    int m_inferIntegrationTime = 10;
+    int m_inferAvgTime = 1;
     int m_inferHeight = 0;
     int m_inferCurrentHeight = 0;
     int m_inferMeasurePeriod = 1;

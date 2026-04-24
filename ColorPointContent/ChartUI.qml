@@ -10,31 +10,17 @@ Rectangle {
     radius: 20
 
     // --- 模擬數據與配置 ---
-    property var chartData: [
-        {x: 0,  y: 12000}, {x: 4,  y: 18000},
-        {x: 8,  y: 26000}, {x: 12, y: 34000},
-        {x: 16, y: 42000}, {x: 20, y: 50000},
-        {x: 24, y: 62000}, {x: 28, y: 75000},
-        {x: 32, y: 88000}, {x: 36, y: 98000},
-        {x: 40, y: 105000}, {x: 44, y: 98000},
-        {x: 48, y: 90000}, {x: 52, y: 82000},
-        {x: 56, y: 70000}, {x: 60, y: 58000},
-        {x: 64, y: 46000}, {x: 68, y: 52000},
-        {x: 72, y: 60000}, {x: 76, y: 68000},
-        {x: 80, y: 62000}, {x: 84, y: 54000},
-        {x: 88, y: 46000}, {x: 92, y: 38000},
-        {x: 96, y: 30000}, {x: 100, y: 24000},
-        {x: 104, y: 28000}, {x: 108, y: 35000},
-        {x: 112, y: 22000}, {x: 116, y: 15000}
-    ]
+    property var chartData: Cp.charData
 
-    readonly property real xMax: 100    // X軸最大值
-    readonly property real yMax: 100000 // Y軸最大值
+readonly property real xMin: 900    // X軸最大值
+    readonly property real xMax: 1700    // X軸最大值
+    readonly property real yMax: 66000 // Y軸最大值
     readonly property int xDivisions: 10 // X軸分10等分
     readonly property int yDivisions: 4  // Y軸分4等分
 
     readonly property real plotWidth: 594
     readonly property real plotHeight: 347
+readonly property real plotHeightOffset: 40
 
     // --- 輔助函數：生成 SVG 路徑字串 ---
     function generatePath(data) {
@@ -42,8 +28,8 @@ Rectangle {
         let pathStr = "";
         for (let i = 0; i < data.length; i++) {
             // 轉換座標：(原始值 / 最大值) * 畫布寬高
-            let px = (data[i].x / xMax) * plotWidth;
-            let py = plotHeight - (data[i].y / yMax) * plotHeight;
+            let px = ((data[i].x-xMin) / (xMax-xMin)) * plotWidth;
+            let py = plotHeight - (data[i].y / yMax) * plotHeight -plotHeightOffset;
 
             if (i === 0) {
                 pathStr += "M " + px + " " + py;
@@ -83,7 +69,7 @@ Rectangle {
         Repeater {
             model: xDivisions + 1
             Text {
-                property real val: (xMax / xDivisions) * index
+                property real val: ((xMax-xMin) / xDivisions) * index +xMin
                 x: 52.86 + (index * (plotWidth / xDivisions)) - width/2
                 y: 360 // 位於 X 軸下方
                 width: 30
