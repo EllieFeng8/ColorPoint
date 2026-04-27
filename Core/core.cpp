@@ -151,6 +151,7 @@ void Core::Core_connect()
     QObject::connect(m_proxy, &ColorPointProxy::avgTimeChanged, m_Spec,&Spectrometer::SetAVG, Qt::QueuedConnection);
     QObject::connect(m_proxy, &ColorPointProxy::scanBtnChanged, m_Spec, &Spectrometer::Scan, Qt::QueuedConnection);
     QObject::connect(m_proxy, &ColorPointProxy::inferScanBtnChanged, m_Spec, &Spectrometer::inference_Scan, Qt::QueuedConnection);
+    //QObject::connect(m_proxy, &ColorPointProxy::, , &Spectrometer::OpenSpectrometer, Qt::QueuedConnection);
 
     QObject::connect(m_proxy, &ColorPointProxy::heightSetChanged, this, &Core::setHeight, Qt::QueuedConnection);
     QObject::connect(m_proxy, &ColorPointProxy::resetBtnChanged, this, &Core::onResetBtnChanged, Qt::QueuedConnection);
