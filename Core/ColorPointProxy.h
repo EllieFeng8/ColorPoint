@@ -27,6 +27,7 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(QVariantList whiteScanList   READ getWhiteScanList  NOTIFY whiteScanListChanged)
 
     // ===== Buttons / States =====
+    Q_PROPERTY(bool intakeBtn   READ getIntakeBtn   WRITE setIntakeBtn   NOTIFY intakeBtnChanged)
     Q_PROPERTY(bool clearBtn   READ getClearBtn   WRITE setClearBtn   NOTIFY clearBtnChanged)
     Q_PROPERTY(bool updateBtn  READ getUpdateBtn  WRITE setUpdateBtn  NOTIFY updateBtnChanged)
     Q_PROPERTY(bool connectBtn READ getConnectBtn WRITE setConnectBtn NOTIFY connectBtnChanged)
@@ -55,6 +56,7 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(QString fileName READ getFileName WRITE setFileName NOTIFY fileNameChanged)
 
     //======inference======
+    Q_PROPERTY(bool inferenceBtn READ getInferenceBtn WRITE setInferenceBtn NOTIFY inferenceBtnChanged)
     Q_PROPERTY(bool inferConnectBtn READ getInferConnectBtn WRITE setInferConnectBtn NOTIFY inferConnectBtnChanged)
     Q_PROPERTY(bool inferConnectedLight  READ getInferConnectedLight  WRITE setInferConnectedLight NOTIFY inferConnectedLightChanged)
 
@@ -87,13 +89,29 @@ public:
 
         // QVariantMap item1;
         // QVariantMap item2;
+        // QVariantMap item3;
+        // QVariantMap item4;
+        // QVariantMap item5;
+        // QVariantMap item6;
         // item1["name"] = "target 1";
-        // item1["data"] = "12.2";
-        // item2["name"] = "target 2";
-        // item2["data"] = "0000000";
-
+        // item1["data"] = "12.22";
+        // item3["name"] = "target 2";
+        // item3["data"] = "Apple";
+        // item4["name"] = "target 3";
+        // item4["data"] = "22.54";
+        // item2["name"] = "target 1";
+        // item2["data"] = "PLS_sdss11";
+        // item5["name"] = "target 2";
+        // item5["data"] = "SVR_asds42";
+        // item6["name"] = "target 3";
+        // item6["data"] = "SVM_bde82810";
+        //
         // m_inferPredictList.append(item1);
+        // m_inferPredictList.append(item3);
+        // m_inferPredictList.append(item4);
         // m_inferModelSetList.append(item2);
+        // m_inferModelSetList.append(item5);
+        // m_inferModelSetList.append(item6);
 
 
     }
@@ -185,6 +203,12 @@ public:
         }
         // 4. 通知界面更新
         emit whiteScanListChanged();
+    }
+    Q_INVOKABLE bool getIntakeBtn() const { return m_intakeBtn; }
+    Q_INVOKABLE void setIntakeBtn(bool value)
+    {
+        m_intakeBtn = value;
+        emit intakeBtnChanged(m_intakeBtn);
     }
     Q_INVOKABLE bool getClearBtn() const { return m_clearBtn; }
     Q_INVOKABLE void setClearBtn(bool value)
@@ -328,6 +352,13 @@ public:
 
 
     //=====inference======
+    Q_INVOKABLE bool getInferenceBtn() const { return m_inferenceBtn ; }
+    Q_INVOKABLE void setInferenceBtn(bool value)
+    {
+        m_inferenceBtn = value;
+        qDebug() << value << "InferenceBtnconnectBtnChanged" << m_inferenceBtn;
+        emit inferenceBtnChanged(m_inferenceBtn);
+    }
     Q_INVOKABLE bool getInferConnectBtn() const { return m_inferConnectBtn ; }
     Q_INVOKABLE void setInferConnectBtn(bool value)
     {
@@ -516,6 +547,7 @@ public:
     void whiteScanListChanged();
 
     void clearBtnChanged(bool);
+    void intakeBtnChanged(bool);
     void updateBtnChanged(bool);
     void connectBtnChanged(bool);
     void connectedLightChanged(bool);
@@ -541,6 +573,7 @@ public:
     void fileNameChanged( QString text);
 
     //====inference======
+    void inferenceBtnChanged(bool);
     void inferConnectBtnChanged(bool);
     void inferConnectedLightChanged(bool);
     void inferIntegrationTimeChanged(int);
@@ -664,6 +697,7 @@ private:
     QVariantList m_whiteScanList;
 	QString m_lastFolderPath;
 	QString m_lastFolderName;
+    bool m_intakeBtn = false;
     bool m_clearBtn = false;
     bool m_updateBtn = false;
     bool m_connectBtn = false;
@@ -689,6 +723,7 @@ private:
     QString m_whiteLabel ="White";
     QString m_fileName="";
 
+    bool m_inferenceBtn = false;
     bool m_inferConnectBtn = false;
     bool m_inferConnectedLight = false;
     int m_inferIntegrationTime = 0;

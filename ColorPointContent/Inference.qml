@@ -176,6 +176,7 @@ Rectangle {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                        Cp.intakeBtn = true
                         onClicked:inference.visible = false
                     }
                 }
@@ -1017,7 +1018,7 @@ Rectangle {
                                     }
 
                                     Text {
-                                        width: 100
+                                        width: 150
                                         color:"#ffffff"
                                         font.family: "Poppins"
                                         font.pixelSize: 20

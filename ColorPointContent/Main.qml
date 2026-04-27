@@ -31,6 +31,7 @@ MainScreen {
     }
     //nav
     inferenceMouseArea.onClicked: {
+        Cp.inferenceBtn = true
         inference.visible = true
     }
 
