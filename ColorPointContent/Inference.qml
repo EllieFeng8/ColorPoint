@@ -176,8 +176,10 @@ Rectangle {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        Cp.intakeBtn = true
-                        onClicked:inference.visible = false
+
+                        onClicked:{inference.visible = false
+                            Cp.intakeBtn = true
+                        }
                     }
                 }
                 Image {
