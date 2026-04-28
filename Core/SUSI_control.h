@@ -64,31 +64,32 @@ public slots:
 
 		if (currentLevel == 1 && lastLevel == 0)
 		{
-			if (currentLevel == 1 && lastLevel == 0) // GPIO Ä²µo¡]¤W¤É½t¡^
+			if (currentLevel == 1 && lastLevel == 0) // GPIO Ä²ï¿½oï¿½]ï¿½Wï¿½É½tï¿½^
 			{
-				// ®Ú¾Ú m_direction §PÂ_ count ¼W´î
+				// ï¿½Ú¾ï¿½ m_direction ï¿½Pï¿½_ count ï¿½Wï¿½ï¿½
 				if (m_direction == 1 && m_count > 0)
-				{ // ¥¿Âà
+				{ // ï¿½ï¿½ï¿½ï¿½
 					m_count--;
 					qDebug() << "--" << m_count;
 				}
 				else if (m_direction == 2) 
-				{ // ¤ÏÂà
+				{ // ï¿½ï¿½ï¿½ï¿½
 					m_count++;
 					qDebug() << "++" << m_count;				}
 				else 
-				{ // °±¤î©Î¥¼ª¾ª¬ºA¤£­p¼Æ
+				{ // ï¿½ï¿½ï¿½ï¿½Î¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½pï¿½ï¿½
 				  //qDebug() << "";
 				}
 			}
 		}
-		if (m_WaitReset) // µ¥«Ý°ª«×¨ì³Ì°ªÂI
+		if (m_WaitReset) // ï¿½ï¿½ï¿½Ý°ï¿½ï¿½×¨ï¿½Ì°ï¿½ï¿½I
 		{
 
 			if(currentLevel==0)
 			{
 				Check++;
-				qDebug() << "Check" <<Check;
+				// ebug debug cout check
+				// qDebug() << "Check" <<Check;
 			}
 			if(currentLevel==1)
 			{
@@ -122,7 +123,7 @@ signals:
 	void count(int count);
 private:
 	uint32_t currentLevel = 0;
-	uint32_t lastLevel = 1; // ¹w³]¬° High¡A½T«O²Ä¤@¦¸°»´ú¥¿½T
+	uint32_t lastLevel = 1; // ï¿½wï¿½]ï¿½ï¿½ Highï¿½Aï¿½Tï¿½Oï¿½Ä¤@ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½T
 	uint32_t m_count = 0;
 	int m_direction;
 	QTimer* m_timer = nullptr;

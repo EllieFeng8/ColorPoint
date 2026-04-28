@@ -112,14 +112,12 @@ Rectangle {
                 }
             }
         }
-
-
+        
         Rectangle {
             id:rec
             y: 28
             height: parent.height * 0.9
             width: parent.width * 0.07
-
             color: "#21555353"
             radius: 50
             ColumnLayout {
@@ -162,7 +160,6 @@ Rectangle {
                         wrapMode: Text.WordWrap
                         leftPadding: 20
                     }
-
                     MouseArea {
                         id: intakeMouseArea
                         anchors.fill: parent

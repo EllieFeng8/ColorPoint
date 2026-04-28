@@ -6,9 +6,9 @@ QString Spectrometer::SearchSpectrometer()
 {
 	QString result;
 	buffersize = 0;
-	UAI_SpectrometerGetDeviceList(&buffersize, nullptr); //¨ú±o buffersize(³]³Æ¼Æ¶q)
-	VIDPID.resize(buffersize * 2); //±NVIDPIDªº¤j¤p³]¬°buffersizeªº¨â­¿
-	UAI_SpectrometerGetDeviceList(&buffersize, VIDPID.data());//¼g¤JVIDPID
+	UAI_SpectrometerGetDeviceList(&buffersize, nullptr); //ï¿½ï¿½ï¿½o buffersize(ï¿½]ï¿½Æ¼Æ¶q)
+	VIDPID.resize(buffersize * 2); //ï¿½NVIDPIDï¿½ï¿½ï¿½jï¿½pï¿½]ï¿½ï¿½buffersizeï¿½ï¿½ï¿½â­¿
+	UAI_SpectrometerGetDeviceList(&buffersize, VIDPID.data());//ï¿½gï¿½JVIDPID
 	for (int dev = 0; dev < buffersize; dev++)
 	{
 		unsigned int i;
@@ -16,7 +16,7 @@ QString Spectrometer::SearchSpectrometer()
 		uint32_t pid = VIDPID[dev * 2 + 1];
 		cout <<  "vid:" << vid << "pid" << pid << endl;
 		status = UAI_SpectrometerGetDeviceAmount(vid, pid, &i);
-		cout <<  endl << "¼Æ¶q" << i << endl;
+		cout <<  endl << "ï¿½Æ¶q" << i << endl;
 
 		result += QString("Device %1  VID:%2 PID:%3  Count=%4\n")
 			.arg(dev)
@@ -35,14 +35,14 @@ void Spectrometer::OpenSpectrometer(bool v)
 		unsigned int bufsize;
 		void* handle = nullptr;
 		status = UAI_SpectrometerOpen(0, &handle, vid, pid);
-		if (status == 0)//½T»{error code ¬° 0
+		if (status == 0)//ï¿½Tï¿½{error code ï¿½ï¿½ 0
 		{
 			handles.resize(buffersize) ;
 			cout << "dev:" << 0 << "    handle=" << handle << endl;
-			handles[0] = handle; //±N¨C¤@¥x¥úÃÐ»öªºhandle¦s¤Jhandles[];
+			handles[0] = handle; //ï¿½Nï¿½Cï¿½@ï¿½xï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½handleï¿½sï¿½Jhandles[];
 			UAI_SpectromoduleGetFrameSize(handle, &framesize);
 
-			cout << "¨ú±oFramesize   :" << framesize << endl << endl;
+			cout << "ï¿½ï¿½ï¿½oFramesize   :" << framesize << endl << endl;
 			wavelength.resize(framesize);
 			intensity.resize(framesize);
 			inference_intensity.resize(framesize);
@@ -51,13 +51,13 @@ void Spectrometer::OpenSpectrometer(bool v)
 			m_intensity.resize(framesize);
 			auto_intensity.resize(framesize);
 
-			//±Nintensityªº¤j¤p³]©w¬°framesize
+			//ï¿½Nintensityï¿½ï¿½ï¿½jï¿½pï¿½]ï¿½wï¿½ï¿½framesize
 			UAI_SpectrometerWavelengthAcquire(handles[0], wavelength.data());
 			emit isOpen();
 		}
 		else
 		{
-			cout << "erroropen:" << status << endl << endl; //Åã¥Üerror code
+			cout << "erroropen:" << status << endl << endl; //ï¿½ï¿½ï¿½error code
 		}
 }
 
@@ -78,7 +78,7 @@ void Spectrometer::SetIntegrationTime( int time)
 {
 	Time = time*1000;
 	qDebug() << Time;
-	//³]©w¿n¤À®É¶¡
+	//ï¿½]ï¿½wï¿½nï¿½ï¿½ï¿½É¶ï¿½
 	//if (!handles.empty() && handles[0] != nullptr)
 	//{
 	//	UAI_SpectrometerSetIntegrationTime(handles[0], Time);
@@ -94,9 +94,13 @@ void Spectrometer::DataAcquires(int dev ,int Time ,int average)
 {
 	if (handles[dev] != nullptr)
 	{
-		
-		UAI_SpectrometerDataAcquires(handles[dev], Time, intensity.data(), average);
-		
+		unsigned int x;
+		UAI_SpectrometerGetShutterSwitch(handles[0], &x);// 1 = shutter enable;
+		qDebug() << "shutter = " << x;
+		qDebug() << "CaptureDarkOneshot Finish";
+		UAI_SpectrometerDataOneshot(handles[dev], Time, intensity.data(), average);
+		// UAI_SpectrometerDataAcquires(handles[dev], Time, intensity.data(), average);
+
 
 		//for (float val : intensity) {
 		//	list.append(val);
@@ -109,9 +113,9 @@ void Spectrometer::DataAcquires(int dev ,int Time ,int average)
 			ScanRecord record;
 			record.time = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
 			record.label = m_label;
-			record.data = m_intensity; // ª½±µ«þ¨©·í«eªº vector ¤º®e
+			record.data = m_intensity; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½eï¿½ï¿½ vector ï¿½ï¿½ï¿½e
 			m_pendingRecords.push_back(record);
-		
+
 		cout << "Intensity DataAcquires FINISH" << endl << endl << endl;
 		emit DataIntensity(m_intensity,Time);
 	}
@@ -126,7 +130,8 @@ void Spectrometer::inference_DataAcquires(int dev, int Time, int average)
 	if (handles[dev] != nullptr)
 	{
 
-		UAI_SpectrometerDataAcquires(handles[dev], Time, inference_intensity.data(), average);
+		// UAI_SpectrometerDataAcquires(handles[dev], Time, inference_intensity.data(), average);
+		UAI_SpectrometerDataOneshot(handles[dev], Time, inference_intensity.data(), average);
 
 
 		//for (float val : intensity) {
@@ -140,7 +145,7 @@ void Spectrometer::inference_DataAcquires(int dev, int Time, int average)
 		ScanRecord record;
 		record.time = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
 		record.label = m_label;
-		record.data = m_intensity; // ª½±µ«þ¨©·í«eªº vector ¤º®e
+		record.data = m_intensity; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½eï¿½ï¿½ vector ï¿½ï¿½ï¿½e
 		inference_pendingRecords.push_back(record);
 
 		cout << "Intensity DataAcquires FINISH" << endl << endl << endl;
@@ -180,19 +185,15 @@ void Spectrometer::StartAcq()
 	}
 }
 
-// ¶Â®Õ¥¿ ShutterSwitch ¨ÃÅª¨ú¤@¦¸
+// ï¿½Â®Õ¥ï¿½ ShutterSwitch ï¿½ï¿½Åªï¿½ï¿½ï¿½@ï¿½ï¿½
 
 void Spectrometer::Scan()
 {
 	qDebug() << "on ScanBtn clicked";
 	if (!handles.empty() && handles[0] != nullptr)
 	{
-		unsigned int x;
-
-		UAI_SpectrometerGetShutterSwitch(handles[0], &x);// 1 = shutter enable;
-		qDebug() << "shutter = " << x;
 		UAI_SpectrometerSetShutterSwitch(handles[0], 0);// 1 = shutter enable;
-		QTimer::singleShot(100, this, &Spectrometer::CaptureDarkOneshot);
+		QTimer::singleShot(20, this, &Spectrometer::CaptureDarkOneshot);
 	}
 	else
 	{
@@ -209,7 +210,7 @@ void Spectrometer::inference_Scan()
 		UAI_SpectrometerGetShutterSwitch(handles[0], &x);// 1 = shutter enable;
 		qDebug() << "shutter = " << x;
 		UAI_SpectrometerSetShutterSwitch(handles[0], 0);// 1 = shutter enable;
-		QTimer::singleShot(100, this, &Spectrometer::inference_CaptureDarkOneshot);
+		QTimer::singleShot(20, this, &Spectrometer::inference_CaptureDarkOneshot);
 	}
 	else
 	{
@@ -220,31 +221,32 @@ void Spectrometer::inference_CaptureDarkOneshot()
 {
 	if (!handles.empty() && handles[0] != nullptr)
 	{
-		UAI_SpectrometerDataAcquires(handles[0], Time, b_intensity.data(), 1);
+		// UAI_SpectrometerDataAcquires(handles[0], Time, b_intensity.data(), 1);
+		UAI_SpectrometerDataOneshot(handles[0], Time, b_intensity.data(), 1);
 		UAI_SpectrometerSetShutterSwitch(handles[0], 1);// 0 = shutter disable;
 		unsigned int x;
 		UAI_SpectrometerGetShutterSwitch(handles[0], &x);// 1 = shutter enable;
 		qDebug() << "shutter = " << x;
-		qDebug() << "CaptureDarkOneshot Finish";
+		qDebug() << "inference_CaptureDarkOneshot Finish";
 
-		QTimer::singleShot(100, this, [this]() {inference_DataAcquires(0, Time, Avg); });
+		QTimer::singleShot(20, this, [this]() {inference_DataAcquires(0, Time, Avg); });
 	}
 }
 void Spectrometer::CaptureDarkOneshot()
 {
 	if (!handles.empty() && handles[0] != nullptr)
 	{
-		UAI_SpectrometerDataAcquires(handles[0], Time, b_intensity.data(), 1);
-		UAI_SpectrometerSetShutterSwitch(handles[0], 1);// 0 = shutter disable;
 		unsigned int x;
 		UAI_SpectrometerGetShutterSwitch(handles[0], &x);// 1 = shutter enable;
 		qDebug() << "shutter = " << x;
-		qDebug() << "CaptureDarkOneshot Finish";
+		UAI_SpectrometerDataOneshot(handles[0], Time, b_intensity.data(), 1);
+		// UAI_SpectrometerDataAcquires(handles[0], Time, b_intensity.data(), 1);
+		UAI_SpectrometerSetShutterSwitch(handles[0], 1);// 0 = shutter disable;
 
-		QTimer::singleShot(100, this, [this]() {DataAcquires(0, Time, Avg); });
+		QTimer::singleShot(20, this, [this]() {DataAcquires(0, Time, Avg); });
 	}
 }
-// ³sÄòÅª¨ú
+// ï¿½sï¿½ï¿½Åªï¿½ï¿½
 
 void Spectrometer::StartContinuousAcq(int interval_ms)
 {
@@ -259,7 +261,7 @@ void Spectrometer::StartContinuousAcq(int interval_ms)
 
 	if (!m_timer) {
 		m_timer = new QTimer(this);
-		// ³s±µ Timer ªº timeout °T¸¹¨ìÅª¨ú°Ê§@
+		// ï¿½sï¿½ï¿½ Timer ï¿½ï¿½ timeout ï¿½Tï¿½ï¿½ï¿½ï¿½Åªï¿½ï¿½ï¿½Ê§@
 		connect(m_timer, &QTimer::timeout, this, &Spectrometer::OnTimerAcq);
 	}
 
@@ -267,7 +269,7 @@ void Spectrometer::StartContinuousAcq(int interval_ms)
 	QTimer::singleShot(300, this, &Spectrometer::inference_CaptureDarkOneshot);
 
 	Run = true;
-	m_timer->start(MeasurePeriod); // ¥H«ü©wªº²@¬í¶¡¹j°õ¦æ
+	m_timer->start(MeasurePeriod); // ï¿½Hï¿½ï¿½ï¿½wï¿½ï¿½ï¿½@ï¿½ï¿½ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½ï¿½
 	qDebug() << "Continuous Acquisition Started with interval:" << MeasurePeriod;
 }
 
@@ -282,22 +284,22 @@ void Spectrometer::StopContinuousAcq()
 
 void Spectrometer::autoset(bool v)
 {
-	// ½T«O³]³Æ¤w¶}±Ò
+	// ï¿½Tï¿½Oï¿½]ï¿½Æ¤wï¿½}ï¿½ï¿½
 	if (handles.empty() || handles[0] == nullptr) {
 		qDebug() << "Autoset failed: No device handle.";
 		return;
 	}
 
-	// 1. ½T«O auto_intensity ªÅ¶¡¨¬°÷ (»P framesize ¦P¤j)
+	// 1. ï¿½Tï¿½O auto_intensity ï¿½Å¶ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½P framesize ï¿½Pï¿½j)
 	if (auto_intensity.size() != framesize) {
 		auto_intensity.resize(framesize);
 	}
 
-	// ¶i¦æ 15 ¦¸Åª¨ú»P½Õ¾ã´`Àô
+	// ï¿½iï¿½ï¿½ 15 ï¿½ï¿½Åªï¿½ï¿½ï¿½Pï¿½Õ¾ï¿½`ï¿½ï¿½
 	for (int i = 0; i < 15; i++)
 	{
-		// 2. Àò¨ú·í«eÃn¥ú®É¶¡¤Uªº¸ê®Æ
-		// ª`·N¡G³o¸Ì¨Ï¥Îªº¬O¦¨­ûÅÜ¼Æ Time (³æ¦ì³q±`¬°·L¬í)
+		// 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½eï¿½nï¿½ï¿½ï¿½É¶ï¿½ï¿½Uï¿½ï¿½ï¿½ï¿½ï¿½
+		// ï¿½`ï¿½Nï¿½Gï¿½oï¿½Ì¨Ï¥Îªï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½Ü¼ï¿½ Time (ï¿½ï¿½ï¿½qï¿½`ï¿½ï¿½ï¿½Lï¿½ï¿½)
 		status = UAI_SpectrometerDataAcquires(handles[0], Time, auto_intensity.data(), Avg);
 
 		if (status != 0) {
@@ -305,42 +307,42 @@ void Spectrometer::autoset(bool v)
 			break;
 		}
 
-		// 3. ´M§ä¥Ø«e¥úÃÐ¤¤ªº³Ì¤j±j«×­È (Intensity)
+		// 3. ï¿½Mï¿½ï¿½Ø«eï¿½ï¿½ï¿½Ð¤ï¿½ï¿½ï¿½ï¿½Ì¤jï¿½jï¿½×­ï¿½ (Intensity)
 		float maxVal = 0;
 		for (float val : auto_intensity) {
 			if (val > maxVal) maxVal = val;
 		}
 
-		// 4. ®Ú¾ÚÅÞ¿è½Õ¾ãÃn¥ú®É¶¡ (Time)
+		// 4. ï¿½Ú¾ï¿½ï¿½Þ¿ï¿½Õ¾ï¿½ï¿½nï¿½ï¿½ï¿½É¶ï¿½ (Time)
 		if (maxVal > 65535)
 		{
-			// ¶W¹L 65535¡G´î¤Ö 30%
+			// ï¿½Wï¿½L 65535ï¿½Gï¿½ï¿½ï¿½ 30%
 			Time = static_cast<int>(Time * 0.7);
 		}
 		else if (maxVal > 50000)
 		{
-			// ¤j©ó 50000 ¥B¤p©óµ¥©ó 65535¡G´î¤Ö 10%
+			// ï¿½jï¿½ï¿½ 50000 ï¿½Bï¿½pï¿½óµ¥©ï¿½ 65535ï¿½Gï¿½ï¿½ï¿½ 10%
 			Time = static_cast<int>(Time * 0.9);
 		}
 		else if (maxVal < 45000)
 		{
-			// ¤p©ó 45000¡G¼W¥[ 30%
+			// ï¿½pï¿½ï¿½ 45000ï¿½Gï¿½Wï¿½[ 30%
 			Time = static_cast<int>(Time * 1.3);
 		}
 		else
 		{
-			// ¦b 45000 ~ 50000 ¤§¶¡¡G¤w¹F²z·Q½d³ò¡Aª½±µµ²§ô´`Àô
+			// ï¿½b 45000 ~ 50000 ï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½wï¿½Fï¿½zï¿½Qï¿½dï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½`ï¿½ï¿½
 			qDebug() << "Optimization finished: Intensity within target range.";
 			break;
 		}
 
 		if (Time > 1000000)
 		{
-			Time = 1000000; 
+			Time = 1000000;
 		}
 		if (Time < 1)
 		{
-			Time = 1; // Á×§K®É¶¡ÅÜ¬° 0 ¾É­P¿ù»~
+			Time = 1; // ï¿½×§Kï¿½É¶ï¿½ï¿½Ü¬ï¿½ 0 ï¿½É­Pï¿½ï¿½ï¿½~
 		}
 		emit currentTime(Time);
 
@@ -361,13 +363,24 @@ void Spectrometer::WhiteScan(double height,int time,int avg)
 	if (handles[0] != nullptr)
 	{
 		qDebug() << "test";
-		UAI_SpectrometerDataAcquires(handles[0], Time, w_intensity.data(), Avg);
+		// UAI_SpectrometerDataAcquires(handles[0], Time, w_intensity.data(), Avg);
+		UAI_SpectrometerSetShutterSwitch(handles[0], 0);// 0 = shutter disable;
+		QThread::msleep(20);
+		UAI_SpectrometerDataOneshot(handles[0], Time, b_intensity.data(), 1);
+		UAI_SpectrometerSetShutterSwitch(handles[0], 1);// 0 = shutter disable;
+		QThread::msleep(20);
+		UAI_SpectrometerDataOneshot(handles[0], Time, intensity.data(), Avg);
 		ScanRecord record;
+		for (int i = 0; i < intensity.size(); i++)
+		{
+			float val = intensity[i]-b_intensity[i];
+			w_intensity[i] = val;
+		}
 		record.time = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
 		record.label = "White";
-		record.data = w_intensity; // ª½±µ«þ¨©·í«eªº vector ¤º®e
+		record.data = w_intensity; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½eï¿½ï¿½ vector ï¿½ï¿½ï¿½e
 		m_pendingRecords.push_back(record);
-		if (!w_intensity.empty()) 
+		if (!w_intensity.empty())
 		{
 			max_val = *std::max_element(w_intensity.begin(), w_intensity.end());
 			std::cout << "max val : " << max_val << std::endl;
@@ -387,7 +400,7 @@ void Spectrometer::inference_WhiteScan(double height, int time, int avg)
 		ScanRecord record;
 		record.time = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
 		record.label = "White";
-		record.data = w_intensity; // ª½±µ«þ¨©·í«eªº vector ¤º®e
+		record.data = w_intensity; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½eï¿½ï¿½ vector ï¿½ï¿½ï¿½e
 		inference_pendingRecords.push_back(record);
 		if (!w_intensity.empty())
 		{
@@ -421,28 +434,28 @@ void Spectrometer::saveToCSV(bool v)
 
 	QTextStream out(&file);
 
-	// 1. ¼g¤JªíÀY (¶È¦bÀÉ®×­è«Ø¥ß®É)
+	// 1. ï¿½gï¿½Jï¿½ï¿½ï¿½Y (ï¿½È¦bï¿½É®×­ï¿½Ø¥ß®ï¿½)
 	if (!fileExists || file.size() == 0) {
 		out << "Time,Label";
 		for (float w : wavelength) {
-			out << "," << QString::number(w, 'f', 1); // ¿é¥Xªiªø§@¬°Äæ¦ì¦W
+			out << "," << QString::number(w, 'f', 1); // ï¿½ï¿½Xï¿½iï¿½ï¿½ï¿½@ï¿½ï¿½ï¿½ï¿½ï¿½W
 		}
 		out << "\n";
 	}
 
-	// 2. ¹M¾ú©Ò¦³¼È¦s°O¿ý¡A½T«O¨C¤@µ§±½´y¦û¥Î¤@¦æ
+	// 2. ï¿½Mï¿½ï¿½ï¿½Ò¦ï¿½ï¿½È¦sï¿½Oï¿½ï¿½ï¿½Aï¿½Tï¿½Oï¿½Cï¿½@ï¿½ï¿½ï¿½ï¿½ï¿½yï¿½ï¿½ï¿½Î¤@ï¿½ï¿½
 	for (const auto& record : m_pendingRecords) {
 		out << record.time << "," << (record.label.isEmpty() ? "None" : record.label);
 
 		for (float val : record.data) {
-			out << "," << QString::number(val, 'g', 10); // ¨C¤@µ§¸ê®ÆÂI±µ¦b¦P¤@¦æ«á¤è
+			out << "," << QString::number(val, 'g', 10); // ï¿½Cï¿½@ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½bï¿½Pï¿½@ï¿½ï¿½ï¿½ï¿½
 		}
-		out << "\n"; // ³oµ§°O¿ýµ²§ô¡A´«¦æ
+		out << "\n"; // ï¿½oï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½
 	}
 
 	file.close();
 
-	// 3. Àx¦s§¹²¦«á²MªÅ°O¾ÐÅé¡AÁ×§K¤U¦¸Àx¦s®É­«½Æ¼g¤JÂÂ¸ê®Æ
+	// 3. ï¿½xï¿½sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Mï¿½Å°Oï¿½ï¿½ï¿½ï¿½Aï¿½×§Kï¿½Uï¿½ï¿½ï¿½xï¿½sï¿½É­ï¿½ï¿½Æ¼gï¿½Jï¿½Â¸ï¿½ï¿½
 	m_pendingRecords.clear();
 	qDebug() << "All data saved to CSV and memory cleared.";
 }
