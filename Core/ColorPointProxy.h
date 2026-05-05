@@ -78,7 +78,6 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(QVariantList inferWhiteScanList   READ getInferWhiteScanList  NOTIFY inferWhiteScanListChanged)
     Q_PROPERTY(QVariantList inferPredictList   READ getInferPredictList  NOTIFY inferPredictListChanged)
     Q_PROPERTY(QVariantList inferModelSetList   READ getInferModelSetList  NOTIFY inferModelSetListChanged)
-    Q_PROPERTY(QVariantList inferWhiteScanList   READ getInferWhiteScanList  NOTIFY inferWhiteScanListChanged)
 
 public:
 
@@ -491,9 +490,10 @@ public:
     }
     Q_INVOKABLE void setInferPredictList(const std::vector<QString>& dataList)
     {
+        m_inferPredictList.clear();
         for (size_t i = 0; i < dataList.size(); ++i) {
             QVariantMap item;
-            // item.insert("name", dataList[i]);
+            item.insert("name", dataList[i]);
             m_inferPredictList.append(item);
         }
         qDebug() << u8"m_inferPredictList" << m_inferPredictList;
@@ -501,11 +501,12 @@ public:
     }
 
     Q_INVOKABLE QVariantList getInferModelSetList() const { return m_inferModelSetList   ; }
-    Q_INVOKABLE void setInferModelSetList(const std::vector<QString>& dataList)
+    Q_INVOKABLE void setInferModelSetList(const std::vector<QString> dataList)
     {
+        m_inferModelSetList.clear();
         for (size_t i = 0; i < dataList.size(); ++i) {
             QVariantMap item;
-            // item.insert("name", dataList[i]);
+            item.insert("name", dataList[i]);
             m_inferModelSetList.append(item);
         }
         emit inferModelSetListChanged();
@@ -514,8 +515,14 @@ public:
     Q_INVOKABLE void raiseAbnormal() {
         abnormalRaised();
     }
-    signals:
 
+    Q_INVOKABLE void initInference() {
+        qDebug() << "initInference";
+        emit initInferenceSignal();
+    }
+
+    signals:
+void initInferenceSignal();
     void abnormalRaised();
     void chartDataChanged();
     void nirListChanged();

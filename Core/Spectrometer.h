@@ -4,6 +4,7 @@
 #include <iostream>
 #include <QtWidgets>
 #include "UserApplication.h"
+#include "specpredict.h"
 
 typedef uint32_t UINT32;
 class Spectrometer : public QObject
@@ -20,13 +21,14 @@ public:
 		QString time;
 		QString label;
 		std::vector<float> data;
+		SpecPredict::PredictionResultData prediction;
 	};
 	std::vector<ScanRecord> m_pendingRecords;
 	std::vector<ScanRecord> inference_pendingRecords;
 
 	unsigned int status=0; 
-	vector<uint32_t> VIDPID; //¦s©ñ±o¨ìªºVIDPID list
-	vector<void*> handles; //Àx¦s¦U³]³Æªºhandle
+	vector<uint32_t> VIDPID; //å­˜æ”¾å¾—åˆ°çš„VIDPID list
+	vector<void*> handles; //å„²å­˜å„è¨­å‚™çš„handle
 	uint32_t buffersize=1;
 	vector<float> intensity;
 	vector<float> inference_intensity;
@@ -52,30 +54,30 @@ public:
 	{
 	}
 public slots:
-	QString SearchSpectrometer();//´M§ä³]³Æ
+	QString SearchSpectrometer();//å°‹æ‰¾è¨­å‚™
 	void autoset(bool v);
 	void clearlist(bool v);
 	void saveToCSV(bool v);
-	void OpenSpectrometer(bool v);//¶}±Ò
+	void OpenSpectrometer(bool v);//é–‹å•Ÿ
 	void setMeasurePeriod(int s)
 	{
 		MeasurePeriod = s * 1000;
 	}
 
-	void CloseSpectrometer(int dev);//Ãö³¬
+	void CloseSpectrometer(int dev);//é—œé–‰
 
-	void SetIntegrationTime( int Time);//³]©w¿n¤À®É¶¡
+	void SetIntegrationTime( int Time);//è¨­å®šç©åˆ†æ™‚é–“
 
 	void SetLable(QString lable);
 
-	void DataAcquires(int dev, int Time, int average);//Àò¨ú¸ê®Æ
-	void inference_DataAcquires(int dev, int Time, int average);//Àò¨ú¸ê®Æ
+	void DataAcquires(int dev, int Time, int average);//ç²å–è³‡æ–™
+	void inference_DataAcquires(int dev, int Time, int average);//ç²å–è³‡æ–™
 	
 	void GetIntegrationTime(int dev);
 
-	void StartContinuousAcq(int interval_ms); // ±Ò°Ê³sÄòÅª¨ú
-	void StopContinuousAcq();                 // °±¤î³sÄòÅª¨ú
-	void OnTimerAcq();                        // ©w®ÉÄ²µoªºÅª¨ú°Ê§@
+	void StartContinuousAcq(int interval_ms); // å•Ÿå‹•é€£çºŒè®€å–
+	void StopContinuousAcq();                 // åœæ­¢é€£çºŒè®€å–
+	void OnTimerAcq();                        // å®šæ™‚è§¸ç™¼çš„è®€å–å‹•ä½œ
 
 	void Scan();
 	void inference_Scan();
@@ -116,6 +118,7 @@ signals:
 	void currentTime(int time);
 	void inference_DataIntensity(vector<float>);
 	void _intensity(double h,float v);
+	// void Inference_Predict();
 private:
 	QMutex m_mutex;
 	

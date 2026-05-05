@@ -1,6 +1,22 @@
 #include "Spectrometer.h"
 #include <iostream>
 
+namespace {
+
+QVector<double> toDoubleVector(const std::vector<float> &values)
+{
+	QVector<double> result;
+	result.reserve(static_cast<qsizetype>(values.size()));
+
+	for (float value : values) {
+		result.append(static_cast<double>(value));
+	}
+
+	return result;
+}
+
+} // namespace
+
 
 QString Spectrometer::SearchSpectrometer()
 {
@@ -116,12 +132,12 @@ void Spectrometer::DataAcquires(int dev ,int Time ,int average)
 			record.data = m_intensity; // �����������e�� vector ���e
 			m_pendingRecords.push_back(record);
 
-		cout << "Intensity DataAcquires FINISH" << endl << endl << endl;
+		qDebug() << "Intensity DataAcquires FINISH" ;
 		emit DataIntensity(m_intensity,Time);
 	}
 	else
 	{
-		cout << "error DataAcquires";
+		qDebug() << "error DataAcquires";
 	}
 }
 
@@ -146,10 +162,24 @@ void Spectrometer::inference_DataAcquires(int dev, int Time, int average)
 		record.time = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
 		record.label = m_label;
 		record.data = m_intensity; // �����������e�� vector ���e
+
 		inference_pendingRecords.push_back(record);
 
-		cout << "Intensity DataAcquires FINISH" << endl << endl << endl;
+		qDebug() << "Intensity DataAcquires FINISH" ;
+		//predict
+
+		auto wData = toDoubleVector(w_intensity);
+		auto mData = toDoubleVector(m_intensity);
+
+		QMetaObject::invokeMethod(&SpecPredict::instance(),
+								  [wData, mData]() {
+									  SpecPredict::instance().predict(wData, mData);
+								  },
+								  Qt::QueuedConnection);
+		//predict end
+
 		emit Inference_Data(m_intensity,Time);
+
 	}
 	else
 	{
@@ -203,6 +233,9 @@ void Spectrometer::Scan()
 void Spectrometer::inference_Scan()
 {
 	qDebug() << "on ScanBtn clicked";
+
+	SetIntegrationTime(SpecPredict::instance().currentParameters().sampleCondition.integrationTimeUs/1000);
+	SetAVG(SpecPredict::instance().currentParameters().sampleCondition.averageCount);
 	if (!handles.empty() && handles[0] != nullptr)
 	{
 		unsigned int x;
@@ -222,7 +255,7 @@ void Spectrometer::inference_CaptureDarkOneshot()
 	if (!handles.empty() && handles[0] != nullptr)
 	{
 		// UAI_SpectrometerDataAcquires(handles[0], Time, b_intensity.data(), 1);
-		UAI_SpectrometerDataOneshot(handles[0], Time, b_intensity.data(), 1);
+		UAI_SpectrometerDataOneshot(handles[0], 1000, b_intensity.data(), 1);
 		UAI_SpectrometerSetShutterSwitch(handles[0], 1);// 0 = shutter disable;
 		unsigned int x;
 		UAI_SpectrometerGetShutterSwitch(handles[0], &x);// 1 = shutter enable;
@@ -265,8 +298,8 @@ void Spectrometer::StartContinuousAcq(int interval_ms)
 		connect(m_timer, &QTimer::timeout, this, &Spectrometer::OnTimerAcq);
 	}
 
-	UAI_SpectrometerSetShutterSwitch(handles[0], 1);// 1 = shutter enable
-	QTimer::singleShot(300, this, &Spectrometer::inference_CaptureDarkOneshot);
+	// UAI_SpectrometerSetShutterSwitch(handles[0], 1);// 1 = shutter enable
+	// QTimer::singleShot(300, this, &Spectrometer::inference_CaptureDarkOneshot);
 
 	Run = true;
 	m_timer->start(MeasurePeriod); // �H���w���@�����j����
@@ -353,7 +386,8 @@ void Spectrometer::autoset(bool v)
 void Spectrometer::OnTimerAcq()
 {
 	if (!Run || handles.empty() || handles[0] == nullptr) return;
-	inference_DataAcquires(0, Time, Avg);
+	// inference_DataAcquires(0, Time, Avg);
+	inference_Scan();
 }
 
 void Spectrometer::WhiteScan(double height,int time,int avg)
@@ -366,7 +400,7 @@ void Spectrometer::WhiteScan(double height,int time,int avg)
 		// UAI_SpectrometerDataAcquires(handles[0], Time, w_intensity.data(), Avg);
 		UAI_SpectrometerSetShutterSwitch(handles[0], 0);// 0 = shutter disable;
 		QThread::msleep(20);
-		UAI_SpectrometerDataOneshot(handles[0], Time, b_intensity.data(), 1);
+		UAI_SpectrometerDataOneshot(handles[0], 1000, b_intensity.data(), 1);
 		UAI_SpectrometerSetShutterSwitch(handles[0], 1);// 0 = shutter disable;
 		QThread::msleep(20);
 		UAI_SpectrometerDataOneshot(handles[0], Time, intensity.data(), Avg);
@@ -393,10 +427,16 @@ void Spectrometer::inference_WhiteScan(double height, int time, int avg)
 {
 	//emit _intensity(height,1000 );
 	float max_val = 0;
+	if (handles.empty() || handles[0] == nullptr) {return;}
 	if (handles[0] != nullptr)
 	{
 		qDebug() << "test";
-		UAI_SpectrometerDataAcquires(handles[0], Time, w_intensity.data(), Avg);
+		UAI_SpectrometerSetShutterSwitch(handles[0], 0);// 0 = shutter disable;
+		QThread::msleep(20);
+		UAI_SpectrometerDataOneshot(handles[0], 1000, b_intensity.data(), 1);
+		UAI_SpectrometerSetShutterSwitch(handles[0], 1);// 0 = shutter disable;
+		QThread::msleep(20);
+		UAI_SpectrometerDataOneshot(handles[0], Time, w_intensity.data(), Avg);
 		ScanRecord record;
 		record.time = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
 		record.label = "White";
@@ -409,7 +449,6 @@ void Spectrometer::inference_WhiteScan(double height, int time, int avg)
 		}
 		emit _intensity(height, max_val);
 		emit Inference_Data(w_intensity, time);
-
 	}
 }
 void Spectrometer::clearlist(bool v)

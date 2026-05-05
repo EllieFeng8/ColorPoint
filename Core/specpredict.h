@@ -77,6 +77,8 @@ public:
     void fetchCurrentParameters();
     void predict(const QVector<double> &white, const QVector<double> &spectra);
 
+    void testPredict();
+
     PredictionParameters currentParameters() const;
     QJsonObject lastPredictionResult() const;
     PredictionResultData lastParsedPredictionResult() const;

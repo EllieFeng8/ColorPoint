@@ -1,46 +1,44 @@
 #include "core.h"
-#include <cmath>  
-#include <cstdint> 
+#include <cmath>
+#include <cstdint>
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QStringList>
+#include "SpecPredict.h"
 
-Core::Core(QObject* parent)
-    : QObject(parent)
-{
-
+Core::Core(QObject *parent)
+    : QObject(parent) {
 }
-Core::~Core()
-{
-   
+
+Core::~Core() {
     if (threadSpec && threadSpec->isRunning()) {
         if (m_Spec) {
-            // °±¤î©w®É¾¹¨ÃÃö³¬³]³Æ
+            // åœæ­¢å®šæ™‚å™¨ä¸¦é—œé–‰è¨­å‚™
             QMetaObject::invokeMethod(m_Spec, [this] { m_Spec->stop(); }, Qt::BlockingQueuedConnection);
 
             QMetaObject::invokeMethod(m_Spec, [this] {
                 m_Spec->CloseSpectrometer(0);
-                }, Qt::BlockingQueuedConnection);
+            }, Qt::BlockingQueuedConnection);
 
             m_Spec->deleteLater();
         }
         threadSpec->quit();
-        if (!threadSpec->wait(3000))
-        { 
-            threadSpec->terminate();   
+        if (!threadSpec->wait(3000)) {
+            threadSpec->terminate();
             threadSpec->wait();
         }
     }
 
     if (threadSusi && threadSusi->isRunning()) {
         if (m_susi) {
-            // °±¤î©w®É¾¹¨ÃÃö³¬³]³Æ
+            // åœæ­¢å®šæ™‚å™¨ä¸¦é—œé–‰è¨­å‚™
             QMetaObject::invokeMethod(m_susi, [this] { m_susi->stop(); }, Qt::BlockingQueuedConnection);
 
             QMetaObject::invokeMethod(m_susi, [this] {
                 m_susi->uninit();
-                }, Qt::BlockingQueuedConnection);
+            }, Qt::BlockingQueuedConnection);
 
             m_susi->deleteLater();
         }
@@ -49,8 +47,7 @@ Core::~Core()
         threadSusi->quit();
 
 
-        if (!threadSusi->wait(3000))
-        {
+        if (!threadSusi->wait(3000)) {
             threadSusi->terminate();
             threadSusi->wait();
         }
@@ -58,7 +55,7 @@ Core::~Core()
 
     if (threadModbus && threadModbus->isRunning()) {
         if (m_modbus) {
-            // °±¤î©w®É¾¹¨ÃÃö³¬³]³Æ
+            // åœæ­¢å®šæ™‚å™¨ä¸¦é—œé–‰è¨­å‚™
             QMetaObject::invokeMethod(m_modbus, [this] { m_modbus->stop(); }, Qt::BlockingQueuedConnection);
 
             m_modbus->deleteLater();
@@ -68,21 +65,19 @@ Core::~Core()
         threadModbus->quit();
 
 
-        if (!threadModbus->wait(3000))
-        {
+        if (!threadModbus->wait(3000)) {
             threadModbus->terminate();
             threadModbus->wait();
         }
     }
- }
-Core& Core::instance()
-{
+}
+
+Core &Core::instance() {
     static Core inst;
     return inst;
 }
 
-void Core::init()
-{
+void Core::init() {
     m_proxy = new ColorPointProxy(this);
 
     threadSpec = new QThread(this);
@@ -101,134 +96,171 @@ void Core::init()
     threadModbus->start();
 
     Core_connect();
-   
+    SpecPredict::instance().setBaseUrl(QUrl("http://192.168.1.200"));
 }
 
-void Core::Core_connect()
-{
+void Core::Core_connect() {
+    QObject::connect(m_proxy, &ColorPointProxy::inferHeightSetBtnChanged, this, [this](bool v) {
+        setHeight(m_proxy->getInferHeight());
+    }, Qt::QueuedConnection);
 
-    
-    QObject::connect(m_proxy, &ColorPointProxy::inferMeasurePeriodChanged, m_Spec, &Spectrometer::setMeasurePeriod, Qt::QueuedConnection);
+    QObject::connect(m_proxy, &ColorPointProxy::initInferenceSignal, this, [=]() {
+        SpecPredict::instance().fetchCurrentParameters();
+    }, Qt::QueuedConnection);
+
+    QObject::connect(&SpecPredict::instance(), &SpecPredict::predictionFinished, this, [this]() {
+        SpecPredict::PredictionResultData result = SpecPredict::instance().lastParsedPredictionResult();
+        qDebug() << "get Result" << result.groupName;
+        if (m_Spec->inference_pendingRecords.size() > 0) {
+            m_Spec->inference_pendingRecords.back().prediction = result;
+        }
+        std::vector<QString> resultList;
+
+        if (!result.predictions.isEmpty()) {
+            const auto &prediction = result.predictions.first();
+            for (const auto &item: prediction.results) {
+                const QString value = item.hasPredictedValue
+                                          ? QString::number(item.predictedValue)
+                                          : item.predictedClass;
+                resultList.emplace_back(item.itemName + " : " + value);
+            }
+        }
+
+        m_proxy->setInferPredictList(resultList);
+    });
+    QObject::connect(&SpecPredict::instance(), &SpecPredict::currentParametersUpdated, this, [this]() {
+        std::vector<QString> modelSetList;
+
+        const auto &models = SpecPredict::instance().currentParameters().models;
+        for (const auto &model: models) {
+            modelSetList.emplace_back(model.modelName);
+        }
+
+        m_proxy->setInferModelSetList(modelSetList);
+        m_proxy->setInferHeight(SpecPredict::instance().currentParameters().sampleCondition.heightCm);
+        m_proxy->setInferAvgTime(SpecPredict::instance().currentParameters().sampleCondition.averageCount);
+        m_proxy->setInferIntegrationTime(
+            SpecPredict::instance().currentParameters().sampleCondition.integrationTimeUs / 1000);
+
+        SpecPredict::instance().testPredict();
+    });
+
+    QObject::connect(m_proxy, &ColorPointProxy::inferMeasurePeriodChanged, m_Spec, &Spectrometer::setMeasurePeriod,
+                     Qt::QueuedConnection);
     QObject::connect(m_proxy, &ColorPointProxy::labelChanged, m_Spec, &Spectrometer::SetLable, Qt::QueuedConnection);
-    QObject::connect(m_proxy, &ColorPointProxy::clearNirListBtnChanged, m_Spec, &Spectrometer::clearlist, Qt::QueuedConnection);
-    QObject::connect(m_proxy, &ColorPointProxy::clearBtnChanged, m_Spec, &Spectrometer::clearlist, Qt::QueuedConnection);
+    QObject::connect(m_proxy, &ColorPointProxy::clearNirListBtnChanged, m_Spec, &Spectrometer::clearlist,
+                     Qt::QueuedConnection);
+    QObject::connect(m_proxy, &ColorPointProxy::clearBtnChanged, m_Spec, &Spectrometer::clearlist,
+                     Qt::QueuedConnection);
 
     QObject::connect(m_proxy, &ColorPointProxy::autoBtnChanged, m_Spec, &Spectrometer::autoset, Qt::QueuedConnection);
-    QObject::connect(m_proxy, &ColorPointProxy::inferAutoScanBtnChanged, this,[this](bool v)
-        {
-            if(v)
-            {
-                if(m_Spec)
-                {
-                    QMetaObject::invokeMethod(m_Spec, [this]()
-                        {
-                            m_Spec->StartContinuousAcq(500);
-                        });
-                }
+    QObject::connect(m_proxy, &ColorPointProxy::inferAutoScanBtnChanged, this, [this](bool v) {
+        if (v) {
+            if (m_Spec) {
+                m_Spec->SetIntegrationTime(
+                    SpecPredict::instance().currentParameters().sampleCondition.integrationTimeUs / 1000);
+                m_Spec->SetAVG(SpecPredict::instance().currentParameters().sampleCondition.averageCount);
+                QMetaObject::invokeMethod(m_Spec, [this]() {
+                    m_Spec->StartContinuousAcq(500);
+                });
             }
-            else
-            {
-                if (m_Spec)
-                {
-                    QMetaObject::invokeMethod(m_Spec, [this]()
-                        {
-                            m_Spec->StopContinuousAcq();
-                        });
-                }
+        } else {
+            if (m_Spec) {
+                QMetaObject::invokeMethod(m_Spec, [this]() {
+                    m_Spec->StopContinuousAcq();
+                });
             }
-        }, Qt::QueuedConnection);
+        }
+    }, Qt::QueuedConnection);
     //QObject::connect(m_proxy, &ColorPointProxy::saveFileNameBtnChan, &Spectrometer::saveToCSV, Qt::QueuedConnection);
     QObject::connect(m_proxy, &ColorPointProxy::saveFileNameBtnChanged, this, &Core::saveData, Qt::QueuedConnection);
-    QObject::connect(m_proxy, &ColorPointProxy::inferSaveBtnChanged, this, &Core::save_inferenceData, Qt::QueuedConnection);
+    QObject::connect(m_proxy, &ColorPointProxy::inferSaveBtnChanged, this, &Core::save_inferenceData,
+                     Qt::QueuedConnection);
 
     //QObject::connect(m_proxy, &ColorPointProxy::autoSetHeightBtnChanged, this, [this](bool v)
     //    {
     //        m_AutoHeight = v;
     //    }, Qt::QueuedConnection);
 
-    QObject::connect(m_proxy, &ColorPointProxy::connectBtnChanged, m_Spec, &Spectrometer::OpenSpectrometer,Qt::QueuedConnection);
-    QObject::connect(m_proxy, &ColorPointProxy::integrationTimeChanged, m_Spec, &Spectrometer::SetIntegrationTime, Qt::QueuedConnection);
-    QObject::connect(m_proxy, &ColorPointProxy::avgTimeChanged, m_Spec,&Spectrometer::SetAVG, Qt::QueuedConnection);
+    QObject::connect(m_proxy, &ColorPointProxy::connectBtnChanged, m_Spec, &Spectrometer::OpenSpectrometer,
+                     Qt::QueuedConnection);
+    QObject::connect(m_proxy, &ColorPointProxy::integrationTimeChanged, m_Spec, &Spectrometer::SetIntegrationTime,
+                     Qt::QueuedConnection);
+    QObject::connect(m_proxy, &ColorPointProxy::avgTimeChanged, m_Spec, &Spectrometer::SetAVG, Qt::QueuedConnection);
     QObject::connect(m_proxy, &ColorPointProxy::scanBtnChanged, m_Spec, &Spectrometer::Scan, Qt::QueuedConnection);
-    QObject::connect(m_proxy, &ColorPointProxy::inferScanBtnChanged, m_Spec, &Spectrometer::inference_Scan, Qt::QueuedConnection);
+    QObject::connect(m_proxy, &ColorPointProxy::inferScanBtnChanged, m_Spec, &Spectrometer::inference_Scan,
+                     Qt::QueuedConnection);
     //QObject::connect(m_proxy, &ColorPointProxy::, , &Spectrometer::OpenSpectrometer, Qt::QueuedConnection);
 
     QObject::connect(m_proxy, &ColorPointProxy::heightSetChanged, this, &Core::setHeight, Qt::QueuedConnection);
     QObject::connect(m_proxy, &ColorPointProxy::resetBtnChanged, this, &Core::onResetBtnChanged, Qt::QueuedConnection);
-    QObject::connect(m_proxy, &ColorPointProxy::powerOnResetBtnChanged, this, &Core::onResetBtnChanged, Qt::QueuedConnection);
+    QObject::connect(m_proxy, &ColorPointProxy::powerOnResetBtnChanged, this, &Core::onResetBtnChanged,
+                     Qt::QueuedConnection);
 
     QObject::connect(m_proxy, &ColorPointProxy::whiteBtnChanged, this, &Core::whiteScan, Qt::QueuedConnection);
-    QObject::connect(m_proxy, &ColorPointProxy::inferWhiteBtnChanged, this, &Core::inference_whiteScan, Qt::QueuedConnection);
+    QObject::connect(m_proxy, &ColorPointProxy::inferWhiteBtnChanged, this, &Core::inference_whiteScan,
+                     Qt::QueuedConnection);
 
     QObject::connect(threadSusi, &QThread::started, m_susi, &susi_control::init);
     QObject::connect(threadModbus, &QThread::started, m_modbus, &ModbusHandler::init);
     QObject::connect(m_Spec, &Spectrometer::DataIntensity, this, &Core::onDataAcquires);
     QObject::connect(m_Spec, &Spectrometer::Inference_Data, this, &Core::onInference_Data);
 
-    QObject::connect(m_Spec, &Spectrometer::isOpen, this, [this]() 
-        {
-            m_proxy->setConnectedLight(true);
-        });
-    QObject::connect(m_Spec, &Spectrometer::currentTime, this, [this](int time)
-        {
-            m_proxy->setIntegrationTime(time/1000);
-        });
+    QObject::connect(m_Spec, &Spectrometer::isOpen, this, [this]() {
+        m_proxy->setConnectedLight(true);
+    });
+    QObject::connect(m_Spec, &Spectrometer::currentTime, this, [this](int time) {
+        m_proxy->setIntegrationTime(time / 1000);
+    });
     QObject::connect(m_Spec, &Spectrometer::_intensity, this, &Core::onWhiteData);
     QObject::connect(m_modbus, &ModbusHandler::dataReceived, this, &Core::onModbusDataReceived);
     QObject::connect(m_susi, &susi_control::count, this, &Core::Height);
-
 }
 
-void Core::OpenSpectrometer(bool v)
-{
-//    qDebug() << "thy Search & Open ";
-//    m_Spec->SearchSpectrometer();
-//    m_Spec->OpenSpectrometer();
-}
-void Core::setIntegrationTime(int v)
-{
-//    m_Spec->SetIntegrationTime(0, v);
-//    m_IntegrationTime = v;
+void Core::OpenSpectrometer(bool v) {
+    //    qDebug() << "thy Search & Open ";
+    //    m_Spec->SearchSpectrometer();
+    //    m_Spec->OpenSpectrometer();
 }
 
-void Core::setAVG(int v)
-{
-//    Avg = v;
-//    m_Spec->SetAVG(v);
+void Core::setIntegrationTime(int v) {
+    //    m_Spec->SetIntegrationTime(0, v);
+    //    m_IntegrationTime = v;
 }
 
-void Core::onDataAcquires(vector<float> values,int time)
-{
-    m_proxy->setChartData(m_Spec->wavelength,values);
+void Core::setAVG(int v) {
+    //    Avg = v;
+    //    m_Spec->SetAVG(v);
+}
+
+void Core::onDataAcquires(vector<float> values, int time) {
+    m_proxy->setChartData(m_Spec->wavelength, values);
     //m_proxy->setIntegrationTime(time/1000);
 }
-void Core::onInference_Data(vector<float> values, int time)
-{
+
+void Core::onInference_Data(vector<float> values, int time) {
     m_proxy->setInferChartData(m_Spec->wavelength, values);
     //m_proxy->setIntegrationTime(time / 1000);
 }
-void Core::onModbusDataReceived(int address, QVector<quint16> data)
-{
-    if ( !data.isEmpty()) 
-    {
-        int status = data[0]; // 1:¥¿Âà, 2:¤ÏÂà, 3:°±¤î
+
+void Core::onModbusDataReceived(int address, QVector<quint16> data) {
+    if (!data.isEmpty()) {
+        int status = data[0]; // 1:æ­£è½‰, 2:åè½‰, 3:åœæ­¢
         //m_currentDirection = data[0];
-        // 1. ±N¤è¦Vª¬ºA¶Ç»¼µ¹ susi_control °õ¦æºü
-        if (m_susi) 
-        {
-            // ¨Ï¥Î QMetaObject::invokeMethod ½T«O¸ó°õ¦æºü©I¥s¦w¥ş
-            QMetaObject::invokeMethod(m_susi, [this, status]()
-                {
-                    m_susi->setDirection(status);
-                });
+        // 1. å°‡æ–¹å‘ç‹€æ…‹å‚³éçµ¦ susi_control åŸ·è¡Œç·’
+        if (m_susi) {
+            // ä½¿ç”¨ QMetaObject::invokeMethod ç¢ºä¿è·¨åŸ·è¡Œç·’å‘¼å«å®‰å…¨
+            QMetaObject::invokeMethod(m_susi, [this, status]() {
+                m_susi->setDirection(status);
+            });
         }
     }
 }
-void Core::Height(int h)
-{    
-    //if (m_height != h) 
+
+void Core::Height(int h) {
+    //if (m_height != h)
     //{
-        m_height = h;
+    m_height = h;
     //    if (!m_Spec->m_pendingRecords.empty())
     //    {
     //        qWarning() << "don't move";
@@ -238,135 +270,109 @@ void Core::Height(int h)
         if (h > 120) {
             m_proxy->setHeight(120);
             m_proxy->setInferCurrentHeight(120);
+        } else {
+            m_proxy->setHeight(h);
+            m_proxy->setInferCurrentHeight(h);
         }
-        else {
-        m_proxy->setHeight(h);
-        m_proxy->setInferCurrentHeight(h);
-    }
-    }// qDebug() << m_height;
+    } // qDebug() << m_height;
 
-    if (!m_AutoHeight || m_targetHeight == 0)
-    {
+    if (!m_AutoHeight || m_targetHeight == 0) {
         if (m_currentDirection != 3) {
             //m_susi->setGPIO2(0);
             //m_susi->setGPIO3(0);
-            m_currentDirection = 3; // ­«³]ª¬ºA
+            m_currentDirection = 3; // é‡è¨­ç‹€æ…‹
             qDebug() << "!m_AutoHeight || m_targetHeight == 0";
         }
         return;
     }
 
-    // ­pºâ®t¶Z
+    // è¨ˆç®—å·®è·
     double diff = h - m_targetHeight;
 
-     //1. ¨ì¹F¥Ø¼Ğ½d³ò (®e³\»~®t 0.25)
-    if (qAbs(diff) <= 0.25)
-    {
-
-            m_currentDirection = 3;    // ¼Ğ°O¥Ø«e¤w°±¤î
-            //this->controlInverter(3);
-            QMetaObject::invokeMethod(m_susi, [this]()
-                {
-                    m_susi->setGPIO2(0); 
-                    m_susi->setGPIO3(0); 
-                });
-            m_AutoHeight = false;      
-            qDebug() << "Target Reached. Stopped.";
-            return;
-        
+    //1. åˆ°é”ç›®æ¨™ç¯„åœ (å®¹è¨±èª¤å·® 0.25)
+    if (qAbs(diff) <= 0.25) {
+        m_currentDirection = 3; // æ¨™è¨˜ç›®å‰å·²åœæ­¢
+        //this->controlInverter(3);
+        QMetaObject::invokeMethod(m_susi, [this]() {
+            m_susi->setGPIO2(0);
+            m_susi->setGPIO3(0);
+        });
+        m_AutoHeight = false;
+        qDebug() << "Target Reached. Stopped.";
+        return;
     }
-    // 2. ¥Ø«e¤Ó°ª -> »İ­n¤U­° (°²³] 2 ¬O¤ÏÂà/¤U­°)
-    else if (h > m_targetHeight)
-    {
+    // 2. ç›®å‰å¤ªé«˜ -> éœ€è¦ä¸‹é™ (å‡è¨­ 2 æ˜¯åè½‰/ä¸‹é™)
+    else if (h > m_targetHeight) {
+        m_currentDirection = 2;
 
-            m_currentDirection = 2;    
-
-            //this->controlInverter(2);
-            if (m_susi)
-            {
-
-                QMetaObject::invokeMethod(m_susi, [this]()
-                    {
-                        m_susi->setGPIO2(0); //½T»{¤W¤É°±¤î
-                        m_susi->setGPIO3(1); //¶}©l¤U­°
-                    });
-            }
-            qDebug() << "Moving Down...";
-        
-    }
-    // 3. ¥Ø«e¤Ó§C -> »İ­n¤W¤É (°²³] 1 ¬O¥¿Âà/¤W¤É)
-    else if (h < m_targetHeight)
-    {
-
-            m_currentDirection = 1;  
-
-            //this->controlInverter(1);
-            if (m_susi)
-            {
-
-                QMetaObject::invokeMethod(m_susi, [this]()
-                    {
-                        m_susi->setGPIO3(0); //½T»{¤U­°°±¤î
-                        m_susi->setGPIO2(1); //¶}©l¤W¤É
-                    });
-            }
-            qDebug() << "Moving Up...";
+        //this->controlInverter(2);
+        if (m_susi) {
+            QMetaObject::invokeMethod(m_susi, [this]() {
+                m_susi->setGPIO2(0); //ç¢ºèªä¸Šå‡åœæ­¢
+                m_susi->setGPIO3(1); //é–‹å§‹ä¸‹é™
+            });
         }
-    
+        qDebug() << "Moving Down...";
+    }
+    // 3. ç›®å‰å¤ªä½ -> éœ€è¦ä¸Šå‡ (å‡è¨­ 1 æ˜¯æ­£è½‰/ä¸Šå‡)
+    else if (h < m_targetHeight) {
+        m_currentDirection = 1;
+
+        //this->controlInverter(1);
+        if (m_susi) {
+            QMetaObject::invokeMethod(m_susi, [this]() {
+                m_susi->setGPIO3(0); //ç¢ºèªä¸‹é™åœæ­¢
+                m_susi->setGPIO2(1); //é–‹å§‹ä¸Šå‡
+            });
+        }
+        qDebug() << "Moving Up...";
+    }
 }
 
 
-void Core::setHeight(int h)
-{
+void Core::setHeight(int h) {
     m_targetHeight = h;
-    m_AutoHeight = true; // ¶}±Ò
+    m_AutoHeight = true; // é–‹å•Ÿ
 }
 
-void Core::controlInverter(int command)
-{
-
-
+void Core::controlInverter(int command) {
     //485
     //if (m_modbus) {
     //    //qDebug() << m_targetHeight;
-    //    // ¸ó°õ¦æºü¦w¥ş©I¥s ModbusHandler ªº writeInverterControl
+    //    // è·¨åŸ·è¡Œç·’å®‰å…¨å‘¼å« ModbusHandler çš„ writeInverterControl
     //    QMetaObject::invokeMethod(m_modbus, [this, command]() {
     //        m_modbus->writeInverterControl(command);
     //        });
     //}
 }
 
-void Core::onResetBtnChanged(bool v)
-{
-
-    if (m_susi)
-    {
-        // ¨Ï¥Î QMetaObject::invokeMethod ½T«O¸ó°õ¦æºü©I¥s¦w¥ş
-        QMetaObject::invokeMethod(m_susi, [this]()
-            {
-                m_susi->reset();
-            });
+void Core::onResetBtnChanged(bool v) {
+    if (m_susi) {
+        // ä½¿ç”¨ QMetaObject::invokeMethod ç¢ºä¿è·¨åŸ·è¡Œç·’å‘¼å«å®‰å…¨
+        QMetaObject::invokeMethod(m_susi, [this]() {
+            m_susi->reset();
+        });
     }
 }
-void Core::whiteScan(bool v)
-{
+
+void Core::whiteScan(bool v) {
     w_height = m_height;
-    QMetaObject::invokeMethod(m_Spec, [this]()
-        {
-            m_Spec->WhiteScan(w_height,100000,1);
-        });
-}
-void Core::inference_whiteScan(bool v)
-{
-    w_height = m_height;
-    QMetaObject::invokeMethod(m_Spec, [this]()
-        {
-            m_Spec->inference_WhiteScan(w_height, 100000, 1);
-        });
+    QMetaObject::invokeMethod(m_Spec, [this]() {
+        m_Spec->WhiteScan(w_height, 100000, 1);
+    });
 }
 
-void Core::saveData(bool v)
-{
+void Core::inference_whiteScan(bool v) {
+    w_height = m_height;
+    QMetaObject::invokeMethod(m_Spec, [this]() {
+        m_Spec->SetIntegrationTime(
+            SpecPredict::instance().currentParameters().whiteRefCondition.integrationTimeUs / 1000);
+        m_Spec->SetAVG(SpecPredict::instance().currentParameters().whiteRefCondition.averageCount);
+        m_Spec->inference_WhiteScan(w_height, 100000, 1);
+    });
+}
+
+void Core::saveData(bool v) {
     //if (m_Spec->m_pendingRecords.empty()) {
     //    qDebug() << "No data to save.";
     //    return;
@@ -380,7 +386,7 @@ void Core::saveData(bool v)
     );
 
     if (csvPath.isEmpty()) {
-        return; // ¨Ï¥ÎªÌ¨ú®ø¿ï¾Ü
+        return; // ä½¿ç”¨è€…å–æ¶ˆé¸æ“‡
     }
     QFile file(csvPath);
     bool fileExists = file.exists();
@@ -392,23 +398,23 @@ void Core::saveData(bool v)
 
     QTextStream out(&file);
 
-    // 1. ¼g¤JªíÀY (¶È¦bÀÉ®×­è«Ø¥ß®É)
+    // 1. å¯«å…¥è¡¨é ­ (åƒ…åœ¨æª”æ¡ˆå‰›å»ºç«‹æ™‚)
     if (!fileExists || file.size() == 0) {
-        out << "Time,Label";
-        for (float w : m_Spec->wavelength) {
-            out << "," << QString::number(w, 'f', 1); // ¿é¥Xªiªø§@¬°Äæ¦ì¦W
+        out << "Time,Label,Wavelength";
+        for (float w: m_Spec->wavelength) {
+            out << "," << QString::number(w, 'f', 1); // è¼¸å‡ºæ³¢é•·ä½œç‚ºæ¬„ä½å
         }
         out << "\n";
     }
 
-    // 2. ¹M¾ú©Ò¦³¼È¦s°O¿ı¡A½T«O¨C¤@µ§±½´y¦û¥Î¤@¦æ
-    for (const auto& record : m_Spec->m_pendingRecords) {
-        out << record.time << "," << (record.label.isEmpty() ? "None" : record.label);
+    // 2. éæ­·æ‰€æœ‰æš«å­˜è¨˜éŒ„ï¼Œç¢ºä¿æ¯ä¸€ç­†æƒæä½”ç”¨ä¸€è¡Œ
+    for (const auto &record: m_Spec->m_pendingRecords) {
+        out << record.time << "," << (record.label.isEmpty() ? "None" : record.label) << ",0";
 
-        for (float val : record.data) {
-            out << "," << QString::number(val, 'g', 10); // ¨C¤@µ§¸ê®ÆÂI±µ¦b¦P¤@¦æ«á¤è
+        for (float val: record.data) {
+            out << "," << QString::number(val, 'g', 10); // æ¯ä¸€ç­†è³‡æ–™é»æ¥åœ¨åŒä¸€è¡Œå¾Œæ–¹
         }
-        out << "\n"; // ³oµ§°O¿ıµ²§ô¡A´«¦æ
+        out << "\n"; // é€™ç­†è¨˜éŒ„çµæŸï¼Œæ›è¡Œ
     }
 
     file.close();
@@ -416,13 +422,12 @@ void Core::saveData(bool v)
     jsonPath.replace(".csv", ".json");
     saveConfigJson(jsonPath);
 
-    // 3. Àx¦s§¹²¦«á²MªÅ°O¾ĞÅé¡AÁ×§K¤U¦¸Àx¦s®É­«½Æ¼g¤JÂÂ¸ê®Æ
+    // 3. å„²å­˜å®Œç•¢å¾Œæ¸…ç©ºè¨˜æ†¶é«”ï¼Œé¿å…ä¸‹æ¬¡å„²å­˜æ™‚é‡è¤‡å¯«å…¥èˆŠè³‡æ–™
     //m_Spec->m_pendingRecords.clear();
     qDebug() << "All data saved to CSV and memory cleared.";
 }
 
-void Core::save_inferenceData(bool v)
-{
+void Core::save_inferenceData(bool v) {
     //if (m_Spec->m_pendingRecords.empty()) {
     //    qDebug() << "No data to save.";
     //    return;
@@ -436,7 +441,7 @@ void Core::save_inferenceData(bool v)
     );
 
     if (csvPath.isEmpty()) {
-        return; // ¨Ï¥ÎªÌ¨ú®ø¿ï¾Ü
+        return; // ä½¿ç”¨è€…å–æ¶ˆé¸æ“‡
     }
     QFile file(csvPath);
     bool fileExists = file.exists();
@@ -447,24 +452,56 @@ void Core::save_inferenceData(bool v)
     }
 
     QTextStream out(&file);
+    QStringList predictionHeaders;
+    for (const auto &record: m_Spec->inference_pendingRecords) {
+        for (const auto &prediction: record.prediction.predictions) {
+            for (const auto &result: prediction.results) {
+                if (!result.itemName.isEmpty() && !predictionHeaders.contains(result.itemName)) {
+                    predictionHeaders.append(result.itemName);
+                }
+            }
+        }
+    }
 
-    // 1. ¼g¤JªíÀY (¶È¦bÀÉ®×­è«Ø¥ß®É)
+    // 1. å¯«å…¥è¡¨é ­ (åƒ…åœ¨æª”æ¡ˆå‰›å»ºç«‹æ™‚)
     if (!fileExists || file.size() == 0) {
         out << "Time,Label";
-        for (float w : m_Spec->wavelength) {
-            out << "," << QString::number(w, 'f', 1); // ¿é¥Xªiªø§@¬°Äæ¦ì¦W
+        for (const QString &header: predictionHeaders) {
+            out << "," << header;
+        }
+        for (float w: m_Spec->wavelength) {
+            out << "," << QString::number(w, 'f', 1); // è¼¸å‡ºæ³¢é•·ä½œç‚ºæ¬„ä½å
         }
         out << "\n";
     }
 
-    // 2. ¹M¾ú©Ò¦³¼È¦s°O¿ı¡A½T«O¨C¤@µ§±½´y¦û¥Î¤@¦æ
-    for (const auto& record : m_Spec->inference_pendingRecords) {
+    // 2. éæ­·æ‰€æœ‰æš«å­˜è¨˜éŒ„ï¼Œç¢ºä¿æ¯ä¸€ç­†æƒæä½”ç”¨ä¸€è¡Œ
+    for (const auto &record: m_Spec->inference_pendingRecords) {
         out << record.time << "," << (record.label.isEmpty() ? "None" : record.label);
 
-        for (float val : record.data) {
-            out << "," << QString::number(val, 'g', 10); // ¨C¤@µ§¸ê®ÆÂI±µ¦b¦P¤@¦æ«á¤è
+        for (const QString &header: predictionHeaders) {
+            QString predictionValue;
+            bool foundPrediction = false;
+            for (const auto &prediction: record.prediction.predictions) {
+                for (const auto &result: prediction.results) {
+                    if (result.itemName == header) {
+                        predictionValue = result.hasPredictedValue
+                                              ? QString::number(result.predictedValue, 'g', 15)
+                                              : result.predictedClass;
+                        foundPrediction = true;
+                        break;
+                    }
+                }
+                if (foundPrediction) {
+                    break;
+                }
+            }
+            out << "," << predictionValue;
         }
-        out << "\n"; // ³oµ§°O¿ıµ²§ô¡A´«¦æ
+        for (float val: record.data) {
+            out << "," << QString::number(val, 'g', 10); // æ¯ä¸€ç­†è³‡æ–™é»æ¥åœ¨åŒä¸€è¡Œå¾Œæ–¹
+        }
+        out << "\n"; // é€™ç­†è¨˜éŒ„çµæŸï¼Œæ›è¡Œ
     }
 
     file.close();
@@ -472,19 +509,18 @@ void Core::save_inferenceData(bool v)
     jsonPath.replace(".csv", ".json");
     saveConfigJson(jsonPath);
 
-    // 3. Àx¦s§¹²¦«á²MªÅ°O¾ĞÅé¡AÁ×§K¤U¦¸Àx¦s®É­«½Æ¼g¤JÂÂ¸ê®Æ
+    // 3. å„²å­˜å®Œç•¢å¾Œæ¸…ç©ºè¨˜æ†¶é«”ï¼Œé¿å…ä¸‹æ¬¡å„²å­˜æ™‚é‡è¤‡å¯«å…¥èˆŠè³‡æ–™
     //m_Spec->inference_pendingRecords.clear();
     qDebug() << "All data saved to CSV and memory cleared.";
 }
 
-void Core::saveConfigJson(QString filePath)
-{
+void Core::saveConfigJson(QString filePath) {
     if (filePath.isEmpty()) return;
 
-    // 1. «Ø¥ß³Ì¤º¼hªº raw_samples °}¦C
+    // 1. å»ºç«‹æœ€å…§å±¤çš„ raw_samples é™£åˆ—
     QJsonArray rawSamplesArray;
-    // ³o¸Ì¥Ü½d¦p¦ó±q§Aªº¸ê®Æ·½¡]°²³]¬O m_Spec ¤ºªº¼È¦s¸ê®Æ¡^«Ø¥ß°}¦C
-    // ¦pªG§A¦³¹ê»Úªº¼Ë¥»²M³æ¡A¥i¥H¦b³o¸Ì¶]°j°é
+    // é€™è£¡ç¤ºç¯„å¦‚ä½•å¾ä½ çš„è³‡æ–™æºï¼ˆå‡è¨­æ˜¯ m_Spec å…§çš„æš«å­˜è³‡æ–™ï¼‰å»ºç«‹é™£åˆ—
+    // å¦‚æœä½ æœ‰å¯¦éš›çš„æ¨£æœ¬æ¸…å–®ï¼Œå¯ä»¥åœ¨é€™è£¡è·‘è¿´åœˆ
     /*
     for (const auto& sample : m_Spec->samples) {
         QJsonObject sampleObj;
@@ -494,39 +530,42 @@ void Core::saveConfigJson(QString filePath)
     }
     */
 
-    // ¬°¤F²Å¦X§Aªº½d¨Ò®æ¦¡¡A¤â°Ê¥[¤J´Xµ§´ú¸Õ¸ê®Æ
-    QJsonObject s1; s1.insert("height_cm", 110); s1.insert("intensity", 1000);
-    QJsonObject s2; s2.insert("height_cm", 111); s2.insert("intensity", 1500);
+    // ç‚ºäº†ç¬¦åˆä½ çš„ç¯„ä¾‹æ ¼å¼ï¼Œæ‰‹å‹•åŠ å…¥å¹¾ç­†æ¸¬è©¦è³‡æ–™
+    QJsonObject s1;
+    s1.insert("height_cm", 110);
+    s1.insert("intensity", 1000);
+    QJsonObject s2;
+    s2.insert("height_cm", 111);
+    s2.insert("intensity", 1500);
     rawSamplesArray.append(s1);
     rawSamplesArray.append(s2);
 
-    // 2. «Ø¥ß white_ref ª«¥ó
+    // 2. å»ºç«‹ white_ref ç‰©ä»¶
     QJsonObject whiteRefObj;
-    whiteRefObj.insert("average_count", m_Spec->Avg); // ±q¥úÃĞ»ö¹êÅé¨ú±o
-    whiteRefObj.insert("height_cm", w_height);       // ¥Ø«e°ª«×
+    whiteRefObj.insert("average_count", m_Spec->Avg); // å¾å…‰è­œå„€å¯¦é«”å–å¾—
+    whiteRefObj.insert("height_cm", w_height); // ç›®å‰é«˜åº¦
     whiteRefObj.insert("integration_time_us", m_Spec->Time);
     whiteRefObj.insert("raw_samples", rawSamplesArray);
 
-    // 3. «Ø¥ß³Ì¥~¼hªº Root ª«¥ó
+    // 3. å»ºç«‹æœ€å¤–å±¤çš„ Root ç‰©ä»¶
     QJsonObject root;
     root.insert("average_count", m_Spec->Avg);
     root.insert("height_cm", m_height);
     root.insert("integration_time_us", m_Spec->Time);
     root.insert("white_ref", whiteRefObj);
 
-    // 4. ¼g¤JÀÉ®×
+    // 4. å¯«å…¥æª”æ¡ˆ
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QJsonDocument doc(root);
-        file.write(doc.toJson(QJsonDocument::Indented)); // ¨Ï¥ÎÁY±Æ®æ¦¡¡A¤è«K¤HÃş¾\Åª
+        file.write(doc.toJson(QJsonDocument::Indented)); // ä½¿ç”¨ç¸®æ’æ ¼å¼ï¼Œæ–¹ä¾¿äººé¡é–±è®€
         file.close();
         qDebug() << "JSON OK";
     }
 }
 
-void Core::onWhiteData(double currentHeight,float currentIntensity)
-{
-    // 1. ¨ú±oÀÉ®×¸ô®| (³q±`¦ì©ó®à­±©Îµ{¦¡¥Ø¿ı)
+void Core::onWhiteData(double currentHeight, float currentIntensity) {
+    // 1. å–å¾—æª”æ¡ˆè·¯å¾‘ (é€šå¸¸ä½æ–¼æ¡Œé¢æˆ–ç¨‹å¼ç›®éŒ„)
     QString jsonPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/data_log.json";
 
     QFile file(jsonPath);
@@ -535,7 +574,7 @@ void Core::onWhiteData(double currentHeight,float currentIntensity)
         return;
     }
 
-    // 2. ¸ÑªR JSON ¤º®e
+    // 2. è§£æ JSON å…§å®¹
     QByteArray data = file.readAll();
     file.close();
 
@@ -543,7 +582,7 @@ void Core::onWhiteData(double currentHeight,float currentIntensity)
     QJsonObject root = doc.object();
     QJsonArray samples = root["white_ref"].toObject()["raw_samples"].toArray();
 
-    // 3. ´M§ä°ª«×³Ì±µªñªº¼Ë¥»
+    // 3. å°‹æ‰¾é«˜åº¦æœ€æ¥è¿‘çš„æ¨£æœ¬
     double minDiff = 9999.0;
     QJsonObject bestMatch;
 
@@ -558,8 +597,9 @@ void Core::onWhiteData(double currentHeight,float currentIntensity)
         }
     }
 
-    // 4. ¶i¦æ¼Æ­È¤ñ¹ï»PÅŞ¿è³B²z
-    if (!bestMatch.isEmpty() && minDiff < 0.5) { // ®e³\»~®t 0.5cm
+    // 4. é€²è¡Œæ•¸å€¼æ¯”å°èˆ‡é‚è¼¯è™•ç†
+    if (!bestMatch.isEmpty() && minDiff < 0.5) {
+        // å®¹è¨±èª¤å·® 0.5cm
         double refIntensity = bestMatch["intensity"].toDouble();
         double intensityDiff = qAbs(refIntensity - currentIntensity);
 
@@ -567,13 +607,13 @@ void Core::onWhiteData(double currentHeight,float currentIntensity)
         qDebug() << "currentHeight:" << currentHeight << " (refHeight:" << bestMatch["height_cm"].toDouble() << ")";
         qDebug() << "currentIntensity:" << currentIntensity << " / refIntensity:" << refIntensity;
 
-        // ¦pªG±j«×°¾®t¹L¤j¡A¥i¥HÄ²µoÄµ§i
-        if (intensityDiff > (refIntensity * 0.3)) { // °¾®t¶W¹L 30%
-            qDebug() << "w_intensity error¡I";
+        // å¦‚æœå¼·åº¦åå·®éå¤§ï¼Œå¯ä»¥è§¸ç™¼è­¦å‘Š
+        if (intensityDiff > (refIntensity * 0.3)) {
+            // åå·®è¶…é 30%
+            qDebug() << "w_intensity errorï¼";
             m_proxy->raiseAbnormal();
         }
-    }
-    else {
-        qDebug() << "error¡C";
+    } else {
+        qDebug() << "errorã€‚";
     }
 }

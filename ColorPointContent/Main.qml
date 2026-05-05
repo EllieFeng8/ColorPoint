@@ -32,6 +32,8 @@ MainScreen {
     //nav
     inferenceMouseArea.onClicked: {
         inference.visible = true
+        console.log("inferenceMouseArea clicked")
+        Cp.initInference()
     }
 
     linkBtnMouseArea.onClicked: {

@@ -8,11 +8,11 @@
 	#include "DSPLibrary.h"
 	#ifdef __linux__ 
 	//linux code goes here
-		#include "MathFuncs.h" //20221101 kevin ²¾¨ì¦¹³B¦P¨Blinux
+		#include "MathFuncs.h" //20221101 kevin ç§»åˆ°æ­¤è™•åŒæ­¥linux
 	#endif
 #else
 
-//20200720 kevin ¾ã¦Xwindows »P Linux¬°¦P¤@ÀÉ®×
+//20200720 kevin æ•´åˆwindows èˆ‡ Linuxç‚ºåŒä¸€æª”æ¡ˆ
 #ifdef __linux__ 
 	//linux code goes here
 	#define DLL_API
@@ -2374,7 +2374,7 @@ DLL_API ERRORCODE UAI_SpectrometerGetXenonPulseIntervalNsave(void* api_handle, u
 //***************************************************************************************//
 DLL_API ERRORCODE UAI_SpectrometerFreeLinearityCalibrationGainAllPixel(void* api_handle);
 
-//20200602 kevin ·s¼W§ó·sFW API.
+//20200602 kevin æ–°å¢æ›´æ–°FW API.
 //***************************************************************************************//
 //Function Name: 	DLI_SpectrometerUpdateFW
 //Input Arguments:	
@@ -2593,7 +2593,7 @@ DLL_API ERRORCODE UAI_SpectrometerGetHGainSupport(void* api_handle, unsigned int
 //Function Name: DLI_SpectrometerSetRingAVGBoxcar
 //Input Arguments: 
 //       Type: void*, Name: device handle pointer
-//       Type: unsigned int, Name: ring buffer average boxcar value control (boxcar = 0 (default), 1, 2, ¡K;)
+//       Type: unsigned int, Name: ring buffer average boxcar value control (boxcar = 0 (default), 1, 2, â€¦;)
 //Return Value:        API Error Code
 //***************************************************************************************//
 DLL_API ERRORCODE UAI_SpectrometerSetRingAVGBoxcar(void* api_handle, unsigned int boxcar);
@@ -2602,7 +2602,7 @@ DLL_API ERRORCODE UAI_SpectrometerSetRingAVGBoxcar(void* api_handle, unsigned in
 //Function Name: DLI_SpectrometerSetRingAVGBoxcar
 //Input Arguments: 
 //       Type: void*, Name: device handle pointer
-//       Type: unsigned int*, Name: ring buffer average boxcar value control (boxcar = 0 (default), 1, 2, ¡K;)
+//       Type: unsigned int*, Name: ring buffer average boxcar value control (boxcar = 0 (default), 1, 2, â€¦;)
 //Return Value:        API Error Code
 //***************************************************************************************//
 DLL_API ERRORCODE UAI_SpectrometerGetRingAVGBoxcar(void* api_handle, unsigned int *boxcar);
@@ -2620,7 +2620,7 @@ DLL_API ERRORCODE UAI_SpectrometerGetRingAVGBoxcar(void* api_handle, unsigned in
 //***************************************************************************************//
 DLL_API ERRORCODE UAI_SpectrometerOpen_GetInterfaceInfo(unsigned int dev, void** api_handle, unsigned int vid, unsigned int pid, unsigned int* rootIndex, unsigned int* subIndex);
 
-//20230829 kevin ·s¼Wfunction ¥[«ü©wBusID»PDeviceID , ¥u¦³Linux¤ä´© 
+//20230829 kevin æ–°å¢function åŠ æŒ‡å®šBusIDèˆ‡DeviceID , åªæœ‰Linuxæ”¯æ´ 
 //***************************************************************************************//
 //Function Name: 	UAI_SpectrometerOpen_WithInterfaceInfo
 //Input Arguments:	
@@ -2633,10 +2633,10 @@ DLL_API ERRORCODE UAI_SpectrometerOpen_GetInterfaceInfo(unsigned int dev, void**
 //***************************************************************************************//
 DLL_API ERRORCODE UAI_SpectrometerOpen_WithInterfaceInfo(unsigned int rootIndex, unsigned int subIndex, void** api_handle, unsigned int vid, unsigned int pid);
 
-//20230921 kevin ·s¼Wfunction usbibit , ¥u¦³linux¤ä´©
+//20230921 kevin æ–°å¢function usbibit , åªæœ‰linuxæ”¯æ´
 DLL_API ERRORCODE UAI_SpectrometerUsbInit();
 
-//20230926 kevin ·s¼Wfunction usbexit , ¥u¦³linux¤ä´©
+//20230926 kevin æ–°å¢function usbexit , åªæœ‰linuxæ”¯æ´
 DLL_API ERRORCODE UAI_SpectrometerUsbExit();
 
 //***************************************************************************************//

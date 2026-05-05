@@ -14,6 +14,10 @@ public:
         QString component;
     };
 public slots:
+
+    void init() {
+    SpecPredict::instance().setBaseUrl(QUrl("http://127.0.0.1"));
+}
     void load()
     {
 

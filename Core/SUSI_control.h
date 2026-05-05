@@ -64,25 +64,25 @@ public slots:
 
 		if (currentLevel == 1 && lastLevel == 0)
 		{
-			if (currentLevel == 1 && lastLevel == 0) // GPIO Ĳ�o�]�W�ɽt�^
+			if (currentLevel == 1 && lastLevel == 0) // GPIO ??o?]?W??t?^
 			{
-				// �ھ� m_direction �P�_ count �W��
+				// ??? m_direction ?P?_ count ?W??
 				if (m_direction == 1 && m_count > 0)
-				{ // ����
+				{ // ????
 					m_count--;
 					qDebug() << "--" << m_count;
 				}
 				else if (m_direction == 2) 
-				{ // ����
+				{ // ????
 					m_count++;
 					qDebug() << "++" << m_count;				}
 				else 
-				{ // ����Υ������A���p��
+				{ // ???????????A???p??
 				  //qDebug() << "";
 				}
 			}
 		}
-		if (m_WaitReset) // ���ݰ��ר�̰��I
+		if (m_WaitReset) // ???????????I
 		{
 
 			if(currentLevel==0)
@@ -123,7 +123,7 @@ signals:
 	void count(int count);
 private:
 	uint32_t currentLevel = 0;
-	uint32_t lastLevel = 1; // �w�]�� High�A�T�O�Ĥ@���������T
+	uint32_t lastLevel = 1; // ?w?]?? High?A?T?O??@?????????T
 	uint32_t m_count = 0;
 	int m_direction;
 	QTimer* m_timer = nullptr;
