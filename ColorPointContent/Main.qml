@@ -96,6 +96,11 @@ MainScreen {
         Cp.heightSet = 120
         console.log("resetBtn: ",  Cp.resetBtn)
     }
+    stopbuttomMouseArea.onClicked: {
+        Cp.stopBtn = true
+        // Cp.heightSet = 120
+        console.log("stopBtn: ",  Cp.stopBtn)
+    }
     SmartNIR{
         id:smartNIR
         visible:false

@@ -26,6 +26,7 @@ Rectangle {
     property alias saveFileBtnMouseArea: saveFileBtnMouseArea
     property alias heightconfirmBtnMouseArea : heightconfirmBtnMouseArea
     property alias resetbuttomMouseArea : resetbuttomMouseArea
+    property alias stopbuttomMouseArea : stopbuttomMouseArea
     property alias heightSet1 : heightSet1
     property bool whiteScanClicked: false
     MouseArea {
@@ -305,6 +306,57 @@ Rectangle {
                                                 verticalAlignment: Text.AlignVCenter
                                             }
                                         }
+                                        Image {
+                                            anchors.left: resetzeroButton.left
+                                            anchors.leftMargin: 100
+                                            anchors.bottom: stopButton.top
+                                            anchors.bottomMargin: 10
+                                            width:64
+                                            height:64
+                                            // anchors.verticalCenter: parent.verticalCenter //垂直置中
+                                            // anchors.horizontalCenter: parent.horizontalCenter //水平置中
+                                            source: Cp.moveSignal===0?"":Cp.moveSignal===1?"assets/up-arrow.png":"assets/down-arrow.png"
+                                            scale: 0.8
+ }
+                                        Rectangle {
+                                            id: stopButton
+
+                                            anchors.left: resetzeroButton.left
+                                            // anchors.leftMargin: 20
+                                            anchors.bottom: resetzeroButton.top
+                                            anchors.bottomMargin: 20
+
+                                            //anchors.topMargin: 15
+                                            height: heightSet1.height
+                                            width: parent.width*0.82
+
+                                            color: "red"
+                                            radius: 10
+                                            Text {
+                                                id: stopbuttom
+                                                color: "#ffffff"
+                                                font.family: "Poppins"
+                                                font.pixelSize: stopbuttomMouseArea.containsMouse ? 22 : 20
+                                                font.weight: Font.Bold
+                                                anchors.verticalCenter: parent.verticalCenter //文字垂直置中
+                                                anchors.horizontalCenter: parent.horizontalCenter //文字水平置中
+                                                text: "Stop"
+                                                textFormat: Text.PlainText
+                                                wrapMode: Text.WordWrap
+                                            }
+                                            layer.enabled: true
+                                            layer.effect: MultiEffect {
+                                                shadowEnabled: stopbuttomMouseArea.containsMouse ? true : false
+                                                shadowColor: "white"
+                                                shadowBlur: 0.8
+                                            }
+                                            MouseArea {
+                                                id: stopbuttomMouseArea
+                                                anchors.fill: parent
+                                                hoverEnabled: true
+                                                cursorShape: Qt.PointingHandCursor
+                                            }
+                                        }
 
                                         Rectangle {
                                             id: resetzeroButton
@@ -312,7 +364,7 @@ Rectangle {
                                             anchors.left: heightset.left
                                             anchors.leftMargin: 20
                                             anchors.top: heightset.bottom
-                                            anchors.topMargin: 207
+                                            anchors.topMargin: 237
 
                                             //anchors.topMargin: 15
                                             height: heightSet1.height

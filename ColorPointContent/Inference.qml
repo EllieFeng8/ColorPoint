@@ -85,41 +85,47 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
     }
+
+    Image{
+        anchors.right:parent.right
+        anchors.rightMargin:45
+        anchors.top:parent.top
+        anchors.topMargin:57
+        scale:heightSetBtnMouseArea.containsMouse ? 1.2 : 1.1
+        source:"assets/refresh.png"
+
+        layer.enabled: true
+        layer.effect: MultiEffect {
+            shadowEnabled: heightSetBtnMouseArea.containsMouse ? true : false
+            shadowColor: "white"
+            shadowBlur: 0.8
+        }
+        MouseArea {
+            id: heightSetBtnMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                //inferAddData(Cp.inferLabel);//test
+                Cp.inferHeightSetBtn = true
+                console.log("inferHeightSetBtn clicked",Cp.inferHeightSetBtn)
+            }
+        }
+    }
     Item {
+        // anchors.fill: parent
+        // Layout.fillHeight: true
+        // Layout.preferredWidth: parent.width * 0.9
+        // anchors.topMargin: 50
+        // anchors.bottomMargin: 20
+        // anchors.leftMargin: 20
+        // anchors.rightMargin: 20
         anchors.fill: parent
-        Layout.fillHeight: true
-        Layout.preferredWidth: parent.width * 0.9
-        anchors.topMargin: 50
+        anchors.topMargin: 60
         anchors.bottomMargin: 20
         anchors.leftMargin: 20
         anchors.rightMargin: 20
 
-        Image{
-            anchors.right:parent.right
-            anchors.rightMargin:20
-            anchors.top:rec.top
-            anchors.topMargin:-18
-            scale:heightSetBtnMouseArea.containsMouse ? 1.2 : 1.1
-            source:"assets/refresh.png"
-
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                shadowEnabled: heightSetBtnMouseArea.containsMouse ? true : false
-                shadowColor: "white"
-                shadowBlur: 0.8
-            }
-            MouseArea {
-                id: heightSetBtnMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    //inferAddData(Cp.inferLabel);//test
-                    Cp.inferHeightSetBtn = true
-                    console.log("inferHeightSetBtn clicked",Cp.inferHeightSetBtn)
-                }
-            }
-        }
 
 
         Rectangle {

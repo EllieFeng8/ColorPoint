@@ -48,6 +48,7 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(int  height   READ getHeight   WRITE setHeight   NOTIFY heightChanged)
     Q_PROPERTY(int  heightSet   READ getHeightSet  WRITE setHeightSet  NOTIFY heightSetChanged)
     Q_PROPERTY(bool  resetBtn   READ getResetBtn  WRITE setResetBtn NOTIFY resetBtnChanged)
+    Q_PROPERTY(bool  stopBtn   READ getStopBtn  WRITE setStopBtn NOTIFY stopBtnChanged)
     Q_PROPERTY(bool  autoSetHeightBtn   READ getAutoSetHeightBtn  WRITE setAutoSetHeightBtn NOTIFY autoSetHeightBtnChanged)
 
     // ===== Text =====
@@ -60,6 +61,8 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(bool inferConnectBtn READ getInferConnectBtn WRITE setInferConnectBtn NOTIFY inferConnectBtnChanged)
     Q_PROPERTY(bool inferConnectedLight  READ getInferConnectedLight  WRITE setInferConnectedLight NOTIFY inferConnectedLightChanged)
 
+    //0-靜止 1-向上 2-向下
+    Q_PROPERTY(int  moveSignal READ getMoveSignal WRITE setMoveSignal NOTIFY moveSignalChanged)
     Q_PROPERTY(int  inferIntegrationTime READ getInferIntegrationTime WRITE setInferIntegrationTime NOTIFY inferIntegrationTimeChanged)
     Q_PROPERTY(int  inferAvgTime   READ getInferAvgTime   WRITE setInferAvgTime   NOTIFY inferAvgTimeChanged)
     Q_PROPERTY(int  inferHeight   READ getInferHeight WRITE setInferHeight   NOTIFY inferHeightChanged)
@@ -322,6 +325,12 @@ public:
         m_resetBtn = value;
         emit resetBtnChanged(m_resetBtn);
     }
+    Q_INVOKABLE bool getStopBtn() const { return m_stopBtn  ; }
+    Q_INVOKABLE void setStopBtn(bool value)
+    {
+        m_stopBtn = value;
+        emit stopBtnChanged(m_stopBtn);
+    }
 
     Q_INVOKABLE bool getAutoSetHeightBtn() const { return m_autoSetHeightBtn  ; }
     Q_INVOKABLE void setAutoSetHeightBtn(bool value)
@@ -371,6 +380,13 @@ public:
     {
         m_connectedLight = value;
         emit inferConnectedLightChanged(m_inferConnectedLight);
+    }
+    //0-靜止 1-向上 2-向下
+    Q_INVOKABLE int getMoveSignal() const { return m_moveSignal ; }
+    Q_INVOKABLE void setMoveSignal(int value)
+    {
+        m_moveSignal = value;
+        emit moveSignalChanged(m_moveSignal);
     }
     Q_INVOKABLE int getInferIntegrationTime() const { return m_inferIntegrationTime ; }
     Q_INVOKABLE void setInferIntegrationTime(int value)
@@ -566,6 +582,7 @@ public:
     void heightChanged(int);
     void heightSetChanged(int);
     void resetBtnChanged(bool);
+    void stopBtnChanged(bool);
     void autoSetHeightBtnChanged(bool);
 
     void labelChanged( QString text);
@@ -576,6 +593,7 @@ public:
     void inferenceBtnChanged(bool);
     void inferConnectBtnChanged(bool);
     void inferConnectedLightChanged(bool);
+    void moveSignalChanged(int);
     void inferIntegrationTimeChanged(int);
     void inferAvgTimeChanged(int);
     void inferHeightChanged(int);
@@ -717,6 +735,7 @@ private:
     int m_height   = 0;
     int m_heightSet   = 0;
     bool m_resetBtn = false;
+    bool m_stopBtn = false;
     bool m_autoSetHeightBtn = true;
 
     QString m_label ="";
@@ -726,6 +745,7 @@ private:
     bool m_inferenceBtn = false;
     bool m_inferConnectBtn = false;
     bool m_inferConnectedLight = false;
+    int m_moveSignal = 2;
     int m_inferIntegrationTime = 0;
     int m_inferAvgTime = 0;
     int m_inferHeight = 0;
