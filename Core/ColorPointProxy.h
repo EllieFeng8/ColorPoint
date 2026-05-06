@@ -47,6 +47,7 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(int  avgTime   READ getAvgTime   WRITE setAvgTime   NOTIFY avgTimeChanged)
     Q_PROPERTY(int  height   READ getHeight   WRITE setHeight   NOTIFY heightChanged)
     Q_PROPERTY(int  heightSet   READ getHeightSet  WRITE setHeightSet  NOTIFY heightSetChanged)
+    Q_PROPERTY(int  conveyorHeight   READ getConveyorHeight  WRITE setConveyorHeight  NOTIFY conveyorHeightChanged)
     Q_PROPERTY(bool  resetBtn   READ getResetBtn  WRITE setResetBtn NOTIFY resetBtnChanged)
     Q_PROPERTY(bool  stopBtn   READ getStopBtn  WRITE setStopBtn NOTIFY stopBtnChanged)
     Q_PROPERTY(bool  autoSetHeightBtn   READ getAutoSetHeightBtn  WRITE setAutoSetHeightBtn NOTIFY autoSetHeightBtnChanged)
@@ -67,6 +68,7 @@ class ColorPointProxy : public QObject
     Q_PROPERTY(int  inferAvgTime   READ getInferAvgTime   WRITE setInferAvgTime   NOTIFY inferAvgTimeChanged)
     Q_PROPERTY(int  inferHeight   READ getInferHeight WRITE setInferHeight   NOTIFY inferHeightChanged)
     Q_PROPERTY(int  inferCurrentHeight   READ getInferCurrentHeight WRITE setInferCurrentHeight   NOTIFY inferCurrentHeightChanged)
+    Q_PROPERTY(int  inferConveyorHeight   READ getInferConveyorHeight WRITE setInferConveyorHeight   NOTIFY inferConveyorHeightChanged)
     Q_PROPERTY(int  inferMeasurePeriod   READ getInferMeasurePeriod  WRITE setInferMeasurePeriod    NOTIFY inferMeasurePeriodChanged)
 
     Q_PROPERTY(bool inferScanBtn    READ getInferScanBtn    WRITE setInferScanBtn    NOTIFY inferScanBtnChanged)
@@ -319,6 +321,12 @@ public:
         m_heightSet = value;
         emit heightSetChanged(m_heightSet);
     }
+    Q_INVOKABLE int getConveyorHeight() const { return m_conveyorHeight   ; }
+    Q_INVOKABLE void setConveyorHeight(int value)
+    {
+        m_conveyorHeight = value;
+        emit conveyorHeightChanged(m_conveyorHeight);
+    }
     Q_INVOKABLE bool getResetBtn() const { return m_resetBtn  ; }
     Q_INVOKABLE void setResetBtn(bool value)
     {
@@ -411,6 +419,13 @@ public:
     {
         m_inferCurrentHeight = value;
         emit inferCurrentHeightChanged(m_inferCurrentHeight);
+    }
+
+    Q_INVOKABLE int getInferConveyorHeight() const { return m_inferConveyorHeight  ; }
+    Q_INVOKABLE void setInferConveyorHeight(int value)
+    {
+        m_inferConveyorHeight = value;
+        emit inferConveyorHeightChanged(m_inferConveyorHeight);
     }
 
     Q_INVOKABLE int getInferMeasurePeriod () const { return m_inferMeasurePeriod   ; }
@@ -581,6 +596,7 @@ public:
     void avgTimeChanged(int);
     void heightChanged(int);
     void heightSetChanged(int);
+    void conveyorHeightChanged(int);
     void resetBtnChanged(bool);
     void stopBtnChanged(bool);
     void autoSetHeightBtnChanged(bool);
@@ -598,6 +614,7 @@ public:
     void inferAvgTimeChanged(int);
     void inferHeightChanged(int);
     void inferCurrentHeightChanged(int);
+    void inferConveyorHeightChanged(int);
     void inferMeasurePeriodChanged(int);
     void inferScanBtnChanged(bool);
     void inferAutoScanBtnChanged(bool);
@@ -734,6 +751,7 @@ private:
     int m_avgTime   = 0;
     int m_height   = 0;
     int m_heightSet   = 0;
+    int m_conveyorHeight   = 78;
     bool m_resetBtn = false;
     bool m_stopBtn = false;
     bool m_autoSetHeightBtn = true;
@@ -750,6 +768,7 @@ private:
     int m_inferAvgTime = 0;
     int m_inferHeight = 0;
     int m_inferCurrentHeight = 0;
+    int m_inferConveyorHeight = 0;
     int m_inferMeasurePeriod = 1;
     bool m_inferScanBtn = false;
     bool m_inferAutoScanBtn = false;

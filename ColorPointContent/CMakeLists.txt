@@ -24,6 +24,7 @@ qt6_add_qml_module(ColorPointContent
         "assets/delete.png"
         "assets/Rectangle 66.png"
         "assets/folder 1.png"
+        "assets/check.png"
         "assets/down-arrow.png"
         "assets/up-arrow.png"
         "assets/Rectangle 65.png"

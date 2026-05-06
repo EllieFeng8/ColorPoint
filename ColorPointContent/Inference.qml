@@ -340,22 +340,25 @@ Rectangle {
                                     //anchors.fill: parent
                                     // anchors.rightMargin: 467
                                     Rectangle{
-                                        Layout.preferredHeight: parent.height * 0.25
+                                        Layout.preferredHeight: parent.height * 0.30
                                         Layout.preferredWidth: parent.width
                                         color: "#21555353"
                                         radius: 20
                                         ColumnLayout {
-                                            // id: scanRow
-                                            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                                            Layout.preferredWidth: parent.width
+                                            id: heightColumn
+                                            // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                            // Layout.preferredWidth: parent.width
+                                            // Layout.fillHeight: true
+                                            Layout.fillWidth: true
                                             Layout.fillHeight: true
 
                                             spacing: 15
 
                                             RowLayout {
                                                 Layout.fillWidth: true
-                                                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-
+                                                // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                Layout.leftMargin:30
+                                                Layout.rightMargin:30
                                                 spacing: 20
                                                 // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                                                 Text {
@@ -363,10 +366,12 @@ Rectangle {
                                                     font.family: "Poppins"
                                                     font.pixelSize: 25
                                                     font.weight: Font.Bold
-                                                    Layout.fillWidth: true
+                                                    // width: 100
+                                                    // Layout.fillWidth: true
+                                                    Layout.preferredWidth: 230
                                                     horizontalAlignment: Text.AlignLeft
                                                     verticalAlignment: Text.AlignVCenter
-                                                    text: "          高度                  "
+                                                    text: "Height"
                                                     // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                                                 }
                                                 Text {
@@ -376,30 +381,37 @@ Rectangle {
                                                     font.family: "Poppins"
                                                     font.pixelSize: 35
                                                     font.weight: Font.Normal
+                                                    // Layout.fillWidth: true
+                                                    // width: 50
                                                     Layout.fillWidth: true
                                                     horizontalAlignment: Text.AlignHCenter
-                                                    verticalAlignment: Text.AlignVCenter
+                                                    // horizontalAlignment: Text.AlignHCenter
+                                                    // verticalAlignment: Text.AlignVCenter
 
                                                     // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                                                 }
                                                 Text {
                                                     // anchors.fill: parent
-                                                    text: "              cm"
+                                                    text: "cm"
                                                     color: "#ffffff"
                                                     font.family: "Poppins"
                                                     font.pixelSize: 25
                                                     font.weight: Font.Normal
-                                                    Layout.fillWidth: true
+                                                    // Layout.fillWidth: true
+                                                    // // width: 20
+                                                    // horizontalAlignment: Text.AlignRight
+                                                    // verticalAlignment: Text.AlignVCenter
+                                                    Layout.preferredWidth: 30
                                                     horizontalAlignment: Text.AlignRight
-                                                    verticalAlignment: Text.AlignVCenter
 
                                                     // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                                                 }
                                             }
                                             RowLayout {
                                                 Layout.fillWidth: true
-                                                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-
+                                                // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                Layout.leftMargin:30
+                                                Layout.rightMargin:30
                                                 spacing: 20
                                                 // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                                                 Text {
@@ -407,10 +419,12 @@ Rectangle {
                                                     font.family: "Poppins"
                                                     font.pixelSize: 25
                                                     font.weight: Font.Bold
-                                                    Layout.fillWidth: true
-                                                    horizontalAlignment: Text.AlignLeft
-                                                    verticalAlignment: Text.AlignVCenter
-                                                    text: "    目前高度                 "
+                                                    // Layout.fillWidth: true
+                                                    // // width: 100
+                                                    // horizontalAlignment: Text.AlignLeft
+                                                    // verticalAlignment: Text.AlignVCenter
+                                                    Layout.preferredWidth: 230
+                                                    text: "Current height"
                                                     // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                                                 }
                                                 Text {
@@ -420,27 +434,120 @@ Rectangle {
                                                     font.family: "Poppins"
                                                     font.pixelSize: 35
                                                     font.weight: Font.Normal
+                                                    // Layout.fillWidth: true
+                                                    // // width: 50
+                                                    // horizontalAlignment: Text.AlignHCenter
+                                                    // verticalAlignment: Text.AlignVCenter
                                                     Layout.fillWidth: true
                                                     horizontalAlignment: Text.AlignHCenter
-                                                    verticalAlignment: Text.AlignVCenter
-
                                                     // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                                                 }
                                                 Text {
                                                     // anchors.fill: parent
-                                                    text: "              cm"
+                                                    text: "cm"
                                                     color: "#ffffff"
                                                     font.family: "Poppins"
                                                     font.pixelSize: 25
                                                     font.weight: Font.Normal
-                                                    Layout.fillWidth: true
+                                                    // Layout.fillWidth: true
+                                                    // // width: 20
+                                                    // horizontalAlignment: Text.AlignRight
+                                                    // verticalAlignment: Text.AlignVCenter
+                                                    Layout.preferredWidth: 30
                                                     horizontalAlignment: Text.AlignRight
-                                                    verticalAlignment: Text.AlignVCenter
+                                                    // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                }
+                                            }
+                                            RowLayout {
+                                                id:conveyorheightText
+                                                Layout.fillWidth: true
+                                                // Layout.fillHeight: true
+                                                // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                Layout.leftMargin:30
+                                                Layout.rightMargin:30
+                                                spacing: 20
+                                                // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                Text {
+                                                    color: "#ffffff"
+                                                    font.family: "Poppins"
+                                                    font.pixelSize: 25
+                                                    font.weight: Font.Bold
+                                                    // Layout.fillWidth: true
+                                                    // // width: 100
+                                                    // horizontalAlignment: Text.AlignLeft
+                                                    // verticalAlignment: Text.AlignVCenter
+                                                    text: "Conveyor Height"
+                                                    Layout.preferredWidth: 230
+                                                    // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                                                }
 
+                                                TextField {
+                                                    id: inferConveyorTextField
+                                                    // anchors.top: integration_Time_text.bottom
+                                                    // anchors.topMargin: 5
+                                                    // anchors.left: integration_Time_text.left
+                                                    // enabled:false
+                                                    text: Number(Cp.inferConveyorHeight)
+                                                    color: "#ffffff"
+                                                    font.family: "Poppins"
+                                                    font.pixelSize: 28
+                                                    font.weight: Font.Normal
+                                                    // Layout.fillWidth: true
+                                                    // width: 50
+                                                    // Layout.fillWidth: true
+                                                    Layout.preferredWidth: 90
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    // horizontalAlignment: Text.AlignHCenter
+                                                    // verticalAlignment: Text.AlignVCenter
+                                                    validator: IntValidator {}
+                                                    // horizontalAlignment: Text.AlignLeft
+                                                    // verticalAlignment: Text.AlignVCenter
+                                                    background: Rectangle {
+                                                        color: "#4de59263" // 背景黑色
+                                                        radius: 5 // 圓角
+                                                    }
+                                                }
+                                                Text {
+                                                    // anchors.fill: parent
+                                                    text: "cm"
+                                                    color: "#ffffff"
+                                                    font.family: "Poppins"
+                                                    font.pixelSize: 25
+                                                    font.weight: Font.Normal
+                                                    // Layout.fillWidth: true
+                                                    // horizontalAlignment: Text.AlignRight
+                                                    // verticalAlignment: Text.AlignVCenter
+                                                    Layout.preferredWidth: 30
+                                                    horizontalAlignment: Text.AlignRight
                                                     // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                                                 }
                                             }
 
+                                        }
+                                        Image{
+                                            anchors.left: heightColumn.right
+                                            anchors.leftMargin: -10
+                                            anchors.top:heightColumn.top
+                                            anchors.topMargin:125
+                                            scale:inferConveyorMouseArea.containsMouse ? 1.2 : 1.1
+                                            source:"assets/check.png"
+
+                                            layer.enabled: true
+                                            layer.effect: MultiEffect {
+                                                shadowEnabled: inferConveyorMouseArea.containsMouse ? true : false
+                                                shadowColor: "white"
+                                                shadowBlur: 0.8
+                                            }
+                                            MouseArea {
+                                                id: inferConveyorMouseArea
+                                                anchors.fill: parent
+                                                hoverEnabled: true
+                                                cursorShape: Qt.PointingHandCursor
+                                                onClicked: {
+                                                    Cp.inferConveyorHeight = inferConveyorTextField.text
+                                                    console.log("inferConveyorHeight clicked",Cp.inferConveyorHeight)
+                                                }
+                                            }
                                         }
                                     }
 

@@ -28,6 +28,7 @@ Rectangle {
     property alias resetbuttomMouseArea : resetbuttomMouseArea
     property alias stopbuttomMouseArea : stopbuttomMouseArea
     property alias heightSet1 : heightSet1
+    property alias conveyorHeight1 : conveyorHeight1
     property bool whiteScanClicked: false
     MouseArea {
         anchors.fill: parent
@@ -267,7 +268,7 @@ Rectangle {
                                     Text {
                                         id: heightset
                                         anchors.top: heighttxt.bottom
-                                        anchors.topMargin: 100
+                                        anchors.topMargin: 60
                                         anchors.left: heighttxt.left
                                         height: 30
                                         width: parent.width
@@ -276,7 +277,7 @@ Rectangle {
                                         font.pixelSize: 20
                                         font.weight: Font.Bold
                                         horizontalAlignment: Text.AlignLeft
-                                        text: "Height Set:(70~120)"
+                                        text: "Height Set:("+Cp.conveyorHeight+"~120)"
                                         textFormat: Text.PlainText
                                         verticalAlignment: Text.AlignVCenter
                                         wrapMode: Text.WordWrap
@@ -306,6 +307,49 @@ Rectangle {
                                                 verticalAlignment: Text.AlignVCenter
                                             }
                                         }
+                                        Text {
+                                            id: conveyorHeight
+                                            anchors.top: heightset.bottom
+                                            anchors.topMargin: 60
+                                            anchors.left: heightset.left
+                                            height: 30
+                                            width: parent.width
+                                            color: "#ffffff"
+                                            font.family: "Poppins"
+                                            font.pixelSize: 20
+                                            font.weight: Font.Bold
+                                            horizontalAlignment: Text.AlignLeft
+                                            text: "Conveyor height:"
+                                            textFormat: Text.PlainText
+                                            verticalAlignment: Text.AlignVCenter
+                                            wrapMode: Text.WordWrap
+                                            leftPadding: 20
+                                            Rectangle {
+                                                id: conveyorHeightRec
+                                                color: "#4de59263" // 背景橘色
+                                                radius: 5 // 圓角
+                                                height: parent.height * 1.4
+                                                width: parent.width * 0.8
+                                                anchors.top: conveyorHeight.bottom
+                                                anchors.topMargin: 10
+                                                anchors.left: conveyorHeight.left
+                                                anchors.leftMargin: 20
+                                                TextField {
+                                                    id: conveyorHeight1
+                                                    height: parent.height
+                                                    width: parent.width
+                                                    anchors.top: conveyorHeightRec.top
+                                                    font.pixelSize: 22
+                                                    font.weight: Font.Bold
+                                                    font.family: "Poppins"
+                                                    color: "#ffffff"
+                                                    text: Number(Cp.conveyorHeight)
+                                                    enabled: true
+                                                    horizontalAlignment: Text.AlignLeft
+                                                    verticalAlignment: Text.AlignVCenter
+                                                }
+                                            }
+                                        }
                                         Image {
                                             anchors.left: resetzeroButton.left
                                             anchors.leftMargin: 100
@@ -315,7 +359,7 @@ Rectangle {
                                             height:64
                                             // anchors.verticalCenter: parent.verticalCenter //垂直置中
                                             // anchors.horizontalCenter: parent.horizontalCenter //水平置中
-                                            source: Cp.moveSignal===0?"":Cp.moveSignal===1?"assets/up-arrow.png":"assets/down-arrow.png"
+                                            source: Cp.moveSignal===2?"assets/down-arrow.png":Cp.moveSignal===1?"assets/up-arrow.png":""
                                             scale: 0.8
  }
                                         Rectangle {
@@ -364,7 +408,7 @@ Rectangle {
                                             anchors.left: heightset.left
                                             anchors.leftMargin: 20
                                             anchors.top: heightset.bottom
-                                            anchors.topMargin: 237
+                                            anchors.topMargin: 297
 
                                             //anchors.topMargin: 15
                                             height: heightSet1.height

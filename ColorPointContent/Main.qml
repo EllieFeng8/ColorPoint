@@ -78,8 +78,8 @@ MainScreen {
     }
     heightconfirmBtnMouseArea.onClicked: {
         // if(Cp.autoSetHeightBtn === true) return
-        if(heightSet1.text < 70 ) {
-            Cp.heightSet = 70
+        if(heightSet1.text < Cp.conveyorHeight ) {
+            Cp.heightSet = Cp.conveyorHeight
         }
         else if(heightSet1.text > 120) {
             Cp.heightSet = 120
@@ -87,8 +87,15 @@ MainScreen {
         else {
             Cp.heightSet = Number(heightSet1.text)
         }
+        if(conveyorHeight1.text < 70 ) {
+            Cp.conveyorHeight = 70
 
-        console.log("heightSet1: ",  Cp.heightSet, heightSet1.text,Cp.autoSetHeightBtn )
+        }
+        else{
+            Cp.conveyorHeight = conveyorHeight1.text
+        }
+        console.log("heightSet1: ,conveyorHeight:",  Cp.heightSet, heightSet1.text,Cp.autoSetHeightBtn )
+        console.log("conveyorHeight:",Cp.conveyorHeight)
     }
 
     resetbuttomMouseArea.onClicked: {
