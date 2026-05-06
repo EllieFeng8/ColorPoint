@@ -232,7 +232,7 @@ Rectangle {
                                         font.pixelSize: 20
                                         font.weight: Font.Bold
                                         horizontalAlignment: Text.AlignLeft
-                                        text: "Height:"
+                                        text: "Height:(cm)"
                                         textFormat: Text.PlainText
                                         verticalAlignment: Text.AlignVCenter
                                         wrapMode: Text.WordWrap
@@ -277,7 +277,7 @@ Rectangle {
                                         font.pixelSize: 20
                                         font.weight: Font.Bold
                                         horizontalAlignment: Text.AlignLeft
-                                        text: "Height Set:("+Cp.conveyorHeight+"~120)"
+                                        text: "Height Set:("+Cp.conveyorHeight+"~120cm)"
                                         textFormat: Text.PlainText
                                         verticalAlignment: Text.AlignVCenter
                                         wrapMode: Text.WordWrap
@@ -319,7 +319,7 @@ Rectangle {
                                             font.pixelSize: 20
                                             font.weight: Font.Bold
                                             horizontalAlignment: Text.AlignLeft
-                                            text: "Conveyor height:"
+                                            text: "Conveyor height:(cm)"
                                             textFormat: Text.PlainText
                                             verticalAlignment: Text.AlignVCenter
                                             wrapMode: Text.WordWrap
