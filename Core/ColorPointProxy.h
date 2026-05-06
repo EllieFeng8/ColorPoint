@@ -745,7 +745,7 @@ private:
     bool m_inferenceBtn = false;
     bool m_inferConnectBtn = false;
     bool m_inferConnectedLight = false;
-    int m_moveSignal = 2;
+    int m_moveSignal = 0;
     int m_inferIntegrationTime = 0;
     int m_inferAvgTime = 0;
     int m_inferHeight = 0;
